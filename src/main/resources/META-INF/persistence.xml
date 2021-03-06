@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<persistence version="2.1" xmlns="http://xmlns.jcp.org/xml/ns/persistence" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://xmlns.jcp.org/xml/ns/persistence http://xmlns.jcp.org/xml/ns/persistence/persistence_2_1.xsd">
+  <persistence-unit name="Incidents_PU" transaction-type="RESOURCE_LOCAL">
+    <provider>org.eclipse.persistence.jpa.PersistenceProvider</provider>
+    <class>com.mycompany.incidents.entities.Entry</class>
+    <class>com.mycompany.incidents.entities.Incident</class>
+    <class>com.mycompany.incidents.entities.Note</class>
+    <class>com.mycompany.incidents.entities.Reinsurance</class>
+    <class>com.mycompany.incidents.entities.Typelist</class>
+    <class>com.mycompany.incidents.entities.Typecode</class>
+    <class>com.mycompany.incidents.entities.Category</class>
+    <class>com.mycompany.incidents.entities.GwLobCode</class>
+    <class>com.mycompany.incidents.entities.GwCostCategory</class>
+    <class>com.mycompany.incidents.entities.GwExposureType</class>
+    <class>com.mycompany.incidents.entities.GwCoverageSubtype</class>
+    <class>com.mycompany.incidents.entities.GwInternalPolicyType</class>
+    <class>com.mycompany.incidents.entities.GwLossCause</class>
+    <class>com.mycompany.incidents.entities.GwPolicyTab</class>
+    <class>com.mycompany.incidents.entities.GwCoverageType</class>
+    <class>com.mycompany.incidents.entities.GwCoverageSubtypeClass</class>
+    <class>com.mycompany.incidents.entities.GwCovtermPattern</class>
+    <class>com.mycompany.incidents.entities.GwOffering</class>
+    <class>com.mycompany.incidents.entities.GwLobModel</class>
+    <class>com.mycompany.incidents.entities.GwLossType</class>
+    <class>com.mycompany.incidents.entities.GwCostType</class>
+    <class>com.mycompany.incidents.entities.GwPolicyType</class>
+    <class>com.mycompany.incidents.entities.GwLossPartyType</class>
+    <class>com.mycompany.incidents.entities.GwTypekey</class>
+    <class>com.mycompany.incidents.entities.GwTypeCode</class>
+    <class>com.mycompany.incidents.entities.GwHomologationsGeneralCore</class>
+    <class>com.mycompany.incidents.entities.GwHomologationsCoreGeneral</class>
+    <class>com.mycompany.incidents.entities.GwHomologCoreToGeneral</class>
+    <class>com.mycompany.incidents.entities.GwHomologGeneralToCore</class>
+    <class>com.mycompany.incidents.entities.GwEcosystemCoverages</class>
+    <class>com.mycompany.incidents.entities.Closure</class>
+    <class>com.mycompany.incidents.entities.Lista</class>
+    <class>com.mycompany.incidents.entities.ClosureClaims</class>
+    <properties>
+      <!--CONEXION DB DLLO -->
+      <property name="javax.persistence.jdbc.url" value="jdbc:derby:incidentesDB"/>
+      <!--CONEXION DB PDN  -->
+      <!--property name="javax.persistence.jdbc.url" value="jdbc:derby:D:\04 Informacion SPRINTS\51. INCIDENTES\incidentesDB"/-->
+      <property name="javax.persistence.jdbc.user" value=""/>
+      <property name="javax.persistence.jdbc.driver" value="org.apache.derby.jdbc.EmbeddedDriver"/>
+      <property name="javax.persistence.jdbc.password" value=""/>
+    </properties>
+  </persistence-unit>
+</persistence>

@@ -1,0 +1,158 @@
+  /*
+//CODIGO PARA RECORRER UN XML DE GUIDEWIRE
+    import java.io.File;
+    import java.io.IOException;
+    import javax.xml.parsers.DocumentBuilder;
+    import javax.xml.parsers.DocumentBuilderFactory;
+    import javax.xml.parsers.ParserConfigurationException;
+    import org.w3c.dom.Document;
+    import org.w3c.dom.Element;
+    import org.w3c.dom.NodeList;
+    import org.xml.sax.SAXException;
+
+    /*Typelist newTypelist = new Typelist();
+    newTypelist.setTypelistName(typelistName.substring(0, typelistName.indexOf(".")));
+    newTypelist.setTypelistDesc(typelistName);
+    typelistController.create(newTypelist);         
+    String strRsult = "";  
+    try {
+      File covTermPatternFile = new File("C:\\Guidewire\\ClaimCenter\\modules\\"
+              + "configuration\\config\\extensions\\typelist\\" + typelistName);
+      
+      DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
+      DocumentBuilder documentBuilder = dbf.newDocumentBuilder();            
+      Document document = documentBuilder.parse(covTermPatternFile);            
+      document.getDocumentElement().normalize();      
+            
+      NodeList typecodes = document.getElementsByTagName("typecode");
+      for (int typecoNum = 0; typecoNum < typecodes.getLength(); typecoNum++) {                          
+        Element xmlTypecode = (Element)typecodes.item(typecoNum);                
+        Typecode newTypecode = new Typecode();
+        newTypecode.setTypelist(newTypelist);
+        newTypecode.setTypecodeCode(xmlTypecode.getAttribute("code"));
+        newTypecode.setTypecodeDesc(xmlTypecode.getAttribute("desc"));
+        newTypecode.setTypecodeName(xmlTypecode.getAttribute("name"));
+        if(xmlTypecode.getAttribute("retired")!=null) {
+          newTypecode.setRetired(Boolean.parseBoolean(xmlTypecode.getAttribute("retired")));
+        }
+        typecodeController.create(newTypecode);
+        progreso(totalItems,currentItem++);
+        NodeList categoryList = xmlTypecode.getElementsByTagName("category");        
+        for (int categoryNum = 0; categoryNum < categoryList.getLength(); categoryNum++) {
+          Element xmlCategory = (Element)categoryList.item(categoryNum); 
+          Category newCategory = new Category();
+          newCategory.setParentTypecode(newTypecode);
+          //newCategory.setCategoryTypecode(newTypecode); //TODO: AY QUE REALIZAR ESTE CUANDO TERMINE TODOS//O ELIMINARLO
+          newCategory.setCategoryCode(xmlCategory.getAttribute("code"));
+          newCategory.setCategoryTypelist(xmlCategory.getAttribute("typelist"));          
+          categoryController.create(newCategory);
+          progreso(totalItems,currentItem++);
+        }          
+      }      
+    } catch (IOException | ParserConfigurationException | SAXException e) {
+      strRsult = e.getMessage();
+    }
+    return strRsult;
+    */
+    
+    
+    *///BORRAR LO ANTERIOR SI YA NO SE REQUIERE
+
+
+https://www.youtube.com/channel/UC4bxarvFfMYDPQaV5vmOYiw
+
+
+=CONCATENATE("INSERT INTO INCIDENT(CODE,CLAIM,POLICY,CLAIM_DATE,RISK,COVERAGE,SUBLINE,OFFERING,HOMOLOGATION,ERROR,PAYLOAD,TRANSFER) VALUES ('";A2;"','";B2;"','";C2;"','";D2;"','";E2;"','";F2;"','";G2;"','";H2;"','";I2;"','";J2;"','";K2;"','";L2;"');")
+=CONCATENATE("INSERT INTO INCIDENT(CODE,STATUS,ASSIGNED,DESCRIPTION,AFFECTED) VALUES ('";A2;"','";B2;"','";C2;"','";D2;"','";F2;"');")
+
+1. CREAR ENTITIES
+    - paquete > click derecho > new > persistence > entities form database
+      se las almacena en un paquete de nombre entities
+2. UNIDAD DE PERSISTENCIA
+    - la unidad de persistencia se encuentrra en:
+      other resources > META_INF > persistence.xml      
+      
+3. CREAR TABLAS DESDE ENTIDADES
+    - modificar las entidades de la carpeta entities
+    - cambiar tableGenerationStrategy en la unidad de persistencia por "Drop and Create"
+    - usar el codigo:
+      EntityManagerFactory factory= Persistence.createEntityManagerFactory("Incidents_PU");
+    - la base de datos se genera como esten las entidades
+4. TRANSIENT
+    si en la entidad un campo tiene la anotacio @Transient
+    indica que no se persiste en base de datos solo es temporal en las instancias
+
+
+    
+//DEFINICION ENTITY MANAGER------------------------------------------------
+    EntityManagerFactory factory= Persistence.createEntityManagerFactory("Incidents_PU");
+    EntityManager manager = factory.createEntityManager();    
+
+
+//INSERCION---------------------------------------------------------------------
+    manager.getTransaction().begin();
+    for (int i = 0; i < 10; i++) {
+      Incidente newIncidente = new Incidente();    
+      newIncidente.setIdIncidente(i);
+      newIncidente.setCodigo(String.valueOf(i));
+      newIncidente.setGestor(String.valueOf(i));
+      newIncidente.setGestor(String.valueOf(i));
+      manager.persist(newIncidente);
+    }
+    manager.getTransaction().commit();
+    
+
+//ROLLBACK----------------------------------------------------------------------
+    manager.getTransaction().rollback();//se lo coloca en el catch para hacer rollback
+    
+           
+//BUSQUEDA NAMEQUERY------------------------------------------------------------
+    TypedQuery<Incidente> consultaIncidentes= manager.
+            createNamedQuery("Incidente.findAll", Incidente.class);
+    consultaIncidentes.setParameter("nombre", "miguel");
+    List<Incidente> lista= consultaIncidentes.getResultList();
+    for (Incidente incidentrFound :lista) {
+        System.out.println(incidentrFound.getCodigo()+ "," +
+                           incidentrFound.getProblema());
+    }
+
+
+//LLENAR COMBO CON EL RESULTADO DE UNA CONSULTA(SOLO TIENE UNA COLUMNA)---------
+    jComboBox1.setModel(new DefaultComboBoxModel(lista.toArray()));
+
+
+//BUSQUEDA----------------------------------------------------------------------
+    Incidente inc = manager.find(Incidente.class, 3);
+    
+//MODIFICACION------------------------------------------------------------------
+    manager.getTransaction().begin();
+    Incidente inc2 = manager.find(Incidente.class, 3);
+    inc2.setGestor("Cambio");
+    manager.getTransaction().commit();
+
+
+//ELIMINACION-------------------------------------------------------------------
+    manager.getTransaction().begin();
+    Incidente inc3 = manager.find(Incidente.class, 3);//modificacion
+    manager.remove(inc3);    
+    manager.getTransaction().commit();
+
+//REFLECTION--------------------------------------------------------------------
+    try {
+        Method method = Class.forName(aClass.getName()).getMethod("getCodigo");
+        System.out.println("----" + method.invoke(lista[0]));
+    } catch (ClassNotFoundException | NoSuchMethodException | IllegalAccessException | IllegalArgumentException | InvocationTargetException ex) {
+        Logger.getLogger(TableController.class.getName()).log(Level.SEVERE, null, ex);
+    }
+//METADATA ENTITY MANAGER JPA---------------------------------------------------        
+    Set as = manager.getMetamodel().managedType(aClass).getAttributes();            
+    Iterator it = as.iterator();
+    while(it.hasNext()) {
+        Attribute a = (Attribute)it.next();                
+        System.out.println(a.getName()+" - "+a.getJavaType().getSimpleName()+" - "+a.getPersistentAttributeType());
+    } 
+
+//BACKUP
+    cd C:\Program Files\Java\jdk1.8.0_111\db\lib
+    java -jar derbyrun.jar ij
+
