@@ -21,6 +21,7 @@ public class DialogHelp extends javax.swing.JDialog {
   
   public void setTextContent(String textValue){
     jTextArea1.setText(textValue);
+    jTextArea1.setCaretPosition(0);
   }
 
   /**

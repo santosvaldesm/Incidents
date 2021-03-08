@@ -4,10 +4,7 @@
 
 ALTER TABLE NOTE ALTER COLUMN DESCRIPTION SET DATA TYPE varchar (20000)
 ALTER TABLE NOTE ALTER COLUMN TYPENOTE SET DATA TYPE VARCHAR(200)
-
------------------------------------------------------
---             CONSULTAS COMUNES                   --
------------------------------------------------------
+ALTER TABLE gw_lob_Model ALTER COLUMN loss_cause SET DATA TYPE VARCHAR(2000);
 
 -----------------------------------------------------
 --             CONSULTAS COMUNES                   --
@@ -44,7 +41,7 @@ CREATE TABLE gw_lob_Model(
     covTerm_pattern         VARCHAR(100), 
     coverage_subtype_class  VARCHAR(20), 
     limit_or_Deductible     VARCHAR(50), 
-    loss_cause              VARCHAR(400),             
+    loss_cause              VARCHAR(2000),             
     cost_category           VARCHAR(1400));    
         
 CREATE TABLE gw_type_code (  

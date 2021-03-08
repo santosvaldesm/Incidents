@@ -7,11 +7,12 @@ import com.mycompany.incidents.jpaControllers.GwTypeCodeJpaController;
 import com.mycompany.incidents.otherResources.DataBaseController;
 import com.mycompany.incidents.otherResources.TypeKeysEnum;
 import java.io.BufferedReader;
-import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.io.UnsupportedEncodingException;
 import java.sql.SQLException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -26,41 +27,60 @@ public class DialogLoadModel extends javax.swing.JDialog implements Runnable  {
   EntityManagerFactory factory = Persistence.createEntityManagerFactory("Incidents_PU");  
   GwTypeCodeJpaController typeCodeController = new GwTypeCodeJpaController(factory);
   GwLobModelJpaController lobModelController = new GwLobModelJpaController(factory);
-  
-  
+  String lastRowInfo="";
+  FileReader fr = null;    
+  int totalItems=17000;
+  int currentItem=1;
   
   public DialogLoadModel(java.awt.Frame parent, boolean modal) {
     super(parent, modal);
     initComponents();
     btnStart.setEnabled(false); 
   }
-  
-  int totalItems=17000;
-  int currentItem=1;
     
   @Override
   public void run() {    
-    if(!btnStart.isEnabled()) {
-      regenerateTablesGW();
-      loadTypelist(TypeKeysEnum.CostCategory.name());      
-      loadTypelist(TypeKeysEnum.CostType.name());      
-      loadTypelist(TypeKeysEnum.CoverageSubtype.name());      
-      loadTypelist(TypeKeysEnum.CoverageType.name());      
-      loadTypelist(TypeKeysEnum.CovTermPattern.name());      
-      loadTypelist(TypeKeysEnum.ExposureType.name());      
-      loadTypelist(TypeKeysEnum.InternalPolicyType.name());      
-      loadTypelist(TypeKeysEnum.LOBCode.name());                  
-      loadTypelist(TypeKeysEnum.LossCause.name());      
-      loadTypelist(TypeKeysEnum.LossPartyType.name());      
-      loadTypelist(TypeKeysEnum.LossType.name());      
-      loadTypelist(TypeKeysEnum.OfferingType_Ext.name());  
-      loadTypelist(TypeKeysEnum.PolicyTab.name());      
-      loadTypelist(TypeKeysEnum.PolicyType.name());                  
-      loadLobModel(TypeKeysEnum.LobModel.name());
-      System.out.println("EL TOTAL DE REGISTROS ES: " + currentItem);
-      progreso(100,100);                    
-      this.dispose();
+    if(!btnStart.isEnabled()) {      
+      try {
+        regenerateTablesGW();
+        loadTypelist(TypeKeysEnum.CostCategory.name());
+        loadTypelist(TypeKeysEnum.CostType.name());
+        loadTypelist(TypeKeysEnum.CoverageSubtype.name());
+        loadTypelist(TypeKeysEnum.CoverageType.name());
+        loadTypelist(TypeKeysEnum.CovTermPattern.name());
+        loadTypelist(TypeKeysEnum.ExposureType.name());
+        loadTypelist(TypeKeysEnum.InternalPolicyType.name());
+        loadTypelist(TypeKeysEnum.LOBCode.name());
+        loadTypelist(TypeKeysEnum.LossCause.name());
+        loadTypelist(TypeKeysEnum.LossPartyType.name());
+        loadTypelist(TypeKeysEnum.LossType.name());
+        loadTypelist(TypeKeysEnum.OfferingType_Ext.name());
+        loadTypelist(TypeKeysEnum.PolicyTab.name());
+        loadTypelist(TypeKeysEnum.PolicyType.name());
+        loadLobModel(TypeKeysEnum.LobModel.name());        
+        System.out.println("EL TOTAL DE REGISTROS ES: " + currentItem);
+        progreso(100,100);
+        this.dispose();
+      } catch (UnsupportedEncodingException ex) {        
+        printInOutputText("\nUnsupportedEncodingException: " + ex.toString()+"\n"+lastRowInfo);
+      } catch (IOException ex) {        
+        printInOutputText("\nIOException: " + ex.toString()+"\n"+lastRowInfo);
+      } catch (ArrayIndexOutOfBoundsException ex){        
+        printInOutputText("\nArrayIndexOutOfBoundsException: " + ex.toString()+"\n"+lastRowInfo);
+      }
+      try{                    
+        if( null != fr ) { 
+          fr.close();
+        }     
+      }catch (IOException e2){ 
+        labelProcess.setText("\nERROR cerrando fileReader: " + e2.getMessage());
+      }
     }    
+  }
+  
+  private void printInOutputText(String textToAdd){
+    outputTxt.setText(outputTxt.getText() + textToAdd);    
+    outputTxt.setCaretPosition(outputTxt.getDocument().getLength());
   }
   
   private void progreso(int total,int actual){
@@ -70,18 +90,16 @@ public class DialogLoadModel extends javax.swing.JDialog implements Runnable  {
     }
   }  
   
-  private void loadTypelist(String typelistName){       
-    
-    
-    FileReader fr = null;    
-    try {
-      FileInputStream archivo = new FileInputStream(ruta + typelistName + ".txt");
+  private void loadTypelist(String typelistName) throws FileNotFoundException, 
+                                     UnsupportedEncodingException, IOException{               
+      String rutaTypelist = ruta + "\\" + typelistName + ".txt";
+      FileInputStream archivo = new FileInputStream(rutaTypelist);
       BufferedReader br = new BufferedReader(new InputStreamReader(archivo, "utf-8"));
-      String linea;      
-      String splitRow[] = null;
+      String linea;
       int numColumns= br.readLine().split("\t").length;
-      while((linea=br.readLine())!=null){        
-        splitRow = linea.split("\t");        
+      while((linea=br.readLine())!=null){ 
+        lastRowInfo = "\n" + rutaTypelist + "\n" + linea;
+        String splitRow[] = linea.split("\t");        
         GwTypeCode newTypeCode = new GwTypeCode();        
         newTypeCode.setTypeCode(splitRow[0]);
         newTypeCode.setNameEs(splitRow[1]);
@@ -94,59 +112,41 @@ public class DialogLoadModel extends javax.swing.JDialog implements Runnable  {
         newTypeCode.setTypeKeyName(typelistName);        
         typeCodeController.create(newTypeCode);
         progreso(totalItems,currentItem++);
-      }        
-    }
-    catch(IOException e){
-       labelProcess.setText("\nERROR: " + e.getMessage());
-    }finally{
-       try{                    
-          if( null != fr ) fr.close();     
-       }catch (IOException e2){ 
-          labelProcess.setText("\nERROR: " + e2.getMessage());
-       }
-    }
+      }
   }
   
-  private void loadLobModel(String typelistName){
-    FileReader fr = null;    
-    try {      
-      FileInputStream archivo = new FileInputStream(ruta + typelistName + ".txt");
-      BufferedReader br = new BufferedReader(new InputStreamReader(archivo, "utf-8"));
-      String linea;      
-      String splitRow[] = null;      
-      int numColumns= br.readLine().split("\t").length;
-      while((linea=br.readLine())!=null){        
-        splitRow = linea.split("\t");            
-        GwLobModel newLobModel = new GwLobModel();                
-        newLobModel.setOffering(splitRow[0]);               //Offering	
-        newLobModel.setLobCode(splitRow[1]);                //LOBCode	
-        newLobModel.setPolicyType(splitRow[2]);             //PolicyType	
-        newLobModel.setLossType(splitRow[3]);               //LossType	
-        newLobModel.setCoverageType(splitRow[4]);           //CoverageType	
-        newLobModel.setInternalPolicyType(splitRow[5]);     //InternalPolicyType	
-        newLobModel.setPolicyTab(splitRow[6]);              //PolicyTab	
-        newLobModel.setLossPartyType(splitRow[7]);          //LossPartyType	
-        newLobModel.setCoverageSubtype(splitRow[8]);        //CoverageSubtype	
-        newLobModel.setExposureType(splitRow[9]);           //ExposureType	
-        newLobModel.setCovtermPattern(splitRow[10]);        //CovTermPattern	
-        newLobModel.setCoverageSubtypeClass(splitRow[11]);  //CoverageSubtypeClass	
-        newLobModel.setLimitOrDeductible(splitRow[12]);     //Limite o Deducible	
+  private void loadLobModel(String typelistName) throws FileNotFoundException, 
+          UnsupportedEncodingException, IOException, ArrayIndexOutOfBoundsException{
+    FileInputStream archivo = new FileInputStream(ruta + "\\" + typelistName + ".txt");
+    BufferedReader br = new BufferedReader(new InputStreamReader(archivo, "utf-8"));
+    String linea;      
+    int numColumns= br.readLine().split("\t").length;
+    while((linea=br.readLine())!=null){   
+      lastRowInfo = linea;
+      String[] splitRow = linea.split("\t");            
+      GwLobModel newLobModel = new GwLobModel();                
+      newLobModel.setOffering(splitRow[0]);               //Offering	
+      newLobModel.setLobCode(splitRow[1]);                //LOBCode	
+      newLobModel.setPolicyType(splitRow[2]);             //PolicyType	
+      newLobModel.setLossType(splitRow[3]);               //LossType	
+      newLobModel.setCoverageType(splitRow[4]);           //CoverageType	
+      newLobModel.setInternalPolicyType(splitRow[5]);     //InternalPolicyType	
+      newLobModel.setPolicyTab(splitRow[6]);              //PolicyTab	
+      newLobModel.setLossPartyType(splitRow[7]);          //LossPartyType	
+      newLobModel.setCoverageSubtype(splitRow[8]);        //CoverageSubtype	
+      newLobModel.setExposureType(splitRow[9]);           //ExposureType	
+      newLobModel.setCovtermPattern(splitRow[10]);        //CovTermPattern	
+      newLobModel.setCoverageSubtypeClass(splitRow[11]);  //CoverageSubtypeClass	
+      newLobModel.setLimitOrDeductible(splitRow[12]);     //Limite o Deducible	
+      if(splitRow.length >14){
         newLobModel.setLossCause(splitRow[13]);             //Causas por cobertura	
+      }
+      if(splitRow.length >14){
         newLobModel.setCostCategory(splitRow[14]);          //Categorias de costo
-        
-        lobModelController.create(newLobModel);
-        progreso(totalItems,currentItem++);        
-      }        
-    }
-    catch(IOException e){
-       labelProcess.setText("\nERROR: " + e.getMessage());
-    }finally{
-       try{                    
-          if( null != fr ) fr.close();     
-       }catch (IOException e2){ 
-          labelProcess.setText("\nERROR: " + e2.getMessage());
-       }
-    }
+      }
+      lobModelController.create(newLobModel);
+      progreso(totalItems,currentItem++);        
+    }            
   }
   
   private void regenerateTablesGW(){               
@@ -170,6 +170,8 @@ public class DialogLoadModel extends javax.swing.JDialog implements Runnable  {
     btnSelectFile = new javax.swing.JButton();
     labelFile = new javax.swing.JLabel();
     labelProcess = new javax.swing.JLabel();
+    jScrollPane1 = new javax.swing.JScrollPane();
+    outputTxt = new javax.swing.JTextArea();
 
     setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
     setTitle("Cargar LOBModel a BD");
@@ -181,12 +183,18 @@ public class DialogLoadModel extends javax.swing.JDialog implements Runnable  {
       }
     });
 
-    btnSelectFile.setText("Selccionar");
+    btnSelectFile.setText("Seleccionar");
     btnSelectFile.addActionListener(new java.awt.event.ActionListener() {
       public void actionPerformed(java.awt.event.ActionEvent evt) {
         btnSelectFileActionPerformed(evt);
       }
     });
+
+    outputTxt.setEditable(false);
+    outputTxt.setColumns(20);
+    outputTxt.setRows(5);
+    outputTxt.setName(""); // NOI18N
+    jScrollPane1.setViewportView(outputTxt);
 
     javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
     getContentPane().setLayout(layout);
@@ -195,15 +203,16 @@ public class DialogLoadModel extends javax.swing.JDialog implements Runnable  {
       .addGroup(layout.createSequentialGroup()
         .addContainerGap()
         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-          .addComponent(progressBar, javax.swing.GroupLayout.DEFAULT_SIZE, 570, Short.MAX_VALUE)
+          .addComponent(progressBar, javax.swing.GroupLayout.DEFAULT_SIZE, 576, Short.MAX_VALUE)
           .addGroup(layout.createSequentialGroup()
-            .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-              .addComponent(btnStart, javax.swing.GroupLayout.PREFERRED_SIZE, 103, javax.swing.GroupLayout.PREFERRED_SIZE)
-              .addComponent(btnSelectFile))
+            .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+              .addComponent(btnSelectFile, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+              .addComponent(btnStart, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
             .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
             .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
               .addComponent(labelProcess, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-              .addComponent(labelFile, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))))
+              .addComponent(labelFile, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
+          .addComponent(jScrollPane1, javax.swing.GroupLayout.Alignment.TRAILING))
         .addContainerGap())
     );
     layout.setVerticalGroup(
@@ -212,20 +221,19 @@ public class DialogLoadModel extends javax.swing.JDialog implements Runnable  {
         .addContainerGap()
         .addComponent(progressBar, javax.swing.GroupLayout.PREFERRED_SIZE, 24, javax.swing.GroupLayout.PREFERRED_SIZE)
         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+          .addComponent(labelFile, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+          .addComponent(btnSelectFile, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-          .addGroup(layout.createSequentialGroup()
-            .addComponent(btnSelectFile)
-            .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-            .addComponent(btnStart)
-            .addGap(0, 0, Short.MAX_VALUE))
-          .addGroup(layout.createSequentialGroup()
-            .addComponent(labelFile, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-            .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-            .addComponent(labelProcess, javax.swing.GroupLayout.PREFERRED_SIZE, 29, javax.swing.GroupLayout.PREFERRED_SIZE)))
+          .addComponent(btnStart)
+          .addComponent(labelProcess, javax.swing.GroupLayout.PREFERRED_SIZE, 29, javax.swing.GroupLayout.PREFERRED_SIZE))
+        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+        .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 203, Short.MAX_VALUE)
         .addContainerGap())
     );
 
-    setSize(new java.awt.Dimension(622, 188));
+    setSize(new java.awt.Dimension(622, 383));
     setLocationRelativeTo(null);
   }// </editor-fold>//GEN-END:initComponents
 
@@ -238,9 +246,10 @@ public class DialogLoadModel extends javax.swing.JDialog implements Runnable  {
 
   private void btnSelectFileActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnSelectFileActionPerformed
     JFileChooser fileChooser = new JFileChooser();
+    fileChooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
     if(fileChooser.showOpenDialog(fileChooser)==JFileChooser.APPROVE_OPTION) {
       ruta = fileChooser.getSelectedFile().getAbsolutePath();
-      ruta = ruta.substring(0,ruta.lastIndexOf("\\")+1);
+      //ruta = ruta.substring(0,ruta.lastIndexOf("\\")+1);
       labelFile.setText(ruta);     
       btnStart.setEnabled(true);
     }
@@ -292,8 +301,10 @@ public class DialogLoadModel extends javax.swing.JDialog implements Runnable  {
   // Variables declaration - do not modify//GEN-BEGIN:variables
   private javax.swing.JButton btnSelectFile;
   private javax.swing.JButton btnStart;
+  private javax.swing.JScrollPane jScrollPane1;
   private javax.swing.JLabel labelFile;
   private javax.swing.JLabel labelProcess;
+  private javax.swing.JTextArea outputTxt;
   private javax.swing.JProgressBar progressBar;
   // End of variables declaration//GEN-END:variables
 

@@ -147,7 +147,7 @@ public class DataBaseController {
                     "        covTerm_pattern         VARCHAR(100)," +
                     "        coverage_subtype_class  VARCHAR(20)," +
                     "        limit_or_Deductible     VARCHAR(50)," +
-                    "        loss_cause              VARCHAR(400)," +            
+                    "        loss_cause              VARCHAR(2000)," +            
                     "        cost_category           VARCHAR(1400))");    
         
     executeNonQuery("CREATE TABLE gw_type_code (" +
