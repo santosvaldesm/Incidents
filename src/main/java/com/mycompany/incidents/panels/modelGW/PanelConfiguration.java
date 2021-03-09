@@ -52,7 +52,7 @@ public class PanelConfiguration extends javax.swing.JPanel {
     
     coverageList = typeCodeController.createFilteredTypeCodeList(aList,TypeKeysEnum.CoverageType);    
     configureTable(tableCoverage,coverageList.toArray(),GwTypeCode.columNames());    
-    setPanelTitle(panelCoverage,"Coverages for Offering: " + currentOffering.getTypeCode());
+    setPanelTitle(panelCoverage,"(+)Coverages for Offering: " + currentOffering.getTypeCode());
     currentCoverage = null;    
     
     //PolicyType  
@@ -75,7 +75,7 @@ public class PanelConfiguration extends javax.swing.JPanel {
     //CovTermPattern    
     covTermList = typeCodeController.createFilteredTypeCodeList(aList,TypeKeysEnum.CovTermPattern);     
     configureTable(tableCovTerm,covTermList.toArray(),GwTypeCode.columNames());    
-    setPanelTitle(panelCovTerm,"CovTerms for Coverage: " + currentCoverage.getTypeCode());    
+    setPanelTitle(panelCovTerm,"(+)CovTerms for Coverage: " + currentCoverage.getTypeCode());    
     //LossCause
     lossCauseList = typeCodeController.createFilteredTypeCodeList(aList,TypeKeysEnum.LossCause);     
     configureTable(tableLossCause,lossCauseList.toArray(),GwTypeCode.columNames());    
@@ -92,7 +92,7 @@ public class PanelConfiguration extends javax.swing.JPanel {
     List<GwLobModel> aList = lobModelController.findBySearchCriteria(searchCriteria);      
     costCategoryList = typeCodeController.createFilteredTypeCodeList(aList,TypeKeysEnum.CostCategory);     
     configureTable(tableCostCategory,costCategoryList.toArray(),GwTypeCode.columNames());    
-    setPanelTitle(panelCostCategory,"CostCategories for CovTerm: " + currentCovTerm.getTypeCode());    
+    setPanelTitle(panelCostCategory,"(+)CostCategories for CovTerm: " + currentCovTerm.getTypeCode());    
   }
   
   private void setCostCategory(String costCategoryCode) {
@@ -137,7 +137,7 @@ public class PanelConfiguration extends javax.swing.JPanel {
   
   private void clearInfoByOfferingChange(){
     Object[] emptyArray = new Object[0];    
-    setPanelTitle(panelCoverage,       "Coverages");
+    setPanelTitle(panelCoverage,       "(+)Coverages");
     configureTable(tableCoverage,emptyArray,GwTypeCode.columNames());
     setPanelTitle(panelPolicyType,     "PolicyTypes");
     configureTable(tablePolicyType,emptyArray,GwTypeCode.columNames());
@@ -150,7 +150,7 @@ public class PanelConfiguration extends javax.swing.JPanel {
     Object[] emptyArray = new Object[0];
     setPanelTitle(panelCoverageSubtype,"CoverageSubtypes");
     configureTable(tableCoverageSubtype,emptyArray,GwTypeCode.columNames());
-    setPanelTitle(panelCovTerm,        "CovTerms");
+    setPanelTitle(panelCovTerm,        "(+)CovTerms");
     configureTable(tableCovTerm,emptyArray,GwTypeCode.columNames());
     setPanelTitle(panelLossCause,      "LossCauses");
     configureTable(tableLossCause,emptyArray,GwTypeCode.columNames());
@@ -159,7 +159,7 @@ public class PanelConfiguration extends javax.swing.JPanel {
   //covterms cambia => costcategories  
   private void clearInfoByCovTermChange(){
     Object[] emptyArray = new Object[0];    
-    setPanelTitle(panelCostCategory,   "CostCategories");
+    setPanelTitle(panelCostCategory,   "(+)CostCategories");
     configureTable(tableCostCategory,emptyArray,GwTypeCode.columNames());
     setPanelTitle(panelCostType,       "CostTypes");
     configureTable(tableCostType,emptyArray,GwTypeCode.columNames());
@@ -213,7 +213,7 @@ public class PanelConfiguration extends javax.swing.JPanel {
 
     jPanel1.setLayout(new java.awt.GridLayout(4, 1));
 
-    panelOffering.setBorder(javax.swing.BorderFactory.createTitledBorder(null, "Productos", javax.swing.border.TitledBorder.DEFAULT_JUSTIFICATION, javax.swing.border.TitledBorder.DEFAULT_POSITION, new java.awt.Font("Tahoma", 3, 14))); // NOI18N
+    panelOffering.setBorder(javax.swing.BorderFactory.createTitledBorder(null, "(+)Products", javax.swing.border.TitledBorder.DEFAULT_JUSTIFICATION, javax.swing.border.TitledBorder.DEFAULT_POSITION, new java.awt.Font("Tahoma", 3, 14))); // NOI18N
 
     tableOffering.setModel(new javax.swing.table.DefaultTableModel(
       new Object [][] {
@@ -226,6 +226,11 @@ public class PanelConfiguration extends javax.swing.JPanel {
     tableOffering.addMouseListener(new java.awt.event.MouseAdapter() {
       public void mouseClicked(java.awt.event.MouseEvent evt) {
         tableOfferingMouseClicked(evt);
+      }
+    });
+    tableOffering.addKeyListener(new java.awt.event.KeyAdapter() {
+      public void keyReleased(java.awt.event.KeyEvent evt) {
+        tableOfferingKeyReleased(evt);
       }
     });
     jScrollPane1.setViewportView(tableOffering);
@@ -404,6 +409,11 @@ public class PanelConfiguration extends javax.swing.JPanel {
         tableCoverageMouseClicked(evt);
       }
     });
+    tableCoverage.addKeyListener(new java.awt.event.KeyAdapter() {
+      public void keyReleased(java.awt.event.KeyEvent evt) {
+        tableCoverageKeyReleased(evt);
+      }
+    });
     jScrollPane2.setViewportView(tableCoverage);
 
     btnDetailCoverage.setText("DETALLES");
@@ -487,6 +497,11 @@ public class PanelConfiguration extends javax.swing.JPanel {
         tableCovTermMouseClicked(evt);
       }
     });
+    tableCovTerm.addKeyListener(new java.awt.event.KeyAdapter() {
+      public void keyReleased(java.awt.event.KeyEvent evt) {
+        tableCovTermKeyReleased(evt);
+      }
+    });
     jScrollPane5.setViewportView(tableCovTerm);
 
     btnDetailCoverage2.setText("DETALLES");
@@ -529,6 +544,11 @@ public class PanelConfiguration extends javax.swing.JPanel {
     tableCostCategory.addMouseListener(new java.awt.event.MouseAdapter() {
       public void mouseClicked(java.awt.event.MouseEvent evt) {
         tableCostCategoryMouseClicked(evt);
+      }
+    });
+    tableCostCategory.addKeyListener(new java.awt.event.KeyAdapter() {
+      public void keyReleased(java.awt.event.KeyEvent evt) {
+        tableCostCategoryKeyReleased(evt);
       }
     });
     jScrollPane7.setViewportView(tableCostCategory);
@@ -609,8 +629,7 @@ public class PanelConfiguration extends javax.swing.JPanel {
     int idPosition = tableOffering.getSelectedRow();
     if (idPosition != -1) {
       setOffering(tableOffering.getModel().getValueAt(idPosition,0).toString());      
-    }
-    
+    }    
   }//GEN-LAST:event_tableOfferingMouseClicked
 
   private void tableCoverageMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_tableCoverageMouseClicked
@@ -650,6 +669,37 @@ public class PanelConfiguration extends javax.swing.JPanel {
     DialogLoadModel dialog = new DialogLoadModel(null,true);
     dialog.setVisible(true);
   }//GEN-LAST:event_btnCargarModeloGWActionPerformed
+
+  private void tableOfferingKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_tableOfferingKeyReleased
+    clearInfoByOfferingChange();
+    int idPosition = tableOffering.getSelectedRow();
+    if (idPosition != -1) {
+      setOffering(tableOffering.getModel().getValueAt(idPosition,0).toString());      
+    } 
+  }//GEN-LAST:event_tableOfferingKeyReleased
+
+  private void tableCoverageKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_tableCoverageKeyReleased
+    clearInfoByCoverageChange();
+    int idPosition = tableCoverage.getSelectedRow();
+    if (idPosition != -1) {
+      setCoverage(tableCoverage.getModel().getValueAt(idPosition,0).toString());
+    }
+  }//GEN-LAST:event_tableCoverageKeyReleased
+
+  private void tableCovTermKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_tableCovTermKeyReleased
+    clearInfoByCovTermChange();
+    int idPosition = tableCovTerm.getSelectedRow();
+    if (idPosition != -1) {
+      setCovTerm(tableCovTerm.getModel().getValueAt(idPosition,0).toString());
+    }
+  }//GEN-LAST:event_tableCovTermKeyReleased
+
+  private void tableCostCategoryKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_tableCostCategoryKeyReleased
+    int idPosition = tableCostCategory.getSelectedRow();
+    if (idPosition != -1) {
+      setCostCategory(tableCostCategory.getModel().getValueAt(idPosition,0).toString());
+    }
+  }//GEN-LAST:event_tableCostCategoryKeyReleased
 
 
   // Variables declaration - do not modify//GEN-BEGIN:variables
