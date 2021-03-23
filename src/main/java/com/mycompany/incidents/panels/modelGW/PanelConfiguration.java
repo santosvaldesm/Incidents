@@ -58,7 +58,7 @@ public class PanelConfiguration extends javax.swing.JPanel {
     //PolicyType  
     policyTypeList = typeCodeController.createFilteredTypeCodeList(aList,TypeKeysEnum.PolicyType);     
     configureTable(tablePolicyType,policyTypeList.toArray(),GwTypeCode.columNames());    
-    setPanelTitle(panelPolicyType,"PolicyTypes for Offering: " + currentOffering.getTypeCode());
+    labelPolicyType.setText("PolicyTypes for Offering: " + currentOffering.getTypeCode());
     
   }
   
@@ -79,7 +79,7 @@ public class PanelConfiguration extends javax.swing.JPanel {
     //LossCause
     lossCauseList = typeCodeController.createFilteredTypeCodeList(aList,TypeKeysEnum.LossCause);     
     configureTable(tableLossCause,lossCauseList.toArray(),GwTypeCode.columNames());    
-    setPanelTitle(panelLossCause,"LossCauses for Coverage: " + currentCoverage.getTypeCode());    
+    labelLossCause.setText("LossCauses for Coverage: " + currentCoverage.getTypeCode());    
   }
   
   private void setCovTerm(String covTermCode) {    
@@ -92,7 +92,7 @@ public class PanelConfiguration extends javax.swing.JPanel {
     List<GwLobModel> aList = lobModelController.findBySearchCriteria(searchCriteria);      
     costCategoryList = typeCodeController.createFilteredTypeCodeList(aList,TypeKeysEnum.CostCategory);     
     configureTable(tableCostCategory,costCategoryList.toArray(),GwTypeCode.columNames());    
-    setPanelTitle(panelCostCategory,"(+)CostCategories for CovTerm: " + currentCovTerm.getTypeCode());    
+    labelCostCategory.setText("(+)CostCategories for CovTerm: " + currentCovTerm.getTypeCode());    
   }
   
   private void setCostCategory(String costCategoryCode) {
@@ -110,7 +110,7 @@ public class PanelConfiguration extends javax.swing.JPanel {
       }
     }     
     configureTable(tableCostType,costTypeList.toArray(),GwTypeCode.columNames());    
-    setPanelTitle(panelCostType,"CostTypes for CostCategory: " + currentCostCategory.getTypeCode());    
+    labelCostType.setText("CostTypes for CostCategory: " + currentCostCategory.getTypeCode());    
   }
   
   private void setPanelTitle(JPanel aPanel, String newTitle) {    
@@ -139,7 +139,7 @@ public class PanelConfiguration extends javax.swing.JPanel {
     Object[] emptyArray = new Object[0];    
     setPanelTitle(panelCoverage,       "(+)Coverages");
     configureTable(tableCoverage,emptyArray,GwTypeCode.columNames());
-    setPanelTitle(panelPolicyType,     "PolicyTypes");
+    labelPolicyType.setText("PolicyTypes");
     configureTable(tablePolicyType,emptyArray,GwTypeCode.columNames());
     clearInfoByCoverageChange();
   }
@@ -152,16 +152,16 @@ public class PanelConfiguration extends javax.swing.JPanel {
     configureTable(tableCoverageSubtype,emptyArray,GwTypeCode.columNames());
     setPanelTitle(panelCovTerm,        "(+)CovTerms");
     configureTable(tableCovTerm,emptyArray,GwTypeCode.columNames());
-    setPanelTitle(panelLossCause,      "LossCauses");
+    labelLossCause.setText("LossCauses");
     configureTable(tableLossCause,emptyArray,GwTypeCode.columNames());
     clearInfoByCovTermChange();
   }
   //covterms cambia => costcategories  
   private void clearInfoByCovTermChange(){
     Object[] emptyArray = new Object[0];    
-    setPanelTitle(panelCostCategory,   "(+)CostCategories");
+    labelCostCategory.setText("(+)CostCategories");
     configureTable(tableCostCategory,emptyArray,GwTypeCode.columNames());
-    setPanelTitle(panelCostType,       "CostTypes");
+    labelCostType.setText("CostTypes");
     configureTable(tableCostType,emptyArray,GwTypeCode.columNames());
   }
   
@@ -177,41 +177,55 @@ public class PanelConfiguration extends javax.swing.JPanel {
     tableOffering = new javax.swing.JTable();
     btnDetailProduct = new javax.swing.JButton();
     btnRefresh = new javax.swing.JButton();
-    panelPolicyType = new javax.swing.JPanel();
+    txtFilterOffering = new javax.swing.JTextField();
     jScrollPane4 = new javax.swing.JScrollPane();
     tablePolicyType = new javax.swing.JTable();
-    btnDetailCoverage1 = new javax.swing.JButton();
-    panelLossCause = new javax.swing.JPanel();
-    jScrollPane8 = new javax.swing.JScrollPane();
-    tableLossCause = new javax.swing.JTable();
-    btnDetailCoverage5 = new javax.swing.JButton();
-    panelCostType = new javax.swing.JPanel();
-    jScrollPane9 = new javax.swing.JScrollPane();
-    tableCostType = new javax.swing.JTable();
-    btnDetailCoverage6 = new javax.swing.JButton();
+    labelPolicyType = new javax.swing.JLabel();
+    jButton5 = new javax.swing.JButton();
+    panelCoverageSubtype = new javax.swing.JPanel();
+    jScrollPane6 = new javax.swing.JScrollPane();
+    tableCoverageSubtype = new javax.swing.JTable();
+    btnDetailCoverage3 = new javax.swing.JButton();
+    txtFilterCoverageSubtype = new javax.swing.JTextField();
+    jButton3 = new javax.swing.JButton();
+    jScrollPane10 = new javax.swing.JScrollPane();
+    tableLossType = new javax.swing.JTable();
+    jLabel1 = new javax.swing.JLabel();
+    jLabel2 = new javax.swing.JLabel();
+    jScrollPane11 = new javax.swing.JScrollPane();
+    tableExposure = new javax.swing.JTable();
+    jLabel3 = new javax.swing.JLabel();
+    jScrollPane12 = new javax.swing.JScrollPane();
+    tableExposureType = new javax.swing.JTable();
     jPanel2 = new javax.swing.JPanel();
     panelCoverage = new javax.swing.JPanel();
     jScrollPane2 = new javax.swing.JScrollPane();
     tableCoverage = new javax.swing.JTable();
     btnDetailCoverage = new javax.swing.JButton();
-    panelCoverageSubtype = new javax.swing.JPanel();
-    jScrollPane6 = new javax.swing.JScrollPane();
-    tableCoverageSubtype = new javax.swing.JTable();
-    btnDetailCoverage3 = new javax.swing.JButton();
+    txtFilterCoverage = new javax.swing.JTextField();
+    labelLossCause = new javax.swing.JLabel();
+    jScrollPane8 = new javax.swing.JScrollPane();
+    tableLossCause = new javax.swing.JTable();
+    jButton7 = new javax.swing.JButton();
     panelCovTerm = new javax.swing.JPanel();
     jScrollPane5 = new javax.swing.JScrollPane();
     tableCovTerm = new javax.swing.JTable();
     btnDetailCoverage2 = new javax.swing.JButton();
-    panelCostCategory = new javax.swing.JPanel();
+    txtFilterTerms = new javax.swing.JTextField();
+    labelCostCategory = new javax.swing.JLabel();
+    labelCostType = new javax.swing.JLabel();
     jScrollPane7 = new javax.swing.JScrollPane();
     tableCostCategory = new javax.swing.JTable();
-    btnDetailCoverage4 = new javax.swing.JButton();
+    jScrollPane9 = new javax.swing.JScrollPane();
+    tableCostType = new javax.swing.JTable();
+    jButton6 = new javax.swing.JButton();
     btnShowScript = new javax.swing.JButton();
     btnCargarModeloGW = new javax.swing.JButton();
+    btnShowQuery1 = new javax.swing.JButton();
 
     jSplitPane1.setDividerLocation(500);
 
-    jPanel1.setLayout(new java.awt.GridLayout(4, 1));
+    jPanel1.setLayout(new java.awt.GridLayout(2, 1));
 
     panelOffering.setBorder(javax.swing.BorderFactory.createTitledBorder(null, "(+)Products", javax.swing.border.TitledBorder.DEFAULT_JUSTIFICATION, javax.swing.border.TitledBorder.DEFAULT_POSITION, new java.awt.Font("Tahoma", 3, 14))); // NOI18N
 
@@ -235,45 +249,14 @@ public class PanelConfiguration extends javax.swing.JPanel {
     });
     jScrollPane1.setViewportView(tableOffering);
 
-    btnDetailProduct.setText("DETALLES");
+    btnDetailProduct.setText("Detalles");
 
-    btnRefresh.setText("REFRESCAR");
+    btnRefresh.setText("Refrescar");
     btnRefresh.addActionListener(new java.awt.event.ActionListener() {
       public void actionPerformed(java.awt.event.ActionEvent evt) {
         btnRefreshActionPerformed(evt);
       }
     });
-
-    javax.swing.GroupLayout panelOfferingLayout = new javax.swing.GroupLayout(panelOffering);
-    panelOffering.setLayout(panelOfferingLayout);
-    panelOfferingLayout.setHorizontalGroup(
-      panelOfferingLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-      .addGroup(panelOfferingLayout.createSequentialGroup()
-        .addContainerGap()
-        .addGroup(panelOfferingLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-          .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 457, Short.MAX_VALUE)
-          .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, panelOfferingLayout.createSequentialGroup()
-            .addComponent(btnRefresh)
-            .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-            .addComponent(btnDetailProduct)
-            .addGap(0, 0, Short.MAX_VALUE)))
-        .addContainerGap())
-    );
-    panelOfferingLayout.setVerticalGroup(
-      panelOfferingLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-      .addGroup(panelOfferingLayout.createSequentialGroup()
-        .addContainerGap()
-        .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 182, javax.swing.GroupLayout.PREFERRED_SIZE)
-        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-        .addGroup(panelOfferingLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-          .addComponent(btnDetailProduct)
-          .addComponent(btnRefresh))
-        .addContainerGap(19, Short.MAX_VALUE))
-    );
-
-    jPanel1.add(panelOffering);
-
-    panelPolicyType.setBorder(javax.swing.BorderFactory.createTitledBorder(null, "Tipo de poliza", javax.swing.border.TitledBorder.DEFAULT_JUSTIFICATION, javax.swing.border.TitledBorder.DEFAULT_POSITION, new java.awt.Font("Tahoma", 3, 14))); // NOI18N
 
     tablePolicyType.setModel(new javax.swing.table.DefaultTableModel(
       new Object [][] {
@@ -285,36 +268,55 @@ public class PanelConfiguration extends javax.swing.JPanel {
     ));
     jScrollPane4.setViewportView(tablePolicyType);
 
-    btnDetailCoverage1.setText("DETALLES");
+    labelPolicyType.setText("TIPO DE POLIZA:");
 
-    javax.swing.GroupLayout panelPolicyTypeLayout = new javax.swing.GroupLayout(panelPolicyType);
-    panelPolicyType.setLayout(panelPolicyTypeLayout);
-    panelPolicyTypeLayout.setHorizontalGroup(
-      panelPolicyTypeLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-      .addGroup(panelPolicyTypeLayout.createSequentialGroup()
+    jButton5.setText("Limpiar");
+
+    javax.swing.GroupLayout panelOfferingLayout = new javax.swing.GroupLayout(panelOffering);
+    panelOffering.setLayout(panelOfferingLayout);
+    panelOfferingLayout.setHorizontalGroup(
+      panelOfferingLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+      .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, panelOfferingLayout.createSequentialGroup()
         .addContainerGap()
-        .addGroup(panelPolicyTypeLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-          .addComponent(jScrollPane4, javax.swing.GroupLayout.DEFAULT_SIZE, 457, Short.MAX_VALUE)
-          .addGroup(panelPolicyTypeLayout.createSequentialGroup()
-            .addComponent(btnDetailCoverage1)
-            .addGap(0, 0, Short.MAX_VALUE)))
-        .addContainerGap())
-    );
-    panelPolicyTypeLayout.setVerticalGroup(
-      panelPolicyTypeLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-      .addGroup(panelPolicyTypeLayout.createSequentialGroup()
-        .addContainerGap()
-        .addComponent(jScrollPane4, javax.swing.GroupLayout.DEFAULT_SIZE, 185, Short.MAX_VALUE)
+        .addGroup(panelOfferingLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+          .addComponent(jScrollPane4, javax.swing.GroupLayout.DEFAULT_SIZE, 353, Short.MAX_VALUE)
+          .addComponent(labelPolicyType, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+          .addComponent(jScrollPane1, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE)
+          .addComponent(txtFilterOffering))
         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-        .addComponent(btnDetailCoverage1)
+        .addGroup(panelOfferingLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+          .addComponent(jButton5, javax.swing.GroupLayout.DEFAULT_SIZE, 108, Short.MAX_VALUE)
+          .addComponent(btnRefresh, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+          .addComponent(btnDetailProduct, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+        .addContainerGap())
+    );
+    panelOfferingLayout.setVerticalGroup(
+      panelOfferingLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+      .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, panelOfferingLayout.createSequentialGroup()
+        .addContainerGap()
+        .addGroup(panelOfferingLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+          .addComponent(txtFilterOffering, javax.swing.GroupLayout.PREFERRED_SIZE, 23, javax.swing.GroupLayout.PREFERRED_SIZE)
+          .addComponent(jButton5))
+        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+        .addGroup(panelOfferingLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+          .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE)
+          .addGroup(panelOfferingLayout.createSequentialGroup()
+            .addComponent(btnRefresh)
+            .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+            .addComponent(btnDetailProduct)
+            .addGap(0, 191, Short.MAX_VALUE)))
+        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+        .addComponent(labelPolicyType)
+        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+        .addComponent(jScrollPane4, javax.swing.GroupLayout.PREFERRED_SIZE, 97, javax.swing.GroupLayout.PREFERRED_SIZE)
         .addContainerGap())
     );
 
-    jPanel1.add(panelPolicyType);
+    jPanel1.add(panelOffering);
 
-    panelLossCause.setBorder(javax.swing.BorderFactory.createTitledBorder(null, "Causas", javax.swing.border.TitledBorder.DEFAULT_JUSTIFICATION, javax.swing.border.TitledBorder.DEFAULT_POSITION, new java.awt.Font("Tahoma", 3, 14))); // NOI18N
+    panelCoverageSubtype.setBorder(javax.swing.BorderFactory.createTitledBorder(null, "Sub Coberturas", javax.swing.border.TitledBorder.DEFAULT_JUSTIFICATION, javax.swing.border.TitledBorder.DEFAULT_POSITION, new java.awt.Font("Tahoma", 3, 14))); // NOI18N
 
-    tableLossCause.setModel(new javax.swing.table.DefaultTableModel(
+    tableCoverageSubtype.setModel(new javax.swing.table.DefaultTableModel(
       new Object [][] {
 
       },
@@ -322,38 +324,13 @@ public class PanelConfiguration extends javax.swing.JPanel {
 
       }
     ));
-    jScrollPane8.setViewportView(tableLossCause);
+    jScrollPane6.setViewportView(tableCoverageSubtype);
 
-    btnDetailCoverage5.setText("DETALLES");
+    btnDetailCoverage3.setText("Detalles");
 
-    javax.swing.GroupLayout panelLossCauseLayout = new javax.swing.GroupLayout(panelLossCause);
-    panelLossCause.setLayout(panelLossCauseLayout);
-    panelLossCauseLayout.setHorizontalGroup(
-      panelLossCauseLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-      .addGroup(panelLossCauseLayout.createSequentialGroup()
-        .addContainerGap()
-        .addGroup(panelLossCauseLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-          .addComponent(jScrollPane8, javax.swing.GroupLayout.DEFAULT_SIZE, 457, Short.MAX_VALUE)
-          .addGroup(panelLossCauseLayout.createSequentialGroup()
-            .addComponent(btnDetailCoverage5)
-            .addGap(0, 0, Short.MAX_VALUE)))
-        .addContainerGap())
-    );
-    panelLossCauseLayout.setVerticalGroup(
-      panelLossCauseLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-      .addGroup(panelLossCauseLayout.createSequentialGroup()
-        .addContainerGap()
-        .addComponent(jScrollPane8, javax.swing.GroupLayout.DEFAULT_SIZE, 185, Short.MAX_VALUE)
-        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-        .addComponent(btnDetailCoverage5)
-        .addContainerGap())
-    );
+    jButton3.setText("Limpiar");
 
-    jPanel1.add(panelLossCause);
-
-    panelCostType.setBorder(javax.swing.BorderFactory.createTitledBorder(null, "Tipo de costo", javax.swing.border.TitledBorder.DEFAULT_JUSTIFICATION, javax.swing.border.TitledBorder.DEFAULT_POSITION, new java.awt.Font("Tahoma", 3, 14))); // NOI18N
-
-    tableCostType.setModel(new javax.swing.table.DefaultTableModel(
+    tableLossType.setModel(new javax.swing.table.DefaultTableModel(
       new Object [][] {
 
       },
@@ -361,38 +338,88 @@ public class PanelConfiguration extends javax.swing.JPanel {
 
       }
     ));
-    jScrollPane9.setViewportView(tableCostType);
+    jScrollPane10.setViewportView(tableLossType);
 
-    btnDetailCoverage6.setText("DETALLES");
+    jLabel1.setText("TIPO DE PERDIDA");
 
-    javax.swing.GroupLayout panelCostTypeLayout = new javax.swing.GroupLayout(panelCostType);
-    panelCostType.setLayout(panelCostTypeLayout);
-    panelCostTypeLayout.setHorizontalGroup(
-      panelCostTypeLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-      .addGroup(panelCostTypeLayout.createSequentialGroup()
+    jLabel2.setText("TIPO EXPOSICION");
+
+    tableExposure.setModel(new javax.swing.table.DefaultTableModel(
+      new Object [][] {
+
+      },
+      new String [] {
+
+      }
+    ));
+    jScrollPane11.setViewportView(tableExposure);
+
+    jLabel3.setText("EXPOSICION");
+
+    tableExposureType.setModel(new javax.swing.table.DefaultTableModel(
+      new Object [][] {
+
+      },
+      new String [] {
+
+      }
+    ));
+    jScrollPane12.setViewportView(tableExposureType);
+
+    javax.swing.GroupLayout panelCoverageSubtypeLayout = new javax.swing.GroupLayout(panelCoverageSubtype);
+    panelCoverageSubtype.setLayout(panelCoverageSubtypeLayout);
+    panelCoverageSubtypeLayout.setHorizontalGroup(
+      panelCoverageSubtypeLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+      .addGroup(panelCoverageSubtypeLayout.createSequentialGroup()
         .addContainerGap()
-        .addGroup(panelCostTypeLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-          .addComponent(jScrollPane9, javax.swing.GroupLayout.DEFAULT_SIZE, 457, Short.MAX_VALUE)
-          .addGroup(panelCostTypeLayout.createSequentialGroup()
-            .addComponent(btnDetailCoverage6)
-            .addGap(0, 0, Short.MAX_VALUE)))
-        .addContainerGap())
-    );
-    panelCostTypeLayout.setVerticalGroup(
-      panelCostTypeLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-      .addGroup(panelCostTypeLayout.createSequentialGroup()
-        .addContainerGap()
-        .addComponent(jScrollPane9, javax.swing.GroupLayout.DEFAULT_SIZE, 185, Short.MAX_VALUE)
+        .addGroup(panelCoverageSubtypeLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+          .addComponent(txtFilterCoverageSubtype)
+          .addComponent(jScrollPane6, javax.swing.GroupLayout.DEFAULT_SIZE, 353, Short.MAX_VALUE)
+          .addComponent(jScrollPane10, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE)
+          .addComponent(jScrollPane11, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE)
+          .addComponent(jScrollPane12, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE)
+          .addComponent(jLabel2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+          .addComponent(jLabel3, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+          .addComponent(jLabel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-        .addComponent(btnDetailCoverage6)
+        .addGroup(panelCoverageSubtypeLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+          .addComponent(jButton3, javax.swing.GroupLayout.PREFERRED_SIZE, 108, javax.swing.GroupLayout.PREFERRED_SIZE)
+          .addComponent(btnDetailCoverage3, javax.swing.GroupLayout.PREFERRED_SIZE, 108, javax.swing.GroupLayout.PREFERRED_SIZE))
+        .addContainerGap())
+    );
+    panelCoverageSubtypeLayout.setVerticalGroup(
+      panelCoverageSubtypeLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+      .addGroup(panelCoverageSubtypeLayout.createSequentialGroup()
+        .addContainerGap()
+        .addGroup(panelCoverageSubtypeLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+          .addComponent(txtFilterCoverageSubtype, javax.swing.GroupLayout.PREFERRED_SIZE, 23, javax.swing.GroupLayout.PREFERRED_SIZE)
+          .addComponent(jButton3))
+        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+        .addGroup(panelCoverageSubtypeLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+          .addGroup(panelCoverageSubtypeLayout.createSequentialGroup()
+            .addComponent(btnDetailCoverage3)
+            .addGap(0, 107, Short.MAX_VALUE))
+          .addComponent(jScrollPane6, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE))
+        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+        .addComponent(jLabel1)
+        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+        .addComponent(jScrollPane10, javax.swing.GroupLayout.PREFERRED_SIZE, 50, javax.swing.GroupLayout.PREFERRED_SIZE)
+        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+        .addComponent(jLabel3)
+        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+        .addComponent(jScrollPane11, javax.swing.GroupLayout.PREFERRED_SIZE, 49, javax.swing.GroupLayout.PREFERRED_SIZE)
+        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+        .addComponent(jLabel2)
+        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+        .addComponent(jScrollPane12, javax.swing.GroupLayout.PREFERRED_SIZE, 59, javax.swing.GroupLayout.PREFERRED_SIZE)
         .addContainerGap())
     );
 
-    jPanel1.add(panelCostType);
+    jPanel1.add(panelCoverageSubtype);
 
     jSplitPane1.setLeftComponent(jPanel1);
 
-    jPanel2.setLayout(new java.awt.GridLayout(4, 1));
+    jPanel2.setLayout(new java.awt.GridLayout(2, 1));
 
     panelCoverage.setBorder(javax.swing.BorderFactory.createTitledBorder(null, "Coberturas", javax.swing.border.TitledBorder.DEFAULT_JUSTIFICATION, javax.swing.border.TitledBorder.DEFAULT_POSITION, new java.awt.Font("Tahoma", 3, 14))); // NOI18N
 
@@ -416,36 +443,11 @@ public class PanelConfiguration extends javax.swing.JPanel {
     });
     jScrollPane2.setViewportView(tableCoverage);
 
-    btnDetailCoverage.setText("DETALLES");
+    btnDetailCoverage.setText("Detalles");
 
-    javax.swing.GroupLayout panelCoverageLayout = new javax.swing.GroupLayout(panelCoverage);
-    panelCoverage.setLayout(panelCoverageLayout);
-    panelCoverageLayout.setHorizontalGroup(
-      panelCoverageLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-      .addGroup(panelCoverageLayout.createSequentialGroup()
-        .addContainerGap()
-        .addGroup(panelCoverageLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-          .addComponent(jScrollPane2, javax.swing.GroupLayout.DEFAULT_SIZE, 571, Short.MAX_VALUE)
-          .addGroup(panelCoverageLayout.createSequentialGroup()
-            .addComponent(btnDetailCoverage)
-            .addGap(0, 0, Short.MAX_VALUE)))
-        .addContainerGap())
-    );
-    panelCoverageLayout.setVerticalGroup(
-      panelCoverageLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-      .addGroup(panelCoverageLayout.createSequentialGroup()
-        .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-        .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 185, javax.swing.GroupLayout.PREFERRED_SIZE)
-        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-        .addComponent(btnDetailCoverage)
-        .addContainerGap())
-    );
+    labelLossCause.setText("CAUSAS:");
 
-    jPanel2.add(panelCoverage);
-
-    panelCoverageSubtype.setBorder(javax.swing.BorderFactory.createTitledBorder(null, "Sub Coberturas", javax.swing.border.TitledBorder.DEFAULT_JUSTIFICATION, javax.swing.border.TitledBorder.DEFAULT_POSITION, new java.awt.Font("Tahoma", 3, 14))); // NOI18N
-
-    tableCoverageSubtype.setModel(new javax.swing.table.DefaultTableModel(
+    tableLossCause.setModel(new javax.swing.table.DefaultTableModel(
       new Object [][] {
 
       },
@@ -453,34 +455,48 @@ public class PanelConfiguration extends javax.swing.JPanel {
 
       }
     ));
-    jScrollPane6.setViewportView(tableCoverageSubtype);
+    jScrollPane8.setViewportView(tableLossCause);
 
-    btnDetailCoverage3.setText("DETALLES");
+    jButton7.setText("Limpiar");
 
-    javax.swing.GroupLayout panelCoverageSubtypeLayout = new javax.swing.GroupLayout(panelCoverageSubtype);
-    panelCoverageSubtype.setLayout(panelCoverageSubtypeLayout);
-    panelCoverageSubtypeLayout.setHorizontalGroup(
-      panelCoverageSubtypeLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-      .addGroup(panelCoverageSubtypeLayout.createSequentialGroup()
+    javax.swing.GroupLayout panelCoverageLayout = new javax.swing.GroupLayout(panelCoverage);
+    panelCoverage.setLayout(panelCoverageLayout);
+    panelCoverageLayout.setHorizontalGroup(
+      panelCoverageLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+      .addGroup(panelCoverageLayout.createSequentialGroup()
         .addContainerGap()
-        .addGroup(panelCoverageSubtypeLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-          .addComponent(jScrollPane6, javax.swing.GroupLayout.DEFAULT_SIZE, 571, Short.MAX_VALUE)
-          .addGroup(panelCoverageSubtypeLayout.createSequentialGroup()
-            .addComponent(btnDetailCoverage3)
-            .addGap(0, 0, Short.MAX_VALUE)))
-        .addContainerGap())
-    );
-    panelCoverageSubtypeLayout.setVerticalGroup(
-      panelCoverageSubtypeLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-      .addGroup(panelCoverageSubtypeLayout.createSequentialGroup()
-        .addContainerGap()
-        .addComponent(jScrollPane6, javax.swing.GroupLayout.DEFAULT_SIZE, 185, Short.MAX_VALUE)
+        .addGroup(panelCoverageLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+          .addComponent(labelLossCause, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+          .addComponent(jScrollPane8, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, 349, Short.MAX_VALUE)
+          .addComponent(txtFilterCoverage, javax.swing.GroupLayout.Alignment.LEADING)
+          .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE))
         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-        .addComponent(btnDetailCoverage3)
+        .addGroup(panelCoverageLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+          .addComponent(jButton7, javax.swing.GroupLayout.PREFERRED_SIZE, 108, javax.swing.GroupLayout.PREFERRED_SIZE)
+          .addComponent(btnDetailCoverage, javax.swing.GroupLayout.PREFERRED_SIZE, 108, javax.swing.GroupLayout.PREFERRED_SIZE))
+        .addContainerGap())
+    );
+    panelCoverageLayout.setVerticalGroup(
+      panelCoverageLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+      .addGroup(panelCoverageLayout.createSequentialGroup()
+        .addContainerGap()
+        .addGroup(panelCoverageLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+          .addComponent(txtFilterCoverage, javax.swing.GroupLayout.PREFERRED_SIZE, 23, javax.swing.GroupLayout.PREFERRED_SIZE)
+          .addComponent(jButton7))
+        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+        .addGroup(panelCoverageLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+          .addGroup(panelCoverageLayout.createSequentialGroup()
+            .addComponent(btnDetailCoverage)
+            .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 236, Short.MAX_VALUE))
+          .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE))
+        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+        .addComponent(labelLossCause)
+        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+        .addComponent(jScrollPane8, javax.swing.GroupLayout.PREFERRED_SIZE, 87, javax.swing.GroupLayout.PREFERRED_SIZE)
         .addContainerGap())
     );
 
-    jPanel2.add(panelCoverageSubtype);
+    jPanel2.add(panelCoverage);
 
     panelCovTerm.setBorder(javax.swing.BorderFactory.createTitledBorder(null, "Terminos", javax.swing.border.TitledBorder.DEFAULT_JUSTIFICATION, javax.swing.border.TitledBorder.DEFAULT_POSITION, new java.awt.Font("Tahoma", 3, 14))); // NOI18N
 
@@ -504,34 +520,11 @@ public class PanelConfiguration extends javax.swing.JPanel {
     });
     jScrollPane5.setViewportView(tableCovTerm);
 
-    btnDetailCoverage2.setText("DETALLES");
+    btnDetailCoverage2.setText("Detalles");
 
-    javax.swing.GroupLayout panelCovTermLayout = new javax.swing.GroupLayout(panelCovTerm);
-    panelCovTerm.setLayout(panelCovTermLayout);
-    panelCovTermLayout.setHorizontalGroup(
-      panelCovTermLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-      .addGroup(panelCovTermLayout.createSequentialGroup()
-        .addContainerGap()
-        .addGroup(panelCovTermLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-          .addComponent(jScrollPane5, javax.swing.GroupLayout.DEFAULT_SIZE, 571, Short.MAX_VALUE)
-          .addGroup(panelCovTermLayout.createSequentialGroup()
-            .addComponent(btnDetailCoverage2)
-            .addGap(0, 0, Short.MAX_VALUE)))
-        .addContainerGap())
-    );
-    panelCovTermLayout.setVerticalGroup(
-      panelCovTermLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-      .addGroup(panelCovTermLayout.createSequentialGroup()
-        .addContainerGap()
-        .addComponent(jScrollPane5, javax.swing.GroupLayout.DEFAULT_SIZE, 185, Short.MAX_VALUE)
-        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-        .addComponent(btnDetailCoverage2)
-        .addContainerGap())
-    );
+    labelCostCategory.setText("CATEGORIA DE COSTO:");
 
-    jPanel2.add(panelCovTerm);
-
-    panelCostCategory.setBorder(javax.swing.BorderFactory.createTitledBorder(null, "Categoria de costo", javax.swing.border.TitledBorder.DEFAULT_JUSTIFICATION, javax.swing.border.TitledBorder.DEFAULT_POSITION, new java.awt.Font("Tahoma", 3, 14))); // NOI18N
+    labelCostType.setText("TIPO DE COSTO: ");
 
     tableCostCategory.setModel(new javax.swing.table.DefaultTableModel(
       new Object [][] {
@@ -553,32 +546,62 @@ public class PanelConfiguration extends javax.swing.JPanel {
     });
     jScrollPane7.setViewportView(tableCostCategory);
 
-    btnDetailCoverage4.setText("DETALLES");
+    tableCostType.setModel(new javax.swing.table.DefaultTableModel(
+      new Object [][] {
 
-    javax.swing.GroupLayout panelCostCategoryLayout = new javax.swing.GroupLayout(panelCostCategory);
-    panelCostCategory.setLayout(panelCostCategoryLayout);
-    panelCostCategoryLayout.setHorizontalGroup(
-      panelCostCategoryLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-      .addGroup(panelCostCategoryLayout.createSequentialGroup()
+      },
+      new String [] {
+
+      }
+    ));
+    jScrollPane9.setViewportView(tableCostType);
+
+    jButton6.setText("Limpiar");
+
+    javax.swing.GroupLayout panelCovTermLayout = new javax.swing.GroupLayout(panelCovTerm);
+    panelCovTerm.setLayout(panelCovTermLayout);
+    panelCovTermLayout.setHorizontalGroup(
+      panelCovTermLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+      .addGroup(panelCovTermLayout.createSequentialGroup()
         .addContainerGap()
-        .addGroup(panelCostCategoryLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-          .addComponent(jScrollPane7, javax.swing.GroupLayout.DEFAULT_SIZE, 571, Short.MAX_VALUE)
-          .addGroup(panelCostCategoryLayout.createSequentialGroup()
-            .addComponent(btnDetailCoverage4)
-            .addGap(0, 0, Short.MAX_VALUE)))
-        .addContainerGap())
-    );
-    panelCostCategoryLayout.setVerticalGroup(
-      panelCostCategoryLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-      .addGroup(panelCostCategoryLayout.createSequentialGroup()
-        .addContainerGap()
-        .addComponent(jScrollPane7, javax.swing.GroupLayout.DEFAULT_SIZE, 185, Short.MAX_VALUE)
+        .addGroup(panelCovTermLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+          .addComponent(jScrollPane9, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, 349, Short.MAX_VALUE)
+          .addComponent(labelCostType, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+          .addComponent(jScrollPane7, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE)
+          .addComponent(labelCostCategory, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+          .addComponent(txtFilterTerms, javax.swing.GroupLayout.Alignment.LEADING)
+          .addComponent(jScrollPane5, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE))
         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-        .addComponent(btnDetailCoverage4)
+        .addGroup(panelCovTermLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+          .addComponent(jButton6, javax.swing.GroupLayout.DEFAULT_SIZE, 108, Short.MAX_VALUE)
+          .addComponent(btnDetailCoverage2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+        .addContainerGap())
+    );
+    panelCovTermLayout.setVerticalGroup(
+      panelCovTermLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+      .addGroup(panelCovTermLayout.createSequentialGroup()
+        .addContainerGap()
+        .addGroup(panelCovTermLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+          .addComponent(txtFilterTerms, javax.swing.GroupLayout.PREFERRED_SIZE, 23, javax.swing.GroupLayout.PREFERRED_SIZE)
+          .addComponent(jButton6))
+        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+        .addGroup(panelCovTermLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+          .addGroup(panelCovTermLayout.createSequentialGroup()
+            .addComponent(btnDetailCoverage2)
+            .addGap(0, 128, Short.MAX_VALUE))
+          .addComponent(jScrollPane5, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE))
+        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+        .addComponent(labelCostCategory)
+        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+        .addComponent(jScrollPane7, javax.swing.GroupLayout.DEFAULT_SIZE, 80, Short.MAX_VALUE)
+        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+        .addComponent(labelCostType)
+        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+        .addComponent(jScrollPane9, javax.swing.GroupLayout.DEFAULT_SIZE, 83, Short.MAX_VALUE)
         .addContainerGap())
     );
 
-    jPanel2.add(panelCostCategory);
+    jPanel2.add(panelCovTerm);
 
     jSplitPane1.setRightComponent(jPanel2);
 
@@ -596,6 +619,13 @@ public class PanelConfiguration extends javax.swing.JPanel {
       }
     });
 
+    btnShowQuery1.setIcon(new javax.swing.ImageIcon(getClass().getResource("/interrogation.png"))); // NOI18N
+    btnShowQuery1.addActionListener(new java.awt.event.ActionListener() {
+      public void actionPerformed(java.awt.event.ActionEvent evt) {
+        btnShowQuery1ActionPerformed(evt);
+      }
+    });
+
     javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
     this.setLayout(layout);
     layout.setHorizontalGroup(
@@ -603,24 +633,26 @@ public class PanelConfiguration extends javax.swing.JPanel {
       .addGroup(layout.createSequentialGroup()
         .addContainerGap()
         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-          .addComponent(jSplitPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 1109, Short.MAX_VALUE)
+          .addComponent(jSplitPane1)
           .addGroup(layout.createSequentialGroup()
             .addComponent(btnCargarModeloGW, javax.swing.GroupLayout.PREFERRED_SIZE, 144, javax.swing.GroupLayout.PREFERRED_SIZE)
             .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
             .addComponent(btnShowScript)
-            .addGap(0, 0, Short.MAX_VALUE)))
-        .addContainerGap())
+            .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+            .addComponent(btnShowQuery1)
+            .addGap(0, 0, Short.MAX_VALUE))))
     );
     layout.setVerticalGroup(
       layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
       .addGroup(layout.createSequentialGroup()
         .addContainerGap()
-        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-          .addComponent(btnCargarModeloGW)
-          .addComponent(btnShowScript, javax.swing.GroupLayout.PREFERRED_SIZE, 24, javax.swing.GroupLayout.PREFERRED_SIZE))
-        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-        .addComponent(jSplitPane1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-        .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+          .addComponent(btnShowQuery1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+          .addComponent(btnShowScript, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+          .addComponent(btnCargarModeloGW, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+        .addComponent(jSplitPane1)
+        .addContainerGap())
     );
   }// </editor-fold>//GEN-END:initComponents
 
@@ -701,22 +733,46 @@ public class PanelConfiguration extends javax.swing.JPanel {
     }
   }//GEN-LAST:event_tableCostCategoryKeyReleased
 
+  private void btnShowQuery1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnShowQuery1ActionPerformed
+    DialogHelp dialog = new DialogHelp(null,true);
+    String aText = "MEJORAS POR REALIZAR\n";
+    aText = aText + "1. De SubCoberturas salen:\n";
+    aText = aText + "   - Tipo de perdida -> LossType\n";
+    aText = aText + "   - Exposición	-> ExposureType\n";
+    aText = aText + "   - TipoExposicion  -> CoverageSUbtypeClassification\n";
+    aText = aText + "\n";
+    aText = aText + "2. Termino lleva un campo:\n";
+    aText = aText + "   - Limit/deductible  (columna limite o deducible) sale de CovTermPattern.Type(colocarla como una nueva columna)\n";
+    aText = aText + "3. Causa lleva un campo\n";
+    aText = aText + "   - Tipo de causa(colocarla como una nueva columna)\n";
+    aText = aText + "4. Sacar tambien el modelo de autos\n";
+    dialog.setTextContent(aText);
+    dialog.setVisible(true);
+  }//GEN-LAST:event_btnShowQuery1ActionPerformed
+
 
   // Variables declaration - do not modify//GEN-BEGIN:variables
   private javax.swing.JButton btnCargarModeloGW;
   private javax.swing.JButton btnDetailCoverage;
-  private javax.swing.JButton btnDetailCoverage1;
   private javax.swing.JButton btnDetailCoverage2;
   private javax.swing.JButton btnDetailCoverage3;
-  private javax.swing.JButton btnDetailCoverage4;
-  private javax.swing.JButton btnDetailCoverage5;
-  private javax.swing.JButton btnDetailCoverage6;
   private javax.swing.JButton btnDetailProduct;
   private javax.swing.JButton btnRefresh;
+  private javax.swing.JButton btnShowQuery1;
   private javax.swing.JButton btnShowScript;
+  private javax.swing.JButton jButton3;
+  private javax.swing.JButton jButton5;
+  private javax.swing.JButton jButton6;
+  private javax.swing.JButton jButton7;
+  private javax.swing.JLabel jLabel1;
+  private javax.swing.JLabel jLabel2;
+  private javax.swing.JLabel jLabel3;
   private javax.swing.JPanel jPanel1;
   private javax.swing.JPanel jPanel2;
   private javax.swing.JScrollPane jScrollPane1;
+  private javax.swing.JScrollPane jScrollPane10;
+  private javax.swing.JScrollPane jScrollPane11;
+  private javax.swing.JScrollPane jScrollPane12;
   private javax.swing.JScrollPane jScrollPane2;
   private javax.swing.JScrollPane jScrollPane4;
   private javax.swing.JScrollPane jScrollPane5;
@@ -725,22 +781,29 @@ public class PanelConfiguration extends javax.swing.JPanel {
   private javax.swing.JScrollPane jScrollPane8;
   private javax.swing.JScrollPane jScrollPane9;
   private javax.swing.JSplitPane jSplitPane1;
-  private javax.swing.JPanel panelCostCategory;
-  private javax.swing.JPanel panelCostType;
+  private javax.swing.JLabel labelCostCategory;
+  private javax.swing.JLabel labelCostType;
+  private javax.swing.JLabel labelLossCause;
+  private javax.swing.JLabel labelPolicyType;
   private javax.swing.JPanel panelCovTerm;
   private javax.swing.JPanel panelCoverage;
   private javax.swing.JPanel panelCoverageSubtype;
-  private javax.swing.JPanel panelLossCause;
   private javax.swing.JPanel panelOffering;
-  private javax.swing.JPanel panelPolicyType;
   private javax.swing.JTable tableCostCategory;
   private javax.swing.JTable tableCostType;
   private javax.swing.JTable tableCovTerm;
   private javax.swing.JTable tableCoverage;
   private javax.swing.JTable tableCoverageSubtype;
+  private javax.swing.JTable tableExposure;
+  private javax.swing.JTable tableExposureType;
   private javax.swing.JTable tableLossCause;
+  private javax.swing.JTable tableLossType;
   private javax.swing.JTable tableOffering;
   private javax.swing.JTable tablePolicyType;
+  private javax.swing.JTextField txtFilterCoverage;
+  private javax.swing.JTextField txtFilterCoverageSubtype;
+  private javax.swing.JTextField txtFilterOffering;
+  private javax.swing.JTextField txtFilterTerms;
   // End of variables declaration//GEN-END:variables
 
   

@@ -156,7 +156,6 @@ public class PanelHomologations extends javax.swing.JPanel {
     jEditorPane1 = new javax.swing.JEditorPane();
     btnShowQuery = new javax.swing.JButton();
     btnLoadHomologGwEco = new javax.swing.JButton();
-    btnShowQuery1 = new javax.swing.JButton();
 
     tableHomologCoreEcosystem.setModel(new javax.swing.table.DefaultTableModel(
       new Object [][] {
@@ -217,7 +216,7 @@ public class PanelHomologations extends javax.swing.JPanel {
                 .addComponent(jLabel4, javax.swing.GroupLayout.PREFERRED_SIZE, 39, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(comboHomologCoreEcoSearchType, javax.swing.GroupLayout.PREFERRED_SIZE, 250, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 130, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 68, Short.MAX_VALUE)
                 .addComponent(jButton1)))
             .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
             .addComponent(btnSearchHomologCoreEcosystem, javax.swing.GroupLayout.PREFERRED_SIZE, 69, javax.swing.GroupLayout.PREFERRED_SIZE))
@@ -240,7 +239,7 @@ public class PanelHomologations extends javax.swing.JPanel {
             .addComponent(txtSearchHomologCoreEco, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
           .addComponent(btnSearchHomologCoreEcosystem, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE))
         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-        .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 338, Short.MAX_VALUE)
+        .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 382, Short.MAX_VALUE)
         .addGap(10, 10, 10)
         .addComponent(txtResultQueryHomologCoreEcosystem, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
         .addContainerGap())
@@ -306,11 +305,11 @@ public class PanelHomologations extends javax.swing.JPanel {
                 .addComponent(jLabel5, javax.swing.GroupLayout.PREFERRED_SIZE, 39, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(comboHomologEcoCoreSearchType, javax.swing.GroupLayout.PREFERRED_SIZE, 250, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 130, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 68, Short.MAX_VALUE)
                 .addComponent(jButton2)))
             .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
             .addComponent(btnSearchHomologEcosystemCore, javax.swing.GroupLayout.PREFERRED_SIZE, 69, javax.swing.GroupLayout.PREFERRED_SIZE))
-          .addComponent(jScrollPane3, javax.swing.GroupLayout.DEFAULT_SIZE, 881, Short.MAX_VALUE)
+          .addComponent(jScrollPane3, javax.swing.GroupLayout.DEFAULT_SIZE, 819, Short.MAX_VALUE)
           .addComponent(txtResultQueryHomologEcosystemCore, javax.swing.GroupLayout.Alignment.TRAILING))
         .addContainerGap())
     );
@@ -330,7 +329,7 @@ public class PanelHomologations extends javax.swing.JPanel {
             .addComponent(txtSearchHomologEcoCore, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
           .addComponent(btnSearchHomologEcosystemCore, javax.swing.GroupLayout.PREFERRED_SIZE, 64, javax.swing.GroupLayout.PREFERRED_SIZE))
         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-        .addComponent(jScrollPane3, javax.swing.GroupLayout.DEFAULT_SIZE, 327, Short.MAX_VALUE)
+        .addComponent(jScrollPane3, javax.swing.GroupLayout.DEFAULT_SIZE, 371, Short.MAX_VALUE)
         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
         .addComponent(txtResultQueryHomologEcosystemCore, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
         .addContainerGap())
@@ -392,7 +391,7 @@ public class PanelHomologations extends javax.swing.JPanel {
                 .addComponent(jButton3)))
             .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
             .addComponent(btnSearchEcosystemCoverages, javax.swing.GroupLayout.PREFERRED_SIZE, 69, javax.swing.GroupLayout.PREFERRED_SIZE))
-          .addComponent(jScrollPane4, javax.swing.GroupLayout.DEFAULT_SIZE, 881, Short.MAX_VALUE)
+          .addComponent(jScrollPane4, javax.swing.GroupLayout.DEFAULT_SIZE, 819, Short.MAX_VALUE)
           .addComponent(txtResultQueryEcosystemCoverages))
         .addContainerGap())
     );
@@ -410,7 +409,7 @@ public class PanelHomologations extends javax.swing.JPanel {
             .addComponent(txtSearchEcosystemCoverage, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
           .addComponent(btnSearchEcosystemCoverages, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE))
         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-        .addComponent(jScrollPane4, javax.swing.GroupLayout.DEFAULT_SIZE, 342, Short.MAX_VALUE)
+        .addComponent(jScrollPane4, javax.swing.GroupLayout.DEFAULT_SIZE, 386, Short.MAX_VALUE)
         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
         .addComponent(txtResultQueryEcosystemCoverages, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
         .addContainerGap())
@@ -553,7 +552,7 @@ public class PanelHomologations extends javax.swing.JPanel {
           .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE)
           .addComponent(jPanel5, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-        .addComponent(jScrollPane5, javax.swing.GroupLayout.DEFAULT_SIZE, 497, Short.MAX_VALUE)
+        .addComponent(jScrollPane5, javax.swing.GroupLayout.DEFAULT_SIZE, 435, Short.MAX_VALUE)
         .addContainerGap())
     );
     jPanel2Layout.setVerticalGroup(
@@ -586,13 +585,6 @@ public class PanelHomologations extends javax.swing.JPanel {
       }
     });
 
-    btnShowQuery1.setIcon(new javax.swing.ImageIcon(getClass().getResource("/interrogation.png"))); // NOI18N
-    btnShowQuery1.addActionListener(new java.awt.event.ActionListener() {
-      public void actionPerformed(java.awt.event.ActionEvent evt) {
-        btnShowQuery1ActionPerformed(evt);
-      }
-    });
-
     javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
     this.setLayout(layout);
     layout.setHorizontalGroup(
@@ -600,13 +592,11 @@ public class PanelHomologations extends javax.swing.JPanel {
       .addGroup(layout.createSequentialGroup()
         .addContainerGap()
         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-          .addComponent(jTabbedPane1)
+          .addComponent(jTabbedPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 844, Short.MAX_VALUE)
           .addGroup(layout.createSequentialGroup()
             .addComponent(btnLoadHomologGwEco)
             .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
             .addComponent(btnShowQuery)
-            .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-            .addComponent(btnShowQuery1)
             .addGap(0, 0, Short.MAX_VALUE)))
         .addContainerGap())
     );
@@ -616,10 +606,9 @@ public class PanelHomologations extends javax.swing.JPanel {
         .addContainerGap()
         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
           .addComponent(btnLoadHomologGwEco, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-          .addComponent(btnShowQuery, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-          .addComponent(btnShowQuery1, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE))
+          .addComponent(btnShowQuery, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-        .addComponent(jTabbedPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 563, Short.MAX_VALUE)
+        .addComponent(jTabbedPane1)
         .addContainerGap())
     );
   }// </editor-fold>//GEN-END:initComponents
@@ -694,22 +683,6 @@ public class PanelHomologations extends javax.swing.JPanel {
 
   }//GEN-LAST:event_btnUpdateIncidentActionPerformed
 
-  private void btnShowQuery1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnShowQuery1ActionPerformed
-    DialogHelp dialog = new DialogHelp(null,true);
-    String aText = "MEJORAS POR REALIZAR\n";    
-    aText = aText + "1. De coberturas salen:\n";
-    aText = aText + "   - Tipo de perdida -> LossType\n";
-    aText = aText + "   - Exposición	-> ExposureType\n";
-    aText = aText + "   - TipoExposicion  -> CoverageSUbtypeClassification\n";
-    aText = aText + "\n";
-    aText = aText + "2. Termino lleva un campo:\n";
-    aText = aText + "   - Limit/deductible  (columna limite o deducible) sale de CovTermPattern.Type\n";
-    aText = aText + "3. Casusa lleva un campo\n";
-    aText = aText + "   - Tipo de casusa\n";
-    dialog.setTextContent(aText);
-    dialog.setVisible(true);
-  }//GEN-LAST:event_btnShowQuery1ActionPerformed
-
   private void btnLoadHomologGwEcoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnLoadHomologGwEcoActionPerformed
     DialogLoadEcosystemData dialog = new DialogLoadEcosystemData(null,true);
     dialog.setVisible(true);
@@ -724,7 +697,6 @@ public class PanelHomologations extends javax.swing.JPanel {
   private javax.swing.JButton btnSearchHomologCoreEcosystem;
   private javax.swing.JButton btnSearchHomologEcosystemCore;
   private javax.swing.JButton btnShowQuery;
-  private javax.swing.JButton btnShowQuery1;
   private javax.swing.JButton btnUpdateIncident;
   private javax.swing.JComboBox<String> comboEcosystemSearchType;
   private javax.swing.JComboBox<String> comboHomologCoreEcoSearchType;
