@@ -129,7 +129,7 @@ public class GwTypeCodeJpaController implements Serializable {
       em.close();
     }
   }
-  
+  /*
   public List<GwTypeCode> findAllTypeCodesByCategory(TypeKeysEnum category){
     EntityManager em = getEntityManager();        
     TypedQuery<GwTypeCode> typeCodeQuery = em.createNamedQuery("GwTypeCode.findByTypeKeyName", GwTypeCode.class);
@@ -139,6 +139,38 @@ public class GwTypeCodeJpaController implements Serializable {
         return new ArrayList<>();
       }
       return typeCodeQuery.getResultList();
+    } finally {
+      em.close();
+    }      
+  }
+  */
+  
+  /**
+   * si la variable filter esta vacia busca todos los typecodes, 
+   * sino aplica el filtro por nombre y copdigo
+   */
+  
+  public List<GwTypeCode> findFilterTypeCodesByCategory(TypeKeysEnum category, String filter){
+    EntityManager em = getEntityManager();        
+    TypedQuery<GwTypeCode> typeCodeQuery = em.createNamedQuery("GwTypeCode.findByTypeKeyName", GwTypeCode.class);
+    typeCodeQuery.setParameter("typeKeyName",category.name());    
+    ArrayList<GwTypeCode> filteredResult = new ArrayList<>();
+    try {
+      if(typeCodeQuery.getResultList().isEmpty()){
+        return filteredResult;
+      }else{
+        if(filter.trim().length()==0){
+          return typeCodeQuery.getResultList();
+        }
+        for(GwTypeCode aGwTypeCode : typeCodeQuery.getResultList()){
+          if(aGwTypeCode.getTypeCode().toLowerCase().contains(filter.toLowerCase()) ||
+             aGwTypeCode.getNameEs().toLowerCase().contains(filter.toLowerCase())){
+             filteredResult.add(aGwTypeCode);
+          }
+        }
+        return filteredResult;
+      }
+      
     } finally {
       em.close();
     }      

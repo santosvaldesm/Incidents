@@ -33,7 +33,7 @@ public class PanelConfiguration extends javax.swing.JPanel {
   GwTypeCode currentCostType        = null;
   GwTypeCode currentPolicyType        = null;
   
-  List<GwTypeCode> offeringList        = typeCodeController.findAllTypeCodesByCategory(TypeKeysEnum.OfferingType_Ext);
+  List<GwTypeCode> offeringList        = typeCodeController.findFilterTypeCodesByCategory(TypeKeysEnum.OfferingType_Ext,"");
   List<GwTypeCode> lossTypeList        = new ArrayList<>();  
   List<GwTypeCode> coverageList        = new ArrayList<>();   
   List<GwTypeCode> coverageSubtypeList = new ArrayList<>();
@@ -43,25 +43,7 @@ public class PanelConfiguration extends javax.swing.JPanel {
   List<GwTypeCode> costTypeList        = new ArrayList<>();  
   List<GwTypeCode> policyTypeList        = new ArrayList<>();  
   
-  private void setOffering(String offeringCode) {    
-    //Offering
-    currentOffering = typeCodeController.findTypeCodeByCategoryAndCode(TypeKeysEnum.OfferingType_Ext,offeringCode);
-    searchCriteria = new HashMap<>();
-    searchCriteria.put(TypeKeysEnum.OfferingType_Ext, currentOffering.getTypeCode());    
-    List<GwLobModel> aList = lobModelController.findBySearchCriteria(searchCriteria);  
-    
-    coverageList = typeCodeController.createFilteredTypeCodeList(aList,TypeKeysEnum.CoverageType);    
-    configureTable(tableCoverage,coverageList.toArray(),GwTypeCode.columNames());    
-    setPanelTitle(panelCoverage,"(+)Coverages for Offering: " + currentOffering.getTypeCode());
-    currentCoverage = null;    
-    
-    //PolicyType  
-    policyTypeList = typeCodeController.createFilteredTypeCodeList(aList,TypeKeysEnum.PolicyType);     
-    configureTable(tablePolicyType,policyTypeList.toArray(),GwTypeCode.columNames());    
-    labelPolicyType.setText("PolicyTypes for Offering: " + currentOffering.getTypeCode());
-    
-  }
-  
+  /*
   private void setCoverage(String coverageCode) {    
     currentCoverage = typeCodeController.findTypeCodeByCategoryAndCode(TypeKeysEnum.CoverageType,coverageCode);    
     //CoverageSUbtype
@@ -81,7 +63,8 @@ public class PanelConfiguration extends javax.swing.JPanel {
     configureTable(tableLossCause,lossCauseList.toArray(),GwTypeCode.columNames());    
     labelLossCause.setText("LossCauses for Coverage: " + currentCoverage.getTypeCode());    
   }
-  
+  */
+  /*
   private void setCovTerm(String covTermCode) {    
     currentCovTerm = typeCodeController.findTypeCodeByCategoryAndCode(TypeKeysEnum.CovTermPattern,covTermCode);    
     //CostCategory
@@ -94,7 +77,8 @@ public class PanelConfiguration extends javax.swing.JPanel {
     configureTable(tableCostCategory,costCategoryList.toArray(),GwTypeCode.columNames());    
     labelCostCategory.setText("(+)CostCategories for CovTerm: " + currentCovTerm.getTypeCode());    
   }
-  
+  */
+  /*
   private void setCostCategory(String costCategoryCode) {
     currentCostCategory = typeCodeController.findTypeCodeByCategoryAndCode(TypeKeysEnum.CostCategory,costCategoryCode);
     //CostType
@@ -112,29 +96,73 @@ public class PanelConfiguration extends javax.swing.JPanel {
     configureTable(tableCostType,costTypeList.toArray(),GwTypeCode.columNames());    
     labelCostType.setText("CostTypes for CostCategory: " + currentCostCategory.getTypeCode());    
   }
+  */
   
   private void setPanelTitle(JPanel aPanel, String newTitle) {    
     TitledBorder aTitleBorder = (TitledBorder)aPanel.getBorder() ;
     aTitleBorder.setTitle(newTitle);
     aPanel.repaint();
   }
-
+  
+  
   void configureTable(JTable table, Object[] toArray, String[] columNames) {
     table.setModel(aTableController.createModel(toArray,columNames));        
     TableController.cofigureSizeColumns(table,columNames);    
   }  
-  
+   
   public PanelConfiguration() {
     initComponents();
-    refreshTables();    
+    searchOffering(); 
   }
   
-  private void refreshTables(){
-    offeringList = typeCodeController.findAllTypeCodesByCategory(TypeKeysEnum.OfferingType_Ext);
-    configureTable(tableOffering,offeringList.toArray(),GwTypeCode.columNames());
-    clearInfoByOfferingChange();
+  
+  private void searchOffering() {        
+    offeringList = typeCodeController.findFilterTypeCodesByCategory(TypeKeysEnum.OfferingType_Ext,txtFilterOffering.getText());
+    configureTable(tableOffering,offeringList.toArray(),GwTypeCode.columNames());     
+    //clearInfoByOfferingChange();
+    if(tableOffering.getRowCount() > 0){
+     tableOffering.changeSelection(0, 1, false, false);
+     setOffering(tableOffering.getModel().getValueAt(0,0).toString());        
+    }   
   }
   
+  private void offeringElementSelected(){
+    //clearInfoByOfferingChange();
+    int idPosition = -1;
+    if(tableOffering.getSelectedRow() != -1){
+      idPosition = tableOffering.getSelectedRow();
+    }else if(tableOffering.getRowCount() > -1){
+       tableOffering.changeSelection(0, 1, false, false);
+       idPosition = 0;
+    }        
+    if (idPosition != -1) {
+      setOffering(tableOffering.getModel().getValueAt(idPosition,0).toString());      
+    } 
+  }
+  
+  private void setOffering(String offeringCode) {    
+    //Offering
+    currentOffering = typeCodeController.findTypeCodeByCategoryAndCode(TypeKeysEnum.OfferingType_Ext,offeringCode);
+    searchCriteria = new HashMap<>();
+    searchCriteria.put(TypeKeysEnum.OfferingType_Ext, currentOffering.getTypeCode());    
+    List<GwLobModel> aList = lobModelController.findBySearchCriteria(searchCriteria);  
+    
+    //Coverage
+    coverageList = typeCodeController.createFilteredTypeCodeList(aList,TypeKeysEnum.CoverageType);    
+    configureTable(tableCoverage,coverageList.toArray(),GwTypeCode.columNames());    
+    setPanelTitle(panelCoverage,"(+)Coverages for Offering: " + currentOffering.getTypeCode());
+    currentCoverage = null;    
+    
+    //PolicyType  
+    policyTypeList = typeCodeController.createFilteredTypeCodeList(aList,TypeKeysEnum.PolicyType);     
+    configureTable(tablePolicyType,policyTypeList.toArray(),GwTypeCode.columNames());    
+    labelPolicyType.setText("PolicyTypes for Offering: " + currentOffering.getTypeCode());
+    
+  }
+  
+  
+  
+  /*
   private void clearInfoByOfferingChange(){
     Object[] emptyArray = new Object[0];    
     setPanelTitle(panelCoverage,       "(+)Coverages");
@@ -143,6 +171,8 @@ public class PanelConfiguration extends javax.swing.JPanel {
     configureTable(tablePolicyType,emptyArray,GwTypeCode.columNames());
     clearInfoByCoverageChange();
   }
+  */
+  /*
   
   
   //coberura cambia => subcoberturas, covterms, loss causes  
@@ -156,7 +186,10 @@ public class PanelConfiguration extends javax.swing.JPanel {
     configureTable(tableLossCause,emptyArray,GwTypeCode.columNames());
     clearInfoByCovTermChange();
   }
-  //covterms cambia => costcategories  
+  */
+  /*
+  
+//covterms cambia => costcategories  
   private void clearInfoByCovTermChange(){
     Object[] emptyArray = new Object[0];    
     labelCostCategory.setText("(+)CostCategories");
@@ -164,7 +197,45 @@ public class PanelConfiguration extends javax.swing.JPanel {
     labelCostType.setText("CostTypes");
     configureTable(tableCostType,emptyArray,GwTypeCode.columNames());
   }
+  */
   
+  
+  
+  /*
+  private void coverageElementSelected(){
+    clearInfoByCoverageChange();
+    int idPosition = tableCoverage.getSelectedRow();
+    if (idPosition != -1) {
+      setCoverage(tableCoverage.getModel().getValueAt(idPosition,0).toString());
+    } else if(tableCoverage.getRowCount() > 0) {
+      idPosition = 1; //seleccionar primer registro
+      setCoverage(tableCoverage.getModel().getValueAt(idPosition,0).toString());
+    }
+  }
+  */
+  /*
+  private void covTermElementSelected(){
+    clearInfoByCovTermChange();
+    int idPosition = tableCovTerm.getSelectedRow();
+    if (idPosition != -1) {
+      setCovTerm(tableCovTerm.getModel().getValueAt(idPosition,0).toString());
+    } else if(tableCovTerm.getRowCount() > 0) {
+      idPosition = 1; //seleccionar primer registro
+      setCovTerm(tableCovTerm.getModel().getValueAt(idPosition,0).toString());
+    }
+  }
+  */
+  /*
+  private void costCategoryElementSelected(){
+    int idPosition = tableCostCategory.getSelectedRow();
+    if (idPosition != -1) {
+      setCostCategory(tableCostCategory.getModel().getValueAt(idPosition,0).toString());
+    } else if(tableCostCategory.getRowCount() > 0) {
+      idPosition = 1; //seleccionar primer registro
+      setCostCategory(tableCostCategory.getModel().getValueAt(idPosition,0).toString());
+    }
+  }
+  */
   
   @SuppressWarnings("unchecked")
   // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
@@ -255,6 +326,12 @@ public class PanelConfiguration extends javax.swing.JPanel {
     btnRefresh.addActionListener(new java.awt.event.ActionListener() {
       public void actionPerformed(java.awt.event.ActionEvent evt) {
         btnRefreshActionPerformed(evt);
+      }
+    });
+
+    txtFilterOffering.addKeyListener(new java.awt.event.KeyAdapter() {
+      public void keyReleased(java.awt.event.KeyEvent evt) {
+        txtFilterOfferingKeyReleased(evt);
       }
     });
 
@@ -657,38 +734,23 @@ public class PanelConfiguration extends javax.swing.JPanel {
   }// </editor-fold>//GEN-END:initComponents
 
   private void tableOfferingMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_tableOfferingMouseClicked
-    clearInfoByOfferingChange();
-    int idPosition = tableOffering.getSelectedRow();
-    if (idPosition != -1) {
-      setOffering(tableOffering.getModel().getValueAt(idPosition,0).toString());      
-    }    
+    offeringElementSelected();
   }//GEN-LAST:event_tableOfferingMouseClicked
 
   private void tableCoverageMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_tableCoverageMouseClicked
-    clearInfoByCoverageChange();
-    int idPosition = tableCoverage.getSelectedRow();
-    if (idPosition != -1) {
-      setCoverage(tableCoverage.getModel().getValueAt(idPosition,0).toString());
-    }
+    //coverageElementSelected();
   }//GEN-LAST:event_tableCoverageMouseClicked
 
   private void tableCovTermMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_tableCovTermMouseClicked
-    clearInfoByCovTermChange();
-    int idPosition = tableCovTerm.getSelectedRow();
-    if (idPosition != -1) {
-      setCovTerm(tableCovTerm.getModel().getValueAt(idPosition,0).toString());
-    }    
+    //covTermElementSelected();   
   }//GEN-LAST:event_tableCovTermMouseClicked
 
   private void tableCostCategoryMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_tableCostCategoryMouseClicked
-    int idPosition = tableCostCategory.getSelectedRow();
-    if (idPosition != -1) {
-      setCostCategory(tableCostCategory.getModel().getValueAt(idPosition,0).toString());
-    }
+    //costCategoryElementSelected();
   }//GEN-LAST:event_tableCostCategoryMouseClicked
 
   private void btnRefreshActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnRefreshActionPerformed
-    refreshTables();    
+    //refreshTables();    
   }//GEN-LAST:event_btnRefreshActionPerformed
 
   private void btnShowScriptActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnShowScriptActionPerformed
@@ -701,36 +763,21 @@ public class PanelConfiguration extends javax.swing.JPanel {
     DialogLoadModel dialog = new DialogLoadModel(null,true);
     dialog.setVisible(true);
   }//GEN-LAST:event_btnCargarModeloGWActionPerformed
-
+   
   private void tableOfferingKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_tableOfferingKeyReleased
-    clearInfoByOfferingChange();
-    int idPosition = tableOffering.getSelectedRow();
-    if (idPosition != -1) {
-      setOffering(tableOffering.getModel().getValueAt(idPosition,0).toString());      
-    } 
+    offeringElementSelected();
   }//GEN-LAST:event_tableOfferingKeyReleased
 
   private void tableCoverageKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_tableCoverageKeyReleased
-    clearInfoByCoverageChange();
-    int idPosition = tableCoverage.getSelectedRow();
-    if (idPosition != -1) {
-      setCoverage(tableCoverage.getModel().getValueAt(idPosition,0).toString());
-    }
+    //coverageElementSelected();
   }//GEN-LAST:event_tableCoverageKeyReleased
 
   private void tableCovTermKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_tableCovTermKeyReleased
-    clearInfoByCovTermChange();
-    int idPosition = tableCovTerm.getSelectedRow();
-    if (idPosition != -1) {
-      setCovTerm(tableCovTerm.getModel().getValueAt(idPosition,0).toString());
-    }
+    //covTermElementSelected();
   }//GEN-LAST:event_tableCovTermKeyReleased
 
   private void tableCostCategoryKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_tableCostCategoryKeyReleased
-    int idPosition = tableCostCategory.getSelectedRow();
-    if (idPosition != -1) {
-      setCostCategory(tableCostCategory.getModel().getValueAt(idPosition,0).toString());
-    }
+    //costCategoryElementSelected();
   }//GEN-LAST:event_tableCostCategoryKeyReleased
 
   private void btnShowQuery1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnShowQuery1ActionPerformed
@@ -749,6 +796,10 @@ public class PanelConfiguration extends javax.swing.JPanel {
     dialog.setTextContent(aText);
     dialog.setVisible(true);
   }//GEN-LAST:event_btnShowQuery1ActionPerformed
+
+  private void txtFilterOfferingKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txtFilterOfferingKeyReleased
+    searchOffering();
+  }//GEN-LAST:event_txtFilterOfferingKeyReleased
 
 
   // Variables declaration - do not modify//GEN-BEGIN:variables
