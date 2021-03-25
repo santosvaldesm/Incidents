@@ -35,6 +35,7 @@ public class ClosuresPanel extends javax.swing.JPanel {
     btnShowQuery2 = new javax.swing.JButton();
     btnImport4 = new javax.swing.JButton();
     btnShowQuery3 = new javax.swing.JButton();
+    btnShowQuery4 = new javax.swing.JButton();
 
     btnImport2.setText("CIERRE FINANCIERO");
     btnImport2.addActionListener(new java.awt.event.ActionListener() {
@@ -78,27 +79,40 @@ public class ClosuresPanel extends javax.swing.JPanel {
       }
     });
 
+    btnShowQuery4.setIcon(new javax.swing.ImageIcon(getClass().getResource("/interrogation.png"))); // NOI18N
+    btnShowQuery4.setText("Como exportar hoja Excel");
+    btnShowQuery4.addActionListener(new java.awt.event.ActionListener() {
+      public void actionPerformed(java.awt.event.ActionEvent evt) {
+        btnShowQuery4ActionPerformed(evt);
+      }
+    });
+
     javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
     this.setLayout(layout);
     layout.setHorizontalGroup(
       layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
       .addGroup(layout.createSequentialGroup()
         .addContainerGap()
-        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-          .addComponent(btnImport2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-          .addComponent(btnImport3, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-          .addComponent(btnImport4, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE))
-        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-          .addComponent(btnShowQuery2)
-          .addComponent(btnShowQuery3, javax.swing.GroupLayout.PREFERRED_SIZE, 53, javax.swing.GroupLayout.PREFERRED_SIZE)
-          .addComponent(btnShowQuery1))
+          .addComponent(btnShowQuery4, javax.swing.GroupLayout.PREFERRED_SIZE, 194, javax.swing.GroupLayout.PREFERRED_SIZE)
+          .addGroup(layout.createSequentialGroup()
+            .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+              .addComponent(btnImport2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+              .addComponent(btnImport3, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+              .addComponent(btnImport4, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+            .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+            .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+              .addComponent(btnShowQuery2)
+              .addComponent(btnShowQuery3, javax.swing.GroupLayout.PREFERRED_SIZE, 53, javax.swing.GroupLayout.PREFERRED_SIZE)
+              .addComponent(btnShowQuery1))))
         .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
     );
     layout.setVerticalGroup(
       layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
       .addGroup(layout.createSequentialGroup()
         .addContainerGap()
+        .addComponent(btnShowQuery4)
+        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
           .addComponent(btnImport2, javax.swing.GroupLayout.PREFERRED_SIZE, 29, javax.swing.GroupLayout.PREFERRED_SIZE)
           .addComponent(btnShowQuery1))
@@ -172,7 +186,7 @@ public class ClosuresPanel extends javax.swing.JPanel {
   }//GEN-LAST:event_btnImport4ActionPerformed
 
   private void btnShowQuery3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnShowQuery3ActionPerformed
-    // TODO add your handling code here:
+    
     DialogHelp dialog = new DialogHelp(null,true);
     String aText =  "IMPORTANTE:\n" +
                     "* Se debe seleccionar una carpeta que contenga 2 archivos csv\n" +
@@ -188,6 +202,62 @@ public class ClosuresPanel extends javax.swing.JPanel {
     
   }//GEN-LAST:event_btnShowQuery3ActionPerformed
 
+  private void btnShowQuery4ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnShowQuery4ActionPerformed
+    DialogHelp dialog = new DialogHelp(null,true);
+    String aText =  "Exportar hoja de excel\n" +
+                    "\n" +
+                    "Para varios de los cierres la información llega en archivos excel\n" +
+                    "y el programa solo trabaja con archivos CSV por lo cual para seguir el mismo formato\n" +
+                    "con el cual se exportan los archivos de las base de datos oracle se debe seguir el\n" +
+                    "siguiente proceso:\n" +
+                    "\n" +
+                    "Pasos\n" +
+                    "1. Ubicarse en la hoja que se exportaran los datos\n" +
+                    "2. Presionar ALT + F11 para abrir la pantalla de programacion\n" +
+                    "3. pegar el siguiente codigo:\n" +
+                    "	\n" +
+                    "	'---------------------------------------------	\n" +
+                    "	Sub CSVFile()\n" +
+                    "		'updateby Extendoffice\n" +
+                    "		Dim xRg As Range\n" +
+                    "		Dim xRow As Range\n" +
+                    "		Dim xCell As Range\n" +
+                    "		Dim xStr As String\n" +
+                    "		Dim xSep As String\n" +
+                    "		Dim xTxt As String\n" +
+                    "		Dim xName As Variant\n" +
+                    "		On Error Resume Next\n" +
+                    "		If ActiveWindow.RangeSelection.Count > 1 Then\n" +
+                    "		  xTxt = ActiveWindow.RangeSelection.AddressLocal\n" +
+                    "		Else\n" +
+                    "		  xTxt = ActiveSheet.UsedRange.AddressLocal\n" +
+                    "		End If\n" +
+                    "		Set xRg = Application.InputBox(\"Please select the data range:\", \"Kutools for Excel\", xTxt, , , , , 8)\n" +
+                    "		If xRg Is Nothing Then Exit Sub\n" +
+                    "		xName = Application.GetSaveAsFilename(\"\", \"CSV File (*.csv), *.csv\")\n" +
+                    "		xSep = Application.International(xlListSeparator)\n" +
+                    "		Open xName For Output As #1\n" +
+                    "		For Each xRow In xRg.Rows\n" +
+                    "			xStr = \"\"\n" +
+                    "			For Each xCell In xRow.Cells\n" +
+                    "				xStr = xStr & \"\"\"\" & xCell.Value & \"\"\"\" & xSep\n" +
+                    "			Next\n" +
+                    "			While Right(xStr, 1) = xSep\n" +
+                    "				xStr = Left(xStr, Len(xStr) - 1)\n" +
+                    "			Wend\n" +
+                    "			Print #1, xStr\n" +
+                    "		Next\n" +
+                    "		Close #1\n" +
+                    "		If Err = 0 Then MsgBox \"The file has saved to: \" & xName, vbInformation, \"Kutools for Excel\"\n" +
+                    "	End Sub\n" +
+                    "	'---------------------------------------------\n" +
+                    "\n" +
+                    "4. presionar F5 para ejecutar la macro\n" +
+                    "5. dar nombre al archivo en la ventana que se abre y guardar";
+    dialog.setTextContent(aText);
+    dialog.setVisible(true);    
+  }//GEN-LAST:event_btnShowQuery4ActionPerformed
+
 
   // Variables declaration - do not modify//GEN-BEGIN:variables
   private javax.swing.JButton btnImport2;
@@ -196,5 +266,6 @@ public class ClosuresPanel extends javax.swing.JPanel {
   private javax.swing.JButton btnShowQuery1;
   private javax.swing.JButton btnShowQuery2;
   private javax.swing.JButton btnShowQuery3;
+  private javax.swing.JButton btnShowQuery4;
   // End of variables declaration//GEN-END:variables
 }
