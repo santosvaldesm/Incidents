@@ -142,7 +142,7 @@ public class ClosuresPanel extends javax.swing.JPanel {
                     "* Los valores numericos de SAP deben marcarse como 'General' (repetir aun si ya lo son)\n" +
                     "\n" +
                     "NOMBRE:   SAP_RESERVAS.csv\n" +
-                    "CABECERA: Moneda;Clase;Ramo;Poliza;Referencia;Reserva 100% Importe MD;Reserva 100% Importe ML;Gto Liquidacion Importe MD;Gto Liquidacion Importe ML;Reaseguro Importe MD;Reaseguro Importe ML\n" +
+                    "CABECERA: \"Moneda\";\"Clase\";\"Ramo\";\"Poliza\";\"Referencia\";\"Reserva 100% Importe MD\";\"Reserva 100% Importe ML\";\"Gto liquidacion Importe MD\";\"Gto liquidacion Importe ML\";\"Reaseguro Importe MD\";\"Reaseguro Importe ML\"\n" +
                     "\n" +
                     "NOMBE:    GW_RESERVAS.csv\";      \n" +
                     "CABECERA: \"ID\";\"CLAIMNUMBER\";\"ESMIGRADO\";\"POLICYNUMBER\";\"ID_TRA\";\"TIPO_TRANSACCION\";\"COST_CATEGORY\";\"RAMO_CONTABLE\";\"ESTADO\";\"CREATETIME\";\"PUBLICID_TRA\";\"TRANSACCION_ORIGEN\";\"CLAIMAMOUNT\";\"CEDIDO\";\"RETENIDO\";\"SURA_RETENIDO\";\"VALOR_BRUTO\";\"MONEDA\";\"MOVIMIENTO\";\"ESTADO_CHEQUE\";\"RECALCULADO\";\"DIFERENCIA\";\"REFLECTION\"\n" +
@@ -151,13 +151,13 @@ public class ClosuresPanel extends javax.swing.JPanel {
                     "CABECERA: \"ID\";\"CLAIMNUMBER\";\"POLICYNUMBER\";\"FECHA_SINIESTRO\";\"FECHA_AVISO\";\"TIPO_TRANSACCION\";\"COST_CATEGORY\";\"RAMO_CONTABLE\";\"SUBTYPE\";\"ESTADO\";\"CREATETIME\";\"PUBLICID_TRA\";\"CLAIMAMOUNT\";\"FECHA_CONTABILIZACION\";\"MONEDA\";\"RESERVETYPE\";\"REFERENCEID\";\"PERCENTAJE\";\"SAP_AMOUNT\";\"LIQUIDATIONEXPENSESRESERVE\"\n" +
                     "\n" +
                     "NOMBE:    SAP_PAGOS.csv\";\n" +
-                    "CABECERA: Moneda;Clase;Ramo;Poliza;Referencia;Texto posicion;Pagos Importe MD;Pagos Importe ML;Reaseguro Importe MD;Reaseguro Importe ML\n" +
+                    "CABECERA: \"Moneda\";\"Clase\";\"Ramo\";\"Poliza\";\"Referencia\";\"Texto posicion\";\"Pagos Importe MD\";\"Pagos Importe ML\";\"Reaseguro Importe MD\";\"Reaseguro Importe ML\"\n" +
                     "\n" +
                     "NOMBE:    GW_PAGOS.csv\";    \n" +
                     "CABECERA: \"ID\";\"TIPO_COASEGURO\";\"CLAIMNUMBER\";\"POLICYNUMBER\";\"RAMO_CONTABLE\";\"COST_CATEGORY\";\"COINSURANCE_EXT\";\"FECHA_SINIESTRO\";\"RECALCULADO\";\"TIPO\";\"NUMERO_TRANSACCION\";\"TRANSACCION_ORIGEN\";\"PAGO_SOLO_SURA\";\"MASIVO\";\"CEDIDO\";\"RETENIDO\";\"SURA_RETENIDO\";\"ESTADO\";\"FECHA_TRANSACCION\";\"VALOR_NETO\";\"MONEDA\";\"VALOR_BRUTO\";\"VALOR_CON_ICM\";\"VALOR_ICM\";\"VALOR_SIN_COASEG\";\"VALOR_BRUTO_SIN_COA\";\"DIFERENCIA\";\"REFLECTION\"\n" +
                     "\n" +
                     "NOMBE:    SAP_SALVAMENTOS.csv\";\n" +
-                    "CABECERA: Moneda;Clase;Ramo;Poliza;Referencia;Texto posicion;Salvamentos Importe MD;Salvamentos Importe ML;Reaseguro Importe MD;Reaseguro Importe ML\n" +
+                    "CABECERA: \"Moneda\";\"Clase\";\"Ramo\";\"Poliza\";\"Referencia\";\"Texto posicion\";\"Salvamento Importe MD\";\"Salvamento Importe ML\";\"Reaseguro Importe MD\";\"Reaseguro Importe ML\"\n" +
                     "\n" +
                     "NOMBE:    GW_SALVAMENTOS.csv\";    \n" +
                     "CABECERA: \"ID\";\"CLAIMNUMBER\";\"POLICYNUMBER\";\"RAMO_CONTABLE\";\"RECALCULADO\";\"COINSURANCE_EXT\";\"COST_CATEGORY\";\"FECHA_SINIESTRO\";\"TIPO\";\"NUMERO_TRANSACCION\";\"TRANSACCION_ORIGEN\";\"ESTADO\";\"FECHA_TRANSACCION\";\"CEDIDO\";\"RETENIDO\";\"RETENCION_PURA\";\"VALOR_NETO\";\"VALOR_BRUTO\";\"MONEDA\";\"VALOR_SIN_COASEG\";\"DIFERENCIA\";\"REFLECTION\"";

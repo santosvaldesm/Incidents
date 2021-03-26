@@ -43,9 +43,9 @@ public class DialogFinancialClosure extends javax.swing.JDialog implements Runna
   String nomArchivoGwSalvamentos     = "GW_SALVAMENTOS.csv";    
   String rutaCarpeta                 = "";  
   
-  String headerArchivoSapReserva     = "Moneda;Clase;Ramo;Poliza;Referencia;Reserva 100% Importe MD;Reserva 100% Importe ML;Gto Liquidacion Importe MD;Gto Liquidacion Importe ML;Reaseguro Importe MD;Reaseguro Importe ML";
-  String headerArchivoSapPagos       = "Moneda;Clase;Ramo;Poliza;Referencia;Texto posicion;Pagos Importe MD;Pagos Importe ML;Reaseguro Importe MD;Reaseguro Importe ML";
-  String headerArchivoSapSalvamentos = "Moneda;Clase;Ramo;Poliza;Referencia;Texto posicion;Salvamentos Importe MD;Salvamentos Importe ML;Reaseguro Importe MD;Reaseguro Importe ML";
+  String headerArchivoSapReserva     = "\"Moneda\";\"Clase\";\"Ramo\";\"Poliza\";\"Referencia\";\"Reserva 100% Importe MD\";\"Reserva 100% Importe ML\";\"Gto liquidacion Importe MD\";\"Gto liquidacion Importe ML\";\"Reaseguro Importe MD\";\"Reaseguro Importe ML\"";
+  String headerArchivoSapPagos       = "\"Moneda\";\"Clase\";\"Ramo\";\"Poliza\";\"Referencia\";\"Texto posicion\";\"Pagos Importe MD\";\"Pagos Importe ML\";\"Reaseguro Importe MD\";\"Reaseguro Importe ML\"";
+  String headerArchivoSapSalvamentos = "\"Moneda\";\"Clase\";\"Ramo\";\"Poliza\";\"Referencia\";\"Texto posicion\";\"Salvamento Importe MD\";\"Salvamento Importe ML\";\"Reaseguro Importe MD\";\"Reaseguro Importe ML\"";
   String headerArchivoGwReserva      = "\"ID\";\"CLAIMNUMBER\";\"ESMIGRADO\";\"POLICYNUMBER\";\"ID_TRA\";\"TIPO_TRANSACCION\";\"COST_CATEGORY\";\"RAMO_CONTABLE\";\"ESTADO\";\"CREATETIME\";\"PUBLICID_TRA\";\"TRANSACCION_ORIGEN\";\"CLAIMAMOUNT\";\"CEDIDO\";\"RETENIDO\";\"SURA_RETENIDO\";\"VALOR_BRUTO\";\"MONEDA\";\"MOVIMIENTO\";\"ESTADO_CHEQUE\";\"RECALCULADO\";\"DIFERENCIA\";\"REFLECTION\"";
   String headerArchivoGwGastos       = "\"ID\";\"CLAIMNUMBER\";\"POLICYNUMBER\";\"FECHA_SINIESTRO\";\"FECHA_AVISO\";\"TIPO_TRANSACCION\";\"COST_CATEGORY\";\"RAMO_CONTABLE\";\"SUBTYPE\";\"ESTADO\";\"CREATETIME\";\"PUBLICID_TRA\";\"CLAIMAMOUNT\";\"FECHA_CONTABILIZACION\";\"MONEDA\";\"RESERVETYPE\";\"REFERENCEID\";\"PERCENTAJE\";\"SAP_AMOUNT\";\"LIQUIDATIONEXPENSESRESERVE\"";
   String headerArchivoGwPagos        = "\"ID\";\"TIPO_COASEGURO\";\"CLAIMNUMBER\";\"POLICYNUMBER\";\"RAMO_CONTABLE\";\"COST_CATEGORY\";\"COINSURANCE_EXT\";\"FECHA_SINIESTRO\";\"RECALCULADO\";\"TIPO\";\"NUMERO_TRANSACCION\";\"TRANSACCION_ORIGEN\";\"PAGO_SOLO_SURA\";\"MASIVO\";\"CEDIDO\";\"RETENIDO\";\"SURA_RETENIDO\";\"ESTADO\";\"FECHA_TRANSACCION\";\"VALOR_NETO\";\"MONEDA\";\"VALOR_BRUTO\";\"VALOR_CON_ICM\";\"VALOR_ICM\";\"VALOR_SIN_COASEG\";\"VALOR_BRUTO_SIN_COA\";\"DIFERENCIA\";\"REFLECTION\"";
@@ -195,7 +195,8 @@ public class DialogFinancialClosure extends javax.swing.JDialog implements Runna
     if(columnIdentifier == null){
       return null;
     }
-    String value = rowInfoSplit[(int)columnIdentifier].replaceAll("\"", "");
+    String value = rowInfoSplit[(int)columnIdentifier]
+                   .replaceAll("\"", "").replaceAll(",", ".");
     if(value.contains("*")){
       return value.substring(0, value.indexOf("*"));
     }
@@ -206,7 +207,7 @@ public class DialogFinancialClosure extends javax.swing.JDialog implements Runna
   }  
  
   private void insertGwInfoInDB(String rowInfo,ArrayList<Object> columnIdentifiers) throws Exception {     
-    lastRowInfo = rowInfo;    
+    lastRowInfo = rowInfo;   
     String[] rowInfoSplit = rowInfo.split(";");    
     String origen       = columnIdentifiers.get(0).toString();                
     String tipo         = columnIdentifiers.get(1).toString();
@@ -216,7 +217,7 @@ public class DialogFinancialClosure extends javax.swing.JDialog implements Runna
                      referencia.toLowerCase() + "-" + ramo;  //si hay referencia la clave = referencia-ramo      
     Double valorCien    = IncidentsUtil.determineDoubleValue(columnIdentifiers.get(6),rowInfoSplit);
     Double valorReas    = IncidentsUtil.determineDoubleValue(columnIdentifiers.get(7),rowInfoSplit);          
-           
+     
     currentClosure = closureController.findClosureByReferenciaOrigenTipo(origen,tipo,clave);
    
     if(currentClosure!=null && clave != null) {                  
