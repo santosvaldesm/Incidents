@@ -196,7 +196,7 @@ public class DialogFinancialClosure extends javax.swing.JDialog implements Runna
       return null;
     }
     String value = rowInfoSplit[(int)columnIdentifier]
-                   .replaceAll("\"", "").replaceAll(",", ".");
+                   .replaceAll("\"", "");
     if(value.contains("*")){
       return value.substring(0, value.indexOf("*"));
     }

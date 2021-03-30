@@ -66,7 +66,7 @@ public class IncidentsUtil {
   }  
   
   public static Double determineDoubleValue(Object columnIdentifier,String[] rowInfoSplit){
-    return columnIdentifier == null? null: Double.parseDouble(rowInfoSplit[((Number)columnIdentifier).intValue()].replaceAll("\"", ""));
+    return columnIdentifier == null? null: Double.parseDouble(rowInfoSplit[((Number)columnIdentifier).intValue()].replaceAll("\"", "").replaceAll(",", "."));
   }
   
   public static Double determineDoubleValue(Double aValue){
