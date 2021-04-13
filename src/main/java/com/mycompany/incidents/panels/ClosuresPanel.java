@@ -172,6 +172,7 @@ public class ClosuresPanel extends javax.swing.JPanel {
 
   private void btnShowQuery2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnShowQuery2ActionPerformed
     DialogHelp dialog = new DialogHelp(null,true);
+    //Comprobar cambio
     String aText =  "IMPORTANTE "+
                     "\nPara el procesamiento se debe seleccionar una carpeta que contenga dos archivos:\n\n" +
                     "1. REASEGURO_ECO.csv (164. Cierre reaseguro - CtasReaseguroEcosistema_CuadreMensual.sql)\n" +
