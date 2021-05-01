@@ -25,7 +25,7 @@ public class PanelConfiguration extends javax.swing.JPanel {
     HashMap<TypeKeysEnum, String> searchCriteria = null;
 
     GwTypeCode currentOffering = null;
-    GwTypeCode currentLossType = null;
+    GwTypeCode currentLossPartyType = null;
     GwTypeCode currentCostCategory = null;
     GwTypeCode currentCoverage = null;
     GwTypeCode currentCoverageSubtype = null;
@@ -37,7 +37,7 @@ public class PanelConfiguration extends javax.swing.JPanel {
     GwTypeCode currentExposureType = null;
 
     List<GwTypeCode> offeringList = typeCodeController.findFilterTypeCodesByCategory(TypeKeysEnum.OfferingType_Ext, "");
-    List<GwTypeCode> lossTypeList = new ArrayList<>();
+    List<GwTypeCode> lossPartyTypeList = new ArrayList<>();
     List<GwTypeCode> coverageList = new ArrayList<>();
     List<GwTypeCode> coverageSubtypeList = new ArrayList<>();
     List<GwTypeCode> covTermList = new ArrayList<>();
@@ -57,15 +57,15 @@ public class PanelConfiguration extends javax.swing.JPanel {
         List<GwLobModel> aList = lobModelController.findBySearchCriteria(searchCriteria);
         coverageSubtypeList = typeCodeController.createFilteredTypeCodeList(aList, TypeKeysEnum.CoverageSubtype);
         configureTable(tableCoverageSubtype, coverageSubtypeList.toArray(), GwTypeCode.columNames());
-        setPanelTitle(panelCoverageSubtype, "CoverageSubtypes for Coverage: " + currentCoverage.getTypeCode());
+        setPanelTitle(panelCoverageSubtype, "SUBCOBERTURAS PARA COBERTURA: " + currentCoverage.getTypeCode());
         //CovTermPattern    
         covTermList = typeCodeController.createFilteredTypeCodeList(aList, TypeKeysEnum.CovTermPattern);
-        configureTable(tableCovTerm, covTermList.toArray(), GwTypeCode.columNames());
-        setPanelTitle(panelCovTerm, "(+)CovTerms for Coverage: " + currentCoverage.getTypeCode());
+        configureTable(tableCovTerm, covTermList.toArray(), GwTypeCode.columNamesWhitType());
+        setPanelTitle(panelCovTerm, "(+)TERMINOS PARA COBERTURA: " + currentCoverage.getTypeCode());
         //LossCause
         lossCauseList = typeCodeController.createFilteredTypeCodeList(aList, TypeKeysEnum.LossCause);
-        configureTable(tableLossCause, lossCauseList.toArray(), GwTypeCode.columNames());
-        labelLossCause.setText("LossCauses for Coverage: " + currentCoverage.getTypeCode());
+        configureTable(tableLossCause, lossCauseList.toArray(), GwTypeCode.columNamesWhitType());
+        labelLossCause.setText("CAUSAS PARA COBERTURA: " + currentCoverage.getTypeCode());
     }
 
     private void setCovTerm(String covTermCode) {
@@ -78,7 +78,7 @@ public class PanelConfiguration extends javax.swing.JPanel {
         List<GwLobModel> aList = lobModelController.findBySearchCriteria(searchCriteria);
         costCategoryList = typeCodeController.createFilteredTypeCodeList(aList, TypeKeysEnum.CostCategory);
         configureTable(tableCostCategory, costCategoryList.toArray(), GwTypeCode.columNames());
-        labelCostCategory.setText("(+)CostCategories for CovTerm: " + currentCovTerm.getTypeCode());
+        labelCostCategory.setText("(+)CATEGORIAS DE COSTO PARA TERMINO: " + currentCovTerm.getTypeCode());
     }
 
     private void setCostCategory(String costCategoryCode) {
@@ -96,35 +96,23 @@ public class PanelConfiguration extends javax.swing.JPanel {
             }
         }
         configureTable(tableCostType, costTypeList.toArray(), GwTypeCode.columNames());
-        labelCostType.setText("CostTypes for CostCategory: " + currentCostCategory.getTypeCode());
+        labelCostType.setText("TIPO DE COSTO PARA CATEGORIA DE COSTO: " + currentCostCategory.getTypeCode());
     }
 
     private void setCoverageSubtype(String coverageSubtypeCode) {
-        
-        //currentCoverage = typeCodeController.findTypeCodeByCategoryAndCode(TypeKeysEnum.CoverageType, coverageCode);
         //CoverageSUbtype
         searchCriteria = new HashMap<>();
         searchCriteria.put(TypeKeysEnum.OfferingType_Ext, currentOffering.getTypeCode());
         searchCriteria.put(TypeKeysEnum.CoverageType, currentCoverage.getTypeCode());
-        searchCriteria.put(TypeKeysEnum.CoverageSubtype, coverageSubtypeCode);
-        
+        searchCriteria.put(TypeKeysEnum.CoverageSubtype, coverageSubtypeCode);        
         List<GwLobModel> aListCoverageSubtype = lobModelController.findBySearchCriteria(searchCriteria);
-        GwLobModel firstCoverageSubtype =  aListCoverageSubtype.get(0); //En teoria solo deberia haber un registro en aListCoverageSubtype
-        
-        
-        
-        
-        
-        
-        
-        
-        
+        GwLobModel firstCoverageSubtype =  aListCoverageSubtype.get(0); //En teoria solo deberia haber un registro en aListCoverageSubtype        
         //Tipo de perdida
-        labelLossType.setText("TIPO DE PERDIDA para " + coverageSubtypeCode);
-        currentLossType = typeCodeController.findTypeCodeByCategoryAndCode(TypeKeysEnum.LossType, firstCoverageSubtype.getLossType());        
-        lossTypeList = new ArrayList<>();        
-        lossTypeList.add(currentLossType);        
-        configureTable(tableLossType, lossTypeList.toArray(), GwTypeCode.columNames());        
+        labelLossPartyType.setText("PARTE RESPONSABLE para " + coverageSubtypeCode);
+        currentLossPartyType = typeCodeController.findTypeCodeByCategoryAndCode(TypeKeysEnum.LossPartyType, firstCoverageSubtype.getLossPartyType());        
+        lossPartyTypeList = new ArrayList<>();        
+        lossPartyTypeList.add(currentLossPartyType);        
+        configureTable(tableLossPartyType, lossPartyTypeList.toArray(), GwTypeCode.columNames());        
         //Exposicion
         labelExposure.setText("EXPOSICION  para " + coverageSubtypeCode);
         currentExposure = typeCodeController.findTypeCodeByCategoryAndCode(TypeKeysEnum.ExposureType, firstCoverageSubtype.getExposureType());        
@@ -133,7 +121,8 @@ public class PanelConfiguration extends javax.swing.JPanel {
         configureTable(tableExposure, exposureList.toArray(), GwTypeCode.columNames());        
         //Tipo de exposicion
         labelExposureType.setText("TIPO DE EXPOSICION  para " + coverageSubtypeCode);
-        currentExposureType = new GwTypeCode();;        
+        currentExposureType = new GwTypeCode();
+        currentExposureType.setTypeKeyName("ExposureType");
         currentExposureType.setTypeCode(firstCoverageSubtype.getCoverageSubtypeClass());
         currentExposureType.setNameEs(firstCoverageSubtype.getCoverageSubtypeClass());
         exposureTypeList = new ArrayList<>();        
@@ -191,21 +180,21 @@ public class PanelConfiguration extends javax.swing.JPanel {
         //Coverage
         coverageList = typeCodeController.createFilteredTypeCodeList(aList, TypeKeysEnum.CoverageType);
         configureTable(tableCoverage, coverageList.toArray(), GwTypeCode.columNames());
-        setPanelTitle(panelCoverage, "(+)Coverages for Offering: " + currentOffering.getTypeCode());
+        setPanelTitle(panelCoverage, "(+)COBERTURAS DEL PRODUCTO: " + currentOffering.getTypeCode());
         currentCoverage = null;
 
         //PolicyType  
         policyTypeList = typeCodeController.createFilteredTypeCodeList(aList, TypeKeysEnum.PolicyType);
         configureTable(tablePolicyType, policyTypeList.toArray(), GwTypeCode.columNames());
-        labelPolicyType.setText("PolicyTypes for Offering: " + currentOffering.getTypeCode());
+        labelPolicyType.setText("TIPOS DE POLIZA PARA EL PRODUCTO: " + currentOffering.getTypeCode());
 
     }
 
     private void clearInfoByOfferingChange() {
         Object[] emptyArray = new Object[0];
-        setPanelTitle(panelCoverage, "(+)Coverages");
+        setPanelTitle(panelCoverage, "(+)COBERTURAS");
         configureTable(tableCoverage, emptyArray, GwTypeCode.columNames());
-        labelPolicyType.setText("PolicyTypes");
+        labelPolicyType.setText("TIPOS DE POLIZA");
         configureTable(tablePolicyType, emptyArray, GwTypeCode.columNames());
         clearInfoByCoverageChange();
     }
@@ -213,23 +202,23 @@ public class PanelConfiguration extends javax.swing.JPanel {
     //coberura cambia => subcoberturas, covterms, loss causes  
     private void clearInfoByCoverageChange() {
         Object[] emptyArray = new Object[0];
-        setPanelTitle(panelCoverageSubtype, "CoverageSubtypes");
+        setPanelTitle(panelCoverageSubtype, "SUBCOBERTURAS");
         configureTable(tableCoverageSubtype, emptyArray, GwTypeCode.columNames());
         
-        labelLossType.setText("TIPO DE PERDIDA");
-        configureTable(tableExposure, emptyArray, GwTypeCode.columNames());
+        labelLossPartyType.setText("PARTE RESPONSABLE");
+        configureTable(tableLossPartyType, emptyArray, GwTypeCode.columNames());        
         
         labelExposure.setText("EXPOSICION");
-        configureTable(tableExposureType, emptyArray, GwTypeCode.columNames());
+        configureTable(tableExposure, emptyArray, GwTypeCode.columNames());
         
         labelExposureType.setText("TIPO DE EXPOSICION");
-        configureTable(tableLossType, emptyArray, GwTypeCode.columNames());
+        configureTable(tableExposureType, emptyArray, GwTypeCode.columNames());
         
-        setPanelTitle(panelCovTerm, "(+)CovTerms");
-        configureTable(tableCovTerm, emptyArray, GwTypeCode.columNames());
+        setPanelTitle(panelCovTerm, "(+)TERMINOS");
+        configureTable(tableCovTerm, emptyArray, GwTypeCode.columNamesWhitType());
         
-        labelLossCause.setText("LossCauses");
-        configureTable(tableLossCause, emptyArray, GwTypeCode.columNames());
+        labelLossCause.setText("CAUSAS");
+        configureTable(tableLossCause, emptyArray, GwTypeCode.columNamesWhitType());
         
         clearInfoByCovTermChange();
     }
@@ -237,9 +226,9 @@ public class PanelConfiguration extends javax.swing.JPanel {
     //covterms cambia => costcategories  
     private void clearInfoByCovTermChange() {
         Object[] emptyArray = new Object[0];
-        labelCostCategory.setText("(+)CostCategories");
+        labelCostCategory.setText("(+)CATEGORIAS DE COSTO");
         configureTable(tableCostCategory, emptyArray, GwTypeCode.columNames());
-        labelCostType.setText("CostTypes");
+        labelCostType.setText("TIPOS DE COSTO");
         configureTable(tableCostType, emptyArray, GwTypeCode.columNames());
     }
 
@@ -308,8 +297,8 @@ public class PanelConfiguration extends javax.swing.JPanel {
         txtFilterCoverageSubtype = new javax.swing.JTextField();
         jButton3 = new javax.swing.JButton();
         jScrollPane10 = new javax.swing.JScrollPane();
-        tableLossType = new javax.swing.JTable();
-        labelLossType = new javax.swing.JLabel();
+        tableLossPartyType = new javax.swing.JTable();
+        labelLossPartyType = new javax.swing.JLabel();
         labelExposureType = new javax.swing.JLabel();
         jScrollPane11 = new javax.swing.JScrollPane();
         tableExposure = new javax.swing.JTable();
@@ -346,7 +335,7 @@ public class PanelConfiguration extends javax.swing.JPanel {
 
         jPanel1.setLayout(new java.awt.GridLayout(2, 1));
 
-        panelOffering.setBorder(javax.swing.BorderFactory.createTitledBorder(null, "(+)Products", javax.swing.border.TitledBorder.DEFAULT_JUSTIFICATION, javax.swing.border.TitledBorder.DEFAULT_POSITION, new java.awt.Font("Tahoma", 3, 14))); // NOI18N
+        panelOffering.setBorder(javax.swing.BorderFactory.createTitledBorder(null, "(+)PRODUCTOS", javax.swing.border.TitledBorder.DEFAULT_JUSTIFICATION, javax.swing.border.TitledBorder.DEFAULT_POSITION, new java.awt.Font("Tahoma", 3, 14))); // NOI18N
 
         tableOffering.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
@@ -401,18 +390,20 @@ public class PanelConfiguration extends javax.swing.JPanel {
         panelOffering.setLayout(panelOfferingLayout);
         panelOfferingLayout.setHorizontalGroup(
             panelOfferingLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, panelOfferingLayout.createSequentialGroup()
+            .addGroup(panelOfferingLayout.createSequentialGroup()
                 .addContainerGap()
-                .addGroup(panelOfferingLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                    .addComponent(jScrollPane4, javax.swing.GroupLayout.DEFAULT_SIZE, 353, Short.MAX_VALUE)
-                    .addComponent(labelPolicyType, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(jScrollPane1, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE)
-                    .addComponent(txtFilterOffering))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(panelOfferingLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                    .addComponent(jButton5, javax.swing.GroupLayout.DEFAULT_SIZE, 108, Short.MAX_VALUE)
-                    .addComponent(btnRefresh, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(btnDetailProduct, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addGroup(panelOfferingLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(panelOfferingLayout.createSequentialGroup()
+                        .addComponent(txtFilterOffering)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(jButton5, javax.swing.GroupLayout.PREFERRED_SIZE, 74, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(btnRefresh)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(btnDetailProduct, javax.swing.GroupLayout.PREFERRED_SIZE, 79, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(labelPolicyType, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(jScrollPane4, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 467, Short.MAX_VALUE)
+                    .addComponent(jScrollPane1, javax.swing.GroupLayout.Alignment.TRAILING))
                 .addContainerGap())
         );
         panelOfferingLayout.setVerticalGroup(
@@ -421,15 +412,11 @@ public class PanelConfiguration extends javax.swing.JPanel {
                 .addContainerGap()
                 .addGroup(panelOfferingLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(txtFilterOffering, javax.swing.GroupLayout.PREFERRED_SIZE, 23, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jButton5))
+                    .addComponent(jButton5)
+                    .addComponent(btnRefresh)
+                    .addComponent(btnDetailProduct))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(panelOfferingLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE)
-                    .addGroup(panelOfferingLayout.createSequentialGroup()
-                        .addComponent(btnRefresh)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(btnDetailProduct)
-                        .addGap(0, 191, Short.MAX_VALUE)))
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 243, Short.MAX_VALUE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(labelPolicyType)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
@@ -465,7 +452,7 @@ public class PanelConfiguration extends javax.swing.JPanel {
 
         jButton3.setText("Limpiar");
 
-        tableLossType.setModel(new javax.swing.table.DefaultTableModel(
+        tableLossPartyType.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
 
             },
@@ -473,9 +460,9 @@ public class PanelConfiguration extends javax.swing.JPanel {
 
             }
         ));
-        jScrollPane10.setViewportView(tableLossType);
+        jScrollPane10.setViewportView(tableLossPartyType);
 
-        labelLossType.setText("TIPO DE PERDIDA");
+        labelLossPartyType.setText("TIPO DE PERDIDA");
 
         labelExposureType.setText("TIPO EXPOSICION");
 
@@ -508,18 +495,19 @@ public class PanelConfiguration extends javax.swing.JPanel {
             .addGroup(panelCoverageSubtypeLayout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(panelCoverageSubtypeLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(txtFilterCoverageSubtype)
-                    .addComponent(jScrollPane6, javax.swing.GroupLayout.DEFAULT_SIZE, 353, Short.MAX_VALUE)
-                    .addComponent(jScrollPane10, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE)
-                    .addComponent(jScrollPane11, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE)
-                    .addComponent(jScrollPane12, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE)
+                    .addGroup(panelCoverageSubtypeLayout.createSequentialGroup()
+                        .addComponent(txtFilterCoverageSubtype)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(jButton3, javax.swing.GroupLayout.PREFERRED_SIZE, 108, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(btnDetailCoverage3, javax.swing.GroupLayout.PREFERRED_SIZE, 98, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(jScrollPane10, javax.swing.GroupLayout.DEFAULT_SIZE, 467, Short.MAX_VALUE)
+                    .addComponent(jScrollPane6, javax.swing.GroupLayout.Alignment.TRAILING)
+                    .addComponent(labelLossPartyType, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addComponent(labelExposureType, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addComponent(labelExposure, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(labelLossType, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(panelCoverageSubtypeLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jButton3, javax.swing.GroupLayout.PREFERRED_SIZE, 108, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(btnDetailCoverage3, javax.swing.GroupLayout.PREFERRED_SIZE, 108, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(jScrollPane12)
+                    .addComponent(jScrollPane11, javax.swing.GroupLayout.Alignment.TRAILING))
                 .addContainerGap())
         );
         panelCoverageSubtypeLayout.setVerticalGroup(
@@ -528,15 +516,12 @@ public class PanelConfiguration extends javax.swing.JPanel {
                 .addContainerGap()
                 .addGroup(panelCoverageSubtypeLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(txtFilterCoverageSubtype, javax.swing.GroupLayout.PREFERRED_SIZE, 23, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jButton3))
+                    .addComponent(jButton3)
+                    .addComponent(btnDetailCoverage3))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(panelCoverageSubtypeLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(panelCoverageSubtypeLayout.createSequentialGroup()
-                        .addComponent(btnDetailCoverage3)
-                        .addGap(0, 107, Short.MAX_VALUE))
-                    .addComponent(jScrollPane6, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE))
+                .addComponent(jScrollPane6, javax.swing.GroupLayout.DEFAULT_SIZE, 130, Short.MAX_VALUE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(labelLossType)
+                .addComponent(labelLossPartyType)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jScrollPane10, javax.swing.GroupLayout.PREFERRED_SIZE, 50, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
@@ -600,15 +585,16 @@ public class PanelConfiguration extends javax.swing.JPanel {
             panelCoverageLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(panelCoverageLayout.createSequentialGroup()
                 .addContainerGap()
-                .addGroup(panelCoverageLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                    .addComponent(labelLossCause, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(jScrollPane8, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, 349, Short.MAX_VALUE)
-                    .addComponent(txtFilterCoverage, javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(panelCoverageLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jButton7, javax.swing.GroupLayout.PREFERRED_SIZE, 108, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(btnDetailCoverage, javax.swing.GroupLayout.PREFERRED_SIZE, 108, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(jScrollPane2, javax.swing.GroupLayout.DEFAULT_SIZE, 463, Short.MAX_VALUE)
+                    .addGroup(panelCoverageLayout.createSequentialGroup()
+                        .addComponent(txtFilterCoverage)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(jButton7, javax.swing.GroupLayout.PREFERRED_SIZE, 108, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(btnDetailCoverage, javax.swing.GroupLayout.PREFERRED_SIZE, 98, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(labelLossCause, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(jScrollPane8))
                 .addContainerGap())
         );
         panelCoverageLayout.setVerticalGroup(
@@ -617,13 +603,10 @@ public class PanelConfiguration extends javax.swing.JPanel {
                 .addContainerGap()
                 .addGroup(panelCoverageLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(txtFilterCoverage, javax.swing.GroupLayout.PREFERRED_SIZE, 23, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jButton7))
+                    .addComponent(jButton7)
+                    .addComponent(btnDetailCoverage))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(panelCoverageLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(panelCoverageLayout.createSequentialGroup()
-                        .addComponent(btnDetailCoverage)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 236, Short.MAX_VALUE))
-                    .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE))
+                .addComponent(jScrollPane2, javax.swing.GroupLayout.DEFAULT_SIZE, 253, Short.MAX_VALUE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(labelLossCause)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
@@ -699,17 +682,18 @@ public class PanelConfiguration extends javax.swing.JPanel {
             panelCovTermLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(panelCovTermLayout.createSequentialGroup()
                 .addContainerGap()
-                .addGroup(panelCovTermLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                    .addComponent(jScrollPane9, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, 349, Short.MAX_VALUE)
-                    .addComponent(labelCostType, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(jScrollPane7, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE)
-                    .addComponent(labelCostCategory, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(txtFilterTerms, javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jScrollPane5, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(panelCovTermLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                    .addComponent(jButton6, javax.swing.GroupLayout.DEFAULT_SIZE, 108, Short.MAX_VALUE)
-                    .addComponent(btnDetailCoverage2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addGroup(panelCovTermLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(jScrollPane9, javax.swing.GroupLayout.DEFAULT_SIZE, 463, Short.MAX_VALUE)
+                    .addGroup(panelCovTermLayout.createSequentialGroup()
+                        .addComponent(txtFilterTerms)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(jButton6, javax.swing.GroupLayout.PREFERRED_SIZE, 108, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(btnDetailCoverage2, javax.swing.GroupLayout.PREFERRED_SIZE, 108, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(labelCostType, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(jScrollPane7)
+                    .addComponent(labelCostCategory, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(jScrollPane5))
                 .addContainerGap())
         );
         panelCovTermLayout.setVerticalGroup(
@@ -718,13 +702,10 @@ public class PanelConfiguration extends javax.swing.JPanel {
                 .addContainerGap()
                 .addGroup(panelCovTermLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(txtFilterTerms, javax.swing.GroupLayout.PREFERRED_SIZE, 23, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jButton6))
+                    .addComponent(jButton6)
+                    .addComponent(btnDetailCoverage2))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(panelCovTermLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(panelCovTermLayout.createSequentialGroup()
-                        .addComponent(btnDetailCoverage2)
-                        .addGap(0, 128, Short.MAX_VALUE))
-                    .addComponent(jScrollPane5, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE))
+                .addComponent(jScrollPane5, javax.swing.GroupLayout.DEFAULT_SIZE, 151, Short.MAX_VALUE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(labelCostCategory)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
@@ -896,7 +877,7 @@ public class PanelConfiguration extends javax.swing.JPanel {
     private javax.swing.JLabel labelExposure;
     private javax.swing.JLabel labelExposureType;
     private javax.swing.JLabel labelLossCause;
-    private javax.swing.JLabel labelLossType;
+    private javax.swing.JLabel labelLossPartyType;
     private javax.swing.JLabel labelPolicyType;
     private javax.swing.JPanel panelCovTerm;
     private javax.swing.JPanel panelCoverage;
@@ -910,7 +891,7 @@ public class PanelConfiguration extends javax.swing.JPanel {
     private javax.swing.JTable tableExposure;
     private javax.swing.JTable tableExposureType;
     private javax.swing.JTable tableLossCause;
-    private javax.swing.JTable tableLossType;
+    private javax.swing.JTable tableLossPartyType;
     private javax.swing.JTable tableOffering;
     private javax.swing.JTable tablePolicyType;
     private javax.swing.JTextField txtFilterCoverage;

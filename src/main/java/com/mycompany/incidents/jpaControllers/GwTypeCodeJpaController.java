@@ -231,8 +231,19 @@ public class GwTypeCodeJpaController implements Serializable {
           continue;
         }
         boolean isFound = isFoundTypeCodeInGwTypeCodeList(resultList,aSearchCode);      
-        if(!isFound && !aSearchCode.isEmpty()){
-          resultList.add(findTypeCodeByCategoryAndCode(category,aSearchCode));
+        if(!isFound && !aSearchCode.isEmpty()){            
+          GwTypeCode aFoundGwTypeCode = findTypeCodeByCategoryAndCode(category,aSearchCode);
+          
+          switch(category){//Adicion de datos para que aparezca una nueva columna
+              case CovTermPattern://si es "termino" adicionar en "otra categoria" el tipo(limite o deducible)
+                  aFoundGwTypeCode.setOtherCategory(aPosibleRepeat.getLimitOrDeductible());
+                  break;
+              case LossCause://si es "Causa perdida" adicionar en "otra categoria" el tipo de causa
+                  aFoundGwTypeCode.setOtherCategory(aPosibleRepeat.getLossType());
+                  break;
+          }
+          
+          resultList.add(aFoundGwTypeCode);
         }
       }      
     } 

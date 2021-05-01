@@ -72,7 +72,7 @@
               <Properties>
                 <Property name="border" type="javax.swing.border.Border" editor="org.netbeans.modules.form.editors2.BorderEditor">
                   <Border info="org.netbeans.modules.form.compat2.border.TitledBorderInfo">
-                    <TitledBorder title="(+)Products">
+                    <TitledBorder title="(+)PRODUCTOS">
                       <Font PropertyName="font" name="Tahoma" size="14" style="3"/>
                     </TitledBorder>
                   </Border>
@@ -82,19 +82,21 @@
               <Layout>
                 <DimensionLayout dim="0">
                   <Group type="103" groupAlignment="0" attributes="0">
-                      <Group type="102" alignment="1" attributes="0">
+                      <Group type="102" alignment="0" attributes="0">
                           <EmptySpace max="-2" attributes="0"/>
-                          <Group type="103" groupAlignment="1" attributes="0">
-                              <Component id="jScrollPane4" pref="353" max="32767" attributes="0"/>
+                          <Group type="103" groupAlignment="0" attributes="0">
+                              <Group type="102" attributes="0">
+                                  <Component id="txtFilterOffering" max="32767" attributes="0"/>
+                                  <EmptySpace max="-2" attributes="0"/>
+                                  <Component id="jButton5" min="-2" pref="74" max="-2" attributes="0"/>
+                                  <EmptySpace max="-2" attributes="0"/>
+                                  <Component id="btnRefresh" min="-2" max="-2" attributes="0"/>
+                                  <EmptySpace max="-2" attributes="0"/>
+                                  <Component id="btnDetailProduct" min="-2" pref="79" max="-2" attributes="0"/>
+                              </Group>
                               <Component id="labelPolicyType" alignment="0" max="32767" attributes="0"/>
-                              <Component id="jScrollPane1" alignment="0" pref="0" max="32767" attributes="0"/>
-                              <Component id="txtFilterOffering" max="32767" attributes="0"/>
-                          </Group>
-                          <EmptySpace max="-2" attributes="0"/>
-                          <Group type="103" groupAlignment="0" max="-2" attributes="0">
-                              <Component id="jButton5" pref="108" max="32767" attributes="0"/>
-                              <Component id="btnRefresh" max="32767" attributes="0"/>
-                              <Component id="btnDetailProduct" alignment="0" max="32767" attributes="0"/>
+                              <Component id="jScrollPane4" alignment="1" pref="467" max="32767" attributes="0"/>
+                              <Component id="jScrollPane1" alignment="1" max="32767" attributes="0"/>
                           </Group>
                           <EmptySpace max="-2" attributes="0"/>
                       </Group>
@@ -107,17 +109,11 @@
                           <Group type="103" groupAlignment="3" attributes="0">
                               <Component id="txtFilterOffering" alignment="3" min="-2" pref="23" max="-2" attributes="0"/>
                               <Component id="jButton5" alignment="3" min="-2" max="-2" attributes="0"/>
+                              <Component id="btnRefresh" alignment="3" min="-2" max="-2" attributes="0"/>
+                              <Component id="btnDetailProduct" alignment="3" min="-2" max="-2" attributes="0"/>
                           </Group>
                           <EmptySpace min="-2" max="-2" attributes="0"/>
-                          <Group type="103" groupAlignment="0" attributes="0">
-                              <Component id="jScrollPane1" pref="0" max="32767" attributes="0"/>
-                              <Group type="102" attributes="0">
-                                  <Component id="btnRefresh" min="-2" max="-2" attributes="0"/>
-                                  <EmptySpace max="-2" attributes="0"/>
-                                  <Component id="btnDetailProduct" min="-2" max="-2" attributes="0"/>
-                                  <EmptySpace min="0" pref="191" max="32767" attributes="0"/>
-                              </Group>
-                          </Group>
+                          <Component id="jScrollPane1" pref="243" max="32767" attributes="0"/>
                           <EmptySpace max="-2" attributes="0"/>
                           <Component id="labelPolicyType" min="-2" max="-2" attributes="0"/>
                           <EmptySpace min="-2" max="-2" attributes="0"/>
@@ -211,21 +207,22 @@
                       <Group type="102" alignment="0" attributes="0">
                           <EmptySpace min="-2" max="-2" attributes="0"/>
                           <Group type="103" groupAlignment="0" attributes="0">
-                              <Component id="txtFilterCoverageSubtype" max="32767" attributes="0"/>
-                              <Component id="jScrollPane6" alignment="0" pref="353" max="32767" attributes="0"/>
-                              <Component id="jScrollPane10" alignment="0" pref="0" max="32767" attributes="0"/>
-                              <Component id="jScrollPane11" alignment="0" pref="0" max="32767" attributes="0"/>
-                              <Component id="jScrollPane12" alignment="0" pref="0" max="32767" attributes="0"/>
-                              <Component id="labelExposureType" alignment="0" max="32767" attributes="0"/>
+                              <Group type="102" alignment="0" attributes="0">
+                                  <Component id="txtFilterCoverageSubtype" max="32767" attributes="0"/>
+                                  <EmptySpace max="-2" attributes="0"/>
+                                  <Component id="jButton3" min="-2" pref="108" max="-2" attributes="0"/>
+                                  <EmptySpace max="-2" attributes="0"/>
+                                  <Component id="btnDetailCoverage3" min="-2" pref="98" max="-2" attributes="0"/>
+                              </Group>
+                              <Component id="jScrollPane10" alignment="0" pref="467" max="32767" attributes="0"/>
+                              <Component id="jScrollPane6" alignment="1" max="32767" attributes="0"/>
+                              <Component id="labelLossPartyType" alignment="0" max="32767" attributes="0"/>
+                              <Component id="labelExposureType" max="32767" attributes="0"/>
                               <Component id="labelExposure" alignment="0" max="32767" attributes="0"/>
-                              <Component id="labelLossType" alignment="0" max="32767" attributes="0"/>
+                              <Component id="jScrollPane12" alignment="0" max="32767" attributes="0"/>
+                              <Component id="jScrollPane11" alignment="1" max="32767" attributes="0"/>
                           </Group>
-                          <EmptySpace min="-2" max="-2" attributes="0"/>
-                          <Group type="103" groupAlignment="0" attributes="0">
-                              <Component id="jButton3" min="-2" pref="108" max="-2" attributes="0"/>
-                              <Component id="btnDetailCoverage3" min="-2" pref="108" max="-2" attributes="0"/>
-                          </Group>
-                          <EmptySpace min="-2" max="-2" attributes="0"/>
+                          <EmptySpace max="-2" attributes="0"/>
                       </Group>
                   </Group>
                 </DimensionLayout>
@@ -236,17 +233,12 @@
                           <Group type="103" groupAlignment="3" attributes="0">
                               <Component id="txtFilterCoverageSubtype" alignment="3" min="-2" pref="23" max="-2" attributes="0"/>
                               <Component id="jButton3" alignment="3" min="-2" max="-2" attributes="0"/>
+                              <Component id="btnDetailCoverage3" alignment="3" min="-2" max="-2" attributes="0"/>
                           </Group>
                           <EmptySpace min="-2" max="-2" attributes="0"/>
-                          <Group type="103" groupAlignment="0" attributes="0">
-                              <Group type="102" attributes="0">
-                                  <Component id="btnDetailCoverage3" min="-2" max="-2" attributes="0"/>
-                                  <EmptySpace min="0" pref="107" max="32767" attributes="0"/>
-                              </Group>
-                              <Component id="jScrollPane6" pref="0" max="32767" attributes="0"/>
-                          </Group>
+                          <Component id="jScrollPane6" pref="130" max="32767" attributes="0"/>
                           <EmptySpace max="-2" attributes="0"/>
-                          <Component id="labelLossType" min="-2" max="-2" attributes="0"/>
+                          <Component id="labelLossPartyType" min="-2" max="-2" attributes="0"/>
                           <EmptySpace max="-2" attributes="0"/>
                           <Component id="jScrollPane10" min="-2" pref="50" max="-2" attributes="0"/>
                           <EmptySpace max="-2" attributes="0"/>
@@ -302,7 +294,7 @@
 
                   <Layout class="org.netbeans.modules.form.compat2.layouts.support.JScrollPaneSupportLayout"/>
                   <SubComponents>
-                    <Component class="javax.swing.JTable" name="tableLossType">
+                    <Component class="javax.swing.JTable" name="tableLossPartyType">
                       <Properties>
                         <Property name="model" type="javax.swing.table.TableModel" editor="org.netbeans.modules.form.editors2.TableModelEditor">
                           <Table columnCount="0" rowCount="0"/>
@@ -311,7 +303,7 @@
                     </Component>
                   </SubComponents>
                 </Container>
-                <Component class="javax.swing.JLabel" name="labelLossType">
+                <Component class="javax.swing.JLabel" name="labelLossPartyType">
                   <Properties>
                     <Property name="text" type="java.lang.String" value="TIPO DE PERDIDA"/>
                   </Properties>
@@ -388,20 +380,21 @@
               <Layout>
                 <DimensionLayout dim="0">
                   <Group type="103" groupAlignment="0" attributes="0">
-                      <Group type="102" attributes="0">
-                          <EmptySpace min="-2" max="-2" attributes="0"/>
-                          <Group type="103" groupAlignment="1" attributes="0">
-                              <Component id="labelLossCause" max="32767" attributes="0"/>
-                              <Component id="jScrollPane8" alignment="0" pref="349" max="32767" attributes="0"/>
-                              <Component id="txtFilterCoverage" alignment="0" max="32767" attributes="0"/>
-                              <Component id="jScrollPane2" pref="0" max="32767" attributes="0"/>
-                          </Group>
+                      <Group type="102" alignment="0" attributes="0">
                           <EmptySpace min="-2" max="-2" attributes="0"/>
                           <Group type="103" groupAlignment="0" attributes="0">
-                              <Component id="jButton7" min="-2" pref="108" max="-2" attributes="0"/>
-                              <Component id="btnDetailCoverage" min="-2" pref="108" max="-2" attributes="0"/>
+                              <Component id="jScrollPane2" pref="463" max="32767" attributes="0"/>
+                              <Group type="102" attributes="0">
+                                  <Component id="txtFilterCoverage" max="32767" attributes="0"/>
+                                  <EmptySpace max="-2" attributes="0"/>
+                                  <Component id="jButton7" min="-2" pref="108" max="-2" attributes="0"/>
+                                  <EmptySpace max="-2" attributes="0"/>
+                                  <Component id="btnDetailCoverage" min="-2" pref="98" max="-2" attributes="0"/>
+                              </Group>
+                              <Component id="labelLossCause" max="32767" attributes="0"/>
+                              <Component id="jScrollPane8" alignment="0" max="32767" attributes="0"/>
                           </Group>
-                          <EmptySpace min="-2" max="-2" attributes="0"/>
+                          <EmptySpace max="-2" attributes="0"/>
                       </Group>
                   </Group>
                 </DimensionLayout>
@@ -412,15 +405,10 @@
                           <Group type="103" groupAlignment="3" attributes="0">
                               <Component id="txtFilterCoverage" alignment="3" min="-2" pref="23" max="-2" attributes="0"/>
                               <Component id="jButton7" alignment="3" min="-2" max="-2" attributes="0"/>
+                              <Component id="btnDetailCoverage" alignment="3" min="-2" max="-2" attributes="0"/>
                           </Group>
                           <EmptySpace max="-2" attributes="0"/>
-                          <Group type="103" groupAlignment="0" attributes="0">
-                              <Group type="102" attributes="0">
-                                  <Component id="btnDetailCoverage" min="-2" max="-2" attributes="0"/>
-                                  <EmptySpace pref="236" max="32767" attributes="0"/>
-                              </Group>
-                              <Component id="jScrollPane2" pref="0" max="32767" attributes="0"/>
-                          </Group>
+                          <Component id="jScrollPane2" pref="253" max="32767" attributes="0"/>
                           <EmptySpace max="-2" attributes="0"/>
                           <Component id="labelLossCause" min="-2" max="-2" attributes="0"/>
                           <EmptySpace max="-2" attributes="0"/>
@@ -500,20 +488,21 @@
               <Layout>
                 <DimensionLayout dim="0">
                   <Group type="103" groupAlignment="0" attributes="0">
-                      <Group type="102" attributes="0">
+                      <Group type="102" alignment="0" attributes="0">
                           <EmptySpace max="-2" attributes="0"/>
-                          <Group type="103" groupAlignment="1" attributes="0">
-                              <Component id="jScrollPane9" alignment="0" pref="349" max="32767" attributes="0"/>
+                          <Group type="103" groupAlignment="0" attributes="0">
+                              <Component id="jScrollPane9" pref="463" max="32767" attributes="0"/>
+                              <Group type="102" alignment="0" attributes="0">
+                                  <Component id="txtFilterTerms" max="32767" attributes="0"/>
+                                  <EmptySpace max="-2" attributes="0"/>
+                                  <Component id="jButton6" min="-2" pref="108" max="-2" attributes="0"/>
+                                  <EmptySpace max="-2" attributes="0"/>
+                                  <Component id="btnDetailCoverage2" min="-2" pref="108" max="-2" attributes="0"/>
+                              </Group>
                               <Component id="labelCostType" alignment="0" max="32767" attributes="0"/>
-                              <Component id="jScrollPane7" alignment="0" pref="0" max="32767" attributes="0"/>
+                              <Component id="jScrollPane7" alignment="0" max="32767" attributes="0"/>
                               <Component id="labelCostCategory" alignment="0" max="32767" attributes="0"/>
-                              <Component id="txtFilterTerms" alignment="0" max="32767" attributes="0"/>
-                              <Component id="jScrollPane5" alignment="0" pref="0" max="32767" attributes="0"/>
-                          </Group>
-                          <EmptySpace max="-2" attributes="0"/>
-                          <Group type="103" groupAlignment="0" max="-2" attributes="0">
-                              <Component id="jButton6" pref="108" max="32767" attributes="0"/>
-                              <Component id="btnDetailCoverage2" max="32767" attributes="0"/>
+                              <Component id="jScrollPane5" max="32767" attributes="0"/>
                           </Group>
                           <EmptySpace max="-2" attributes="0"/>
                       </Group>
@@ -526,15 +515,10 @@
                           <Group type="103" groupAlignment="3" attributes="0">
                               <Component id="txtFilterTerms" alignment="3" min="-2" pref="23" max="-2" attributes="0"/>
                               <Component id="jButton6" alignment="3" min="-2" max="-2" attributes="0"/>
+                              <Component id="btnDetailCoverage2" alignment="3" min="-2" max="-2" attributes="0"/>
                           </Group>
                           <EmptySpace min="-2" max="-2" attributes="0"/>
-                          <Group type="103" groupAlignment="0" attributes="0">
-                              <Group type="102" attributes="0">
-                                  <Component id="btnDetailCoverage2" min="-2" max="-2" attributes="0"/>
-                                  <EmptySpace min="0" pref="128" max="32767" attributes="0"/>
-                              </Group>
-                              <Component id="jScrollPane5" pref="0" max="32767" attributes="0"/>
-                          </Group>
+                          <Component id="jScrollPane5" pref="151" max="32767" attributes="0"/>
                           <EmptySpace min="-2" max="-2" attributes="0"/>
                           <Component id="labelCostCategory" min="-2" max="-2" attributes="0"/>
                           <EmptySpace min="-2" max="-2" attributes="0"/>

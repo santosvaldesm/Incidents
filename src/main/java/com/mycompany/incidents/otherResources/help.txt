@@ -1,3 +1,12 @@
+//URL DE CONEXION A BASE DE DATOS------------------------------------------------
+- en la carpeta de dependences aparece el jar derby-10.8.3.0.jar
+- agrgarlo como nuevo driver de conexion en: services > Drivers > New Driver...
+- Databases > New connection > Java DB > Next
+  en el campo "Database" colocar ruta "C:\Users\santvamu\Documents\NetBeansProjects\Incidents\incidentesDB"
+  test connection(probar que este bien) > finalizar 
+
+
+
   /*
 //CODIGO PARA RECORRER UN XML DE GUIDEWIRE
     import java.io.File;

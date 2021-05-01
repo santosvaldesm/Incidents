@@ -32,32 +32,7 @@ public class TableController {
     }        
     return arrayResult == null ? new String[0][0] : arrayResult;
   }  
-  /*
-  public TableModel createModelForLOB(List<GwLobModel> entitiesList,
-                                          TypeKeysEnum category)  {                     
-    String[][] arrayResult = getArrayResultForLOB(entitiesList,category);
-    
-    
-    return new DefaultTableModel(arrayResult, GwLobModel.columNames(category)){
-      @Override
-      public boolean isCellEditable(int rowIndex, int columnIndex) {
-        return false;  
-      }
-    };
-  }
   
-  public String[][] getArrayResultForLOB(List<GwLobModel> entitiesList,TypeKeysEnum category){
-    String[][] arrayResult = null;
-    for (int i = 0; i < entitiesList.size(); i++) {
-      GwLobModel anElement = entitiesList.get(i);
-      if(arrayResult == null){
-        arrayResult = new String[entitiesList.size()][GwLobModel.columNames(category).length];    
-      }            
-      arrayResult[i]=anElement.getData(category);
-    }        
-    return arrayResult == null ? new String[0][0] : arrayResult;
-  }  
-  */
   public static void cofigureSizeColumns(JTable table, String[] columNames) {
     double sumAllNamesSize = 0;
     int tW = table.getWidth() == 0 ? 800 : table.getWidth();    

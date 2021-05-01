@@ -11,6 +11,8 @@ ALTER TABLE gw_lob_Model ALTER COLUMN loss_cause SET DATA TYPE VARCHAR(2000);
 -----------------------------------------------------
 
 SELECT * FROM APP.gw_homolog_core_to_general FETCH FIRST 100 ROWS ONLY;
+SELECT * FROM APP.gw_lob_model FETCH FIRST 100 ROWS ONLY;
+SELECT * FROM APP.gw_type_code WHERE type_key_name like 'CovTermPattern' and other_category is not null;
 
 SELECT COUNT(*) FROM APP.gw_ecosystem_coverages -- 11179
 SELECT COUNT(*) FROM APP.gw_homolog_general_to_core; --13510
