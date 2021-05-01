@@ -7,7 +7,6 @@ package com.mycompany.incidents.jpaControllers;
 
 import com.mycompany.incidents.entities.GwHomologGeneralToCore;
 import com.mycompany.incidents.jpaControllers.exceptions.NonexistentEntityException;
-import com.mycompany.incidents.otherResources.HomologationSearchTypeEnum;
 import com.mycompany.incidents.otherResources.HomologationTypeEnum;
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -140,37 +139,25 @@ public class GwHomologGeneralToCoreJpaController implements Serializable {
   }
   
   public List<GwHomologGeneralToCore> executeSearchHomologations(String valeToSearch, 
-          HomologationTypeEnum homologationType,HomologationSearchTypeEnum searchType, JTextField aTextField){    
+          HomologationTypeEnum homologationType, JTextField aTextField){    
     String hql = "SELECT h FROM GwHomologGeneralToCore h ";         
-    if(valeToSearch.trim().length()==0 && homologationType == HomologationTypeEnum.ALL){
-       aTextField.setText("Para el tipo de homologación todos el valor a buscar no debe estar vacio");
+    if(valeToSearch.trim().length() < 3 && homologationType == HomologationTypeEnum.ALL){
+       aTextField.setText("Para el tipo de homologación todos el valor debe tener minimo 3 caracteres");
        return new ArrayList<>();
     }
     if(valeToSearch.trim().length()==0 && homologationType != HomologationTypeEnum.ALL){
       hql = hql + " WHERE h.homologationName = :homologationName";
     } else {
-      switch(searchType){
-        case ValorEcosistema:
-          switch(homologationType){
-            case ALL:
-              hql = hql + " WHERE lower(h.source) LIKE lower(CONCAT('%',:valeToSearch,'%'))";
-              break;
-            default:              
-              hql = hql + " WHERE lower(h.source) LIKE lower(CONCAT('%',:valeToSearch,'%'))";
-              hql = hql + " AND h.homologationName = :homologationName";
-          }
-        break;
-        case ValorCore:
-          switch(homologationType){
-            case ALL:
-              hql = hql + " WHERE lower(h.target) LIKE lower(CONCAT('%',:valeToSearch,'%'))";              
-              break;
-            default:              
-              hql = hql + " WHERE lower(h.target) LIKE lower(CONCAT('%',:valeToSearch,'%'))";
-              hql = hql + " AND h.homologationName = :homologationName";
-          }
-        break;          
-      }
+        switch(homologationType){
+          case ALL:
+            hql = hql + " WHERE lower(h.source) LIKE lower(CONCAT('%',:valeToSearch,'%'))";
+            hql = hql + "    OR lower(h.target) LIKE lower(CONCAT('%',:valeToSearch,'%'))";
+            break;
+          default:              
+            hql = hql + " WHERE h.homologationName = :homologationName AND ";
+            hql = hql + " ( lower(h.source) LIKE lower(CONCAT('%',:valeToSearch,'%')) OR ";
+            hql = hql + "   lower(h.target) LIKE lower(CONCAT('%',:valeToSearch,'%')) )";
+        }      
     }
        
     EntityManager em = getEntityManager();

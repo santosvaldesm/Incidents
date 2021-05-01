@@ -193,7 +193,7 @@ public class IncidentsUtil {
                 + "  fileLobModel.write(header)\n"
                 + "  _writeLobModel = new PrintWriter(new FileOutputStream(fileLobModel, true))\n"
                 + "  _writeLobModel.write(\"\\n\")  \n"
-                + "  typekey.LOBCode.getTypeKeys(false).where(\\ lob -> lob != typekey.LOBCode.TC_PERSONALAUTOLINE).each(\\lob -> {\n"
+                + "  typekey.LOBCode.getTypeKeys(false).each(\\lob -> {\n"
                 + "    lob.Categories.whereTypeIs(PolicyType).each(\\ polType -> {\n"
                 + "      polType.Categories.whereTypeIs(CoverageType).where(\\ cov -> !cov.Retired).each(\\ cov -> {\n"
                 + "        cov.Categories.whereTypeIs(CoverageSubtype).where(\\subcov -> !subcov.Retired).each(\\ subcov -> {\n"

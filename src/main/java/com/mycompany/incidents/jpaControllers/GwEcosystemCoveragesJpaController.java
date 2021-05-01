@@ -7,9 +7,7 @@ package com.mycompany.incidents.jpaControllers;
 
 import com.mycompany.incidents.entities.GwEcosystemCoverages;
 import com.mycompany.incidents.jpaControllers.exceptions.NonexistentEntityException;
-import com.mycompany.incidents.otherResources.EcosystemSearchTypeEnum;
 import java.io.Serializable;
-import java.util.ArrayList;
 import java.util.List;
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
@@ -139,27 +137,15 @@ public class GwEcosystemCoveragesJpaController implements Serializable {
   }
   
   public List<GwEcosystemCoverages> executeSearchEcosystemCoverages(String valeToSearch, 
-          EcosystemSearchTypeEnum type, JTextField aTextField){
+                                                          JTextField aTextField){
     String hql = "SELECT h FROM GwEcosystemCoverages h ";         
-    if(valeToSearch.trim().length()==0){
-       aTextField.setText("Se debe especificar el valor a buscar");
-       return new ArrayList<>();
-    }    
-    switch(type){
-      case Homologacion:        
-            hql = hql + " WHERE lower(CONCAT(h.ramo,'-',h.subramo,'-',h.garantia,'-',h.subgarantia)) LIKE lower(CONCAT('%',:valeToSearch,'%'))";                
-      break;
-      case RamoContable:        
-            hql = hql + " WHERE lower(h.ramoContable) LIKE lower(CONCAT('%',:valeToSearch,'%'))";                
-      break;
-      case Cobertura:
-            hql = hql + " WHERE lower(h.coverageName) LIKE lower(CONCAT('%',:valeToSearch,'%'))";                          
-      break;      
-      case Producto:
-            hql = hql + " WHERE lower(h.product) LIKE lower(CONCAT('%',:valeToSearch,'%'))";              
-      break;      
+    if(valeToSearch.trim().length() != 0){       
+        hql = hql + " WHERE lower(CONCAT(h.ramo,'-',h.subramo,'-',h.garantia,'-',h.subgarantia)) LIKE lower(CONCAT('%',:valeToSearch,'%'))";                
+        hql = hql + " OR lower(h.ramoContable) LIKE lower(CONCAT('%',:valeToSearch,'%'))";                
+        hql = hql + " OR lower(h.coverageName) LIKE lower(CONCAT('%',:valeToSearch,'%'))";                          
+        hql = hql + " OR lower(h.product) LIKE lower(CONCAT('%',:valeToSearch,'%'))";
     }
-       
+    
     EntityManager em = getEntityManager();
     Query aQuery = em.createQuery(hql, GwEcosystemCoverages.class);
     if(hql.contains("valeToSearch")){
