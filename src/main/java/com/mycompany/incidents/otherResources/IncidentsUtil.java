@@ -16,80 +16,351 @@ import java.text.DecimalFormat;
  * @author santvamu
  */
 public class IncidentsUtil {
-    
-  static DecimalFormat df = new DecimalFormat("#.#");
-  
-  static {
-    df.setMaximumFractionDigits(3);
-  }  
-  
-  public static void validateFile(String rutaCarp, String fileName, String header) throws Exception {
-    File fileEco = new File(rutaCarp+"\\"+fileName);                            
-    if (!fileEco.exists()) {// Si el archivo no existe es creado
-      throw new Exception("\nEn la carpeta seleccionada deben existir archivo: " + fileName );
-    }    
-    FileReader fr = new FileReader (fileEco);
-    BufferedReader br = new BufferedReader(fr);          
-    String lineaStr=br.readLine();//la primer linea es cabecera     
-    fr.close();
-    br.close();
-    if(lineaStr.compareTo(header)!=0){
-      throw new Exception("\nLa cabecera del archivo " + fileName + " no coresponde, revisar la ayuda" );
-    }      
-  }  
-  
-  public static String determineUrl(String rutaInicial,String name){     
-    int version = 1;
-    boolean continuar = true;
-    String rutaFinal = "";
-    while(continuar) {
-      rutaFinal = rutaInicial + "\\" + name + "_v" + version+".csv";
-      File file = new File(rutaFinal);                
-      if (!file.exists()) {// Si el archivo no existe es creado
-        continuar=false;                
-      }
-      version++;
+
+    static DecimalFormat df = new DecimalFormat("#.#");
+
+    static {
+        df.setMaximumFractionDigits(3);
     }
-    return rutaFinal;
-  }
-  
-  public static String determineStringValue(String aValue){
-    return aValue == null ? "#N/A" : aValue ;
-  }
-  
-  public static String determineStringValue(Double aValue){
-    return aValue == null ? "#N/A" : df.format(aValue) ;
-  }
-  
-  public static String determineStringValue(Object columnIdentifier,String[] rowInfoSplit) {
-    return columnIdentifier == null? null : rowInfoSplit[((Number)columnIdentifier).intValue()].replaceAll("\"", "");
-  }  
-  
-  public static Double determineDoubleValue(Object columnIdentifier,String[] rowInfoSplit){
-    return columnIdentifier == null? null: Double.parseDouble(rowInfoSplit[((Number)columnIdentifier).intValue()].replaceAll("\"", "").replaceAll(",", "."));
-  }
-  
-  public static Double determineDoubleValue(Double aValue){
-    return aValue == null ? 0 : aValue;
-  } 
-  
-  public static String determineRowInfo(Closure aResult) {
-    return  "ID("         + aResult.getId()     + 
-            ") ORIGEN("   + aResult.getOrigen() + 
-            ") TIPO("     + aResult.getTipo() + 
-            ") NUM_RECL(" + aResult.getClaimnumber() +
-            ") POLIZA("   + aResult.getPolicynumber() + 
-            ") RAMO("     + aResult.getRamo() + 
-            ") REFERENC(" + aResult.getReferencia() + 
-            ") ROW_INFO(" + aResult.getRowTxt() + 
-            ") CIEN_GW("  + aResult.getValorCienGw() + 
-            ") REAS_GW("  + aResult.getValorReasGw() + 
-            ") CIEN_SAP(" + aResult.getValorCienSap() + 
-            ") REAS_SAP(" + aResult.getValorReasSap() + 
-            ") MONEDA("   + aResult.getMoneda() + 
-            ") ESTADO("   + aResult.getEstado() + 
-            ") DIF_CIEN(" + aResult.getDiferCien() +
-            ") DIF REAS(" + aResult.getDiferReas() + ")";
-  }
-  
+
+    public static void validateFile(String rutaCarp, String fileName, String header) throws Exception {
+        File fileEco = new File(rutaCarp + "\\" + fileName);
+        if (!fileEco.exists()) {// Si el archivo no existe es creado
+            throw new Exception("\nEn la carpeta seleccionada deben existir archivo: " + fileName);
+        }
+        FileReader fr = new FileReader(fileEco);
+        BufferedReader br = new BufferedReader(fr);
+        String lineaStr = br.readLine();//la primer linea es cabecera     
+        fr.close();
+        br.close();
+        if (lineaStr.compareTo(header) != 0) {
+            throw new Exception("\nLa cabecera del archivo " + fileName + " no coresponde, revisar la ayuda");
+        }
+    }
+
+    public static String determineUrl(String rutaInicial, String name) {
+        int version = 1;
+        boolean continuar = true;
+        String rutaFinal = "";
+        while (continuar) {
+            rutaFinal = rutaInicial + "\\" + name + "_v" + version + ".csv";
+            File file = new File(rutaFinal);
+            if (!file.exists()) {// Si el archivo no existe es creado
+                continuar = false;
+            }
+            version++;
+        }
+        return rutaFinal;
+    }
+
+    public static String determineStringValue(String aValue) {
+        return aValue == null ? "#N/A" : aValue;
+    }
+
+    public static String determineStringValue(Double aValue) {
+        return aValue == null ? "#N/A" : df.format(aValue);
+    }
+
+    public static String determineStringValue(Object columnIdentifier, String[] rowInfoSplit) {
+        return columnIdentifier == null ? null : rowInfoSplit[((Number) columnIdentifier).intValue()].replaceAll("\"", "");
+    }
+
+    public static Double determineDoubleValue(Object columnIdentifier, String[] rowInfoSplit) {
+        return columnIdentifier == null ? null : Double.parseDouble(rowInfoSplit[((Number) columnIdentifier).intValue()].replaceAll("\"", "").replaceAll(",", "."));
+    }
+
+    public static Double determineDoubleValue(Double aValue) {
+        return aValue == null ? 0 : aValue;
+    }
+
+    public static String determineRowInfo(Closure aResult) {
+        return "ID(" + aResult.getId()
+                + ") ORIGEN(" + aResult.getOrigen()
+                + ") TIPO(" + aResult.getTipo()
+                + ") NUM_RECL(" + aResult.getClaimnumber()
+                + ") POLIZA(" + aResult.getPolicynumber()
+                + ") RAMO(" + aResult.getRamo()
+                + ") REFERENC(" + aResult.getReferencia()
+                + ") ROW_INFO(" + aResult.getRowTxt()
+                + ") CIEN_GW(" + aResult.getValorCienGw()
+                + ") REAS_GW(" + aResult.getValorReasGw()
+                + ") CIEN_SAP(" + aResult.getValorCienSap()
+                + ") REAS_SAP(" + aResult.getValorReasSap()
+                + ") MONEDA(" + aResult.getMoneda()
+                + ") ESTADO(" + aResult.getEstado()
+                + ") DIF_CIEN(" + aResult.getDiferCien()
+                + ") DIF REAS(" + aResult.getDiferReas() + ")";
+    }
+
+    public static String getModelHelpString() {
+        return "/*--------------------------------------------------------------------------------\n" +
+" 1. Ejecutar este codigo en Scratchpad,\n" +
+" 2. genera una carpeta en D: con el modelo de productos de claims \n" +
+" 3. esta carpeta se selecciona al realizar la importacion al programa de notas \n" +
+" --------------------------------------------------------------------------------\n" +
+"*/\n" +
+"\n" +
+"uses java.io.File\n" +
+"uses java.io.FileOutputStream\n" +
+"uses java.io.PrintWriter\n" +
+"uses java.util.HashMap\n" +
+"uses java.text.SimpleDateFormat\n" +
+"uses java.util.Date\n" +
+"uses java.util.ArrayList\n" +
+"uses gw.api.util.LocaleUtil\n" +
+"uses gw.i18n.ILocale\n" +
+"uses gw.entity.TypeKey\n" +
+"uses gw.entity.ITypeList\n" +
+"uses gw.lang.reflect.TypeSystem\n" +
+"\n" +
+"var _esCO : ILocale = LocaleUtil.toLanguage(typekey.LanguageType.TC_ES_CO)\n" +
+"var _enUS : ILocale = LocaleUtil.toLanguage(typekey.LanguageType.TC_EN_US)\n" +
+"\n" +
+"var _dateFormat = new SimpleDateFormat(\"HH:mm:ss\")\n" +
+"var _startDate = new Date()\n" +
+"var _pathOut = \"D:/\" + _startDate + \"_outLobModels\"\n" +
+"var _writeLobModel : PrintWriter = null\n" +
+"var _writeLob : PrintWriter = null\n" +
+"var _offering = \"\"\n" +
+"var _lobCode = \"\"\n" +
+"var _policyType = \"\"\n" +
+"var _lossType = \"\"\n" +
+"var _coverageType = \"\"\n" +
+"var _internalPolicyType = \"\"\n" +
+"var _policyTab = \"\"\n" +
+"var _lossPartyType = \"\"\n" +
+"var _coverageSubType = \"\"\n" +
+"var _exposureType = \"\"\n" +
+"var _covTermPattern = \"\"\n" +
+"var _coverageSubtypeClass = \"\"\n" +
+"var _limitDeducible = \"\"\n" +
+"var _lossCauses = \"\"\n" +
+"var _costCategories = \"\"\n" +
+"var _mapCovTermsByCoverage : HashMap<String, List<typekey.CovTermPattern>> = null\n" +
+"var _mapCostCategoryByCovTerm : HashMap<String, String> = null\n" +
+"var _mapLossPartyByCoverageSubType : HashMap<String, String> = null\n" +
+"var _mapLossCauseByCoverageType : HashMap<String, String> = null\n" +
+"var _mapOfferingByCov : HashMap<String, String> = null\n" +
+"var _mapLossTypeByLobCode : HashMap<String, String> = null\n" +
+"var _mapInternalPolicyByPolicyType : HashMap<String, String> = null\n" +
+"var _mapPolicyTabByPolicyType : HashMap<String, String> = null\n" +
+"\n" +
+"startProcess()\n" +
+"\n" +
+"/**/\n" +
+"function startProcess() {\n" +
+"  createDirectories()\n" +
+"  print(timeEvent(\"Directorios cargados... \"))\n" +
+"\n" +
+"  generateTypeListByName(\"OfferingType_Ext\")\n" +
+"  generateTypeListByName(\"LOBCode\")\n" +
+"  generateTypeListByName(\"PolicyType\")\n" +
+"  generateTypeListByName(\"LossType\")\n" +
+"  generateTypeListByName(\"CoverageType\")\n" +
+"  generateTypeListByName(\"InternalPolicyType\")\n" +
+"  generateTypeListByName(\"PolicyTab\")\n" +
+"  generateTypeListByName(\"LossPartyType\")\n" +
+"  generateTypeListByName(\"CoverageSubtype\")\n" +
+"  generateTypeListByName(\"ExposureType\")\n" +
+"  generateTypeListByName(\"CovTermPattern\")\n" +
+"  generateTypeListByName(\"LossCause\")\n" +
+"  generateTypeListByName(\"CostType\")\n" +
+"  generateTypeListByNameAndCategory(\"CostCategory\",typekey.CostType)\n" +
+"  print(timeEvent(\"TypeList cargados... \"))\n" +
+"\n" +
+"  _mapCovTermsByCoverage         = loadMapCovTermsByCoverage()\n" +
+"  _mapCostCategoryByCovTerm      = loadMapTypeListWithConcatenatedCategory(\"CostCategory\",typekey.CovTermPattern)\n" +
+"  _mapLossPartyByCoverageSubType = loadMapTypeListWithConcatenatedCategory(\"LossPartyType\",typekey.CoverageSubtype)\n" +
+"  _mapLossCauseByCoverageType    = loadMapTypeListWithConcatenatedCategory(\"LossCause\",typekey.CoverageType)\n" +
+"  _mapOfferingByCov              = loadMapTypeListWithConcatenatedCategory(typekey.OfferingType_Ext,\"CoverageType\")\n" +
+"  _mapLossTypeByLobCode          = loadMapTypeListWithConcatenatedCategory(typekey.LossType,\"LOBCode\")\n" +
+"  _mapInternalPolicyByPolicyType = loadMapTypeListWithConcatenatedCategory(typekey.InternalPolicyType,\"PolicyType\")\n" +
+"  _mapPolicyTabByPolicyType      = loadMapTypeListWithConcatenatedCategory(typekey.PolicyTab,\"PolicyType\")\n" +
+"  print(timeEvent(\"Mapas cargados... \"))\n" +
+"\n" +
+"  generateLobModel()\n" +
+"  print(timeEvent(\"FIN, LobModel cargado \"))\n" +
+"}\n" +
+"\n" +
+"\n" +
+"/**/\n" +
+"function generateLobModel() {\n" +
+"  var header = (\"Offering\\t\" + \"LOBCode\\t\" + \"PolicyType\\t\" + \"LossType\\t\" + \"CoverageType\\t\" + \"InternalPolicyType\\t\" + \"PolicyTab\\t\" + \"LossPartyType\\t\" + \"CoverageSubtype\\t\" + \"ExposureType\\t\" + \"CovTermPattern\\t\" + \"CoverageSubtypeClass\\t\" + \"Limite o Deducible\\t\" + \"Causas por cobertura\\t\" + \"Categorias de costo\")\n" +
+"  var fileLobModel = new File(_pathOut + \"/LobModel.txt\")\n" +
+"  fileLobModel.write(header)\n" +
+"  _writeLobModel = new PrintWriter(new FileOutputStream(fileLobModel, true))\n" +
+"  _writeLobModel.write(\"\\n\")  \n" +
+"  typekey.LOBCode.getTypeKeys(false).where(\\ lob -> lob != typekey.LOBCode.TC_PERSONALAUTOLINE).each(\\lob -> {\n" +
+"    lob.Categories.whereTypeIs(PolicyType).each(\\ polType -> {\n" +
+"      polType.Categories.whereTypeIs(CoverageType).where(\\ cov -> !cov.Retired).each(\\ cov -> {\n" +
+"        cov.Categories.whereTypeIs(CoverageSubtype).where(\\subcov -> !subcov.Retired).each(\\ subcov -> {\n" +
+"          var exp = subcov.Categories.whereTypeIs(typekey.ExposureType).first()\n" +
+"          _coverageSubtypeClass = determineCoverageSubtypeClass(subcov)\n" +
+"          _lobCode = lob.Code\n" +
+"          _policyType = polType.Code\n" +
+"          _coverageType = cov.Code\n" +
+"          _coverageSubType = subcov.Code\n" +
+"          _exposureType = exp.Code\n" +
+"          _offering = _mapOfferingByCov.get(cov.Code)\n" +
+"          _lossType = _mapLossTypeByLobCode.get(lob.Code)\n" +
+"          _internalPolicyType = _mapInternalPolicyByPolicyType.get(polType.Code)\n" +
+"          _policyTab = _mapPolicyTabByPolicyType.get(polType.Code)\n" +
+"          _lossPartyType = _mapLossPartyByCoverageSubType.get(subcov.Code)\n" +
+"          _lossCauses = _mapLossCauseByCoverageType.get(cov.Code) ?: \"\"\n" +
+"          var covTermByCov = _mapCovTermsByCoverage.get(cov.Code)\n" +
+"          var CovTermPatternList = covTermByCov?.where(\\covT ->\n" +
+"                  (covT.Categories.whereTypeIs(typekey.CoverageSubtype).contains(subcov)) or\n" +
+"                  (covT.Categories.whereTypeIs(typekey.CoverageSubtype).IsEmpty and covT.Categories.whereTypeIs(typekey.ExposureType).contains(exp)) or\n" +
+"                  (covT.Categories.whereTypeIs(typekey.CoverageSubtype).IsEmpty and covT.Categories.whereTypeIs(typekey.ExposureType).IsEmpty))\n" +
+"          if(CovTermPatternList.HasElements) {\n" +
+"            CovTermPatternList.each(\\covTerm -> {\n" +
+"              _limitDeducible = getLimOrDed(covTerm)\n" +
+"              _covTermPattern = covTerm.Code\n" +
+"              _costCategories = _mapCostCategoryByCovTerm.get(covTerm.Code) ?: \"\"\n" +
+"              write()\n" +
+"            })\n" +
+"          }else {\n" +
+"            _covTermPattern = \"\"\n" +
+"            _limitDeducible = \"\"\n" +
+"            _costCategories = \"\"\n" +
+"            write()\n" +
+"          }\n" +
+"        })\n" +
+"      })\n" +
+"    })\n" +
+"  })\n" +
+"  _writeLobModel.flush()\n" +
+"  _writeLobModel.close()\n" +
+"}\n" +
+"\n" +
+"/**/\n" +
+"function createDirectories() {\n" +
+"  if (!getFile(_pathOut).exists()) {\n" +
+"    getFile(_pathOut).mkdirs()\n" +
+"  }\n" +
+"}\n" +
+"\n" +
+"/**/\n" +
+"function getFile(path : String) : File {\n" +
+"  return new File(path)\n" +
+"}\n" +
+"/**/\n" +
+"function timeEvent(valueText : String) : String {\n" +
+"  var currentDate = new Date()\n" +
+"  return valueText + _dateFormat.format(currentDate) + \" Duracion \" + timeDiff(_startDate,new Date()) + \" segundos\"\n" +
+"}\n" +
+"\n" +
+"/**/\n" +
+"function timeDiff(fechaInicio : Date, fechaTermino : Date) : float {\n" +
+"  return ((fechaTermino.getTime() / 1000) - (fechaInicio.getTime() / 1000))\n" +
+"}\n" +
+"\n" +
+"/**/\n" +
+"function getLimOrDed(term : CovTermPattern) : String {\n" +
+"  for (filter in typekey.CovTermPattern.Type.TypeFilters) {\n" +
+"    if (filter.Includes.contains(term)) {\n" +
+"      return filter.Name.replace(\"_Ext\", \"\")\n" +
+"    }\n" +
+"  }\n" +
+"  return \"\"\n" +
+"}\n" +
+"\n" +
+"/**/\n" +
+"function determineCoverageSubtypeClass(subcov : typekey.CoverageSubtype) : String {\n" +
+"  if (subcov.Code.contains(\"Art\")) {\n" +
+"    return \"Articulo\"\n" +
+"  }\n" +
+"  if (subcov.Code.contains(\"Bkt\") or subcov.Code.contains(\"Blanket\") or subcov.Code.contains(\"BKT\")) {\n" +
+"    return \"Blanket\"\n" +
+"  }\n" +
+"  if (subcov.Code.contains(\"Ubi\")) {\n" +
+"    return \"Ubicacion\"\n" +
+"  }\n" +
+"  return \"\"\n" +
+"}\n" +
+"\n" +
+"/**/\n" +
+"function write() {\n" +
+"  var body = (_offering + \"\\t\" + _lobCode + \"\\t\" + _policyType + \"\\t\" + _lossType + \"\\t\" + _coverageType + \"\\t\" +\n" +
+"      _internalPolicyType + \"\\t\" + _policyTab + \"\\t\" + _lossPartyType + \"\\t\" + _coverageSubType + \"\\t\" + _exposureType + \"\\t\" +\n" +
+"      _covTermPattern + \"\\t\" + _coverageSubtypeClass + \"\\t\" + _limitDeducible + \"\\t\" + _lossCauses + \"\\t\" + _costCategories)\n" +
+"  _writeLobModel.write(body)\n" +
+"  _writeLobModel.write(\"\\n\")\n" +
+"}\n" +
+"\n" +
+"/**/\n" +
+"function generateTypeListByNameAndCategory(typeListName : String, aTypeTarget : Type<TypeKey>) {\n" +
+"  var aTypeList = TypeSystem.getByFullName(\"typekey.\" + typeListName) as ITypeList\n" +
+"  var fileTypeList = new File(_pathOut + \"/\" + typeListName + \".txt\")\n" +
+"  fileTypeList.write(\"Code\\tNameES\\tNameUS\\t\" + typeListName + \"\\n\")\n" +
+"  var writerTypeList = new PrintWriter(new FileOutputStream(fileTypeList, true))\n" +
+"  aTypeList.getTypeKeys(false).each(\\ aTypeKey -> {\n" +
+"    writerTypeList.write(aTypeKey.Code + \"\\t\" + aTypeKey.getDisplayName(_esCO) + \"\\t\" + aTypeKey.getDisplayName(_enUS) + \"\\t\" +\n" +
+"        aTypeKey.Categories.whereTypeIs(aTypeTarget)*.Code.join(\";\") + \"\\n\")\n" +
+"  })\n" +
+"  writerTypeList.flush()\n" +
+"  writerTypeList.close()\n" +
+"}\n" +
+"\n" +
+"/**/\n" +
+"function generateTypeListByName(typeListName : String) {\n" +
+"  var aTypeList = TypeSystem.getByFullName(\"typekey.\" + typeListName) as ITypeList\n" +
+"  var fileTypeList = new File(_pathOut + \"/\" + typeListName + \".txt\")\n" +
+"  fileTypeList.write(\"Code\\tNameES\\tNameUS\\n\")\n" +
+"  var writerTypeList = new PrintWriter(new FileOutputStream(fileTypeList, true))\n" +
+"  aTypeList.getTypeKeys(false).each(\\ aTypeKey -> {\n" +
+"    writerTypeList.write(aTypeKey.Code + \"\\t\" + aTypeKey.getDisplayName(_esCO) + \"\\t\" + aTypeKey.getDisplayName(_enUS) + \"\\n\")\n" +
+"  })\n" +
+"  writerTypeList.flush()\n" +
+"  writerTypeList.close()\n" +
+"}\n" +
+"\n" +
+"/**/\n" +
+"function loadMapCovTermsByCoverage() : HashMap<String, List<typekey.CovTermPattern>> {\n" +
+"  var mapCovTermsByCoverage = new HashMap<String, List<typekey.CovTermPattern>>()\n" +
+"  for (aCovTerm in typekey.CovTermPattern.getTypeKeys(false)) {\n" +
+"    var coverageList =  aCovTerm.Categories.whereTypeIs(typekey.CoverageType)\n" +
+"    for (aCoverage in coverageList) {\n" +
+"      var aResultSearch = mapCovTermsByCoverage.get(aCoverage.Code)\n" +
+"      if(aResultSearch == null) {\n" +
+"        aResultSearch = new ArrayList<typekey.CovTermPattern>()\n" +
+"      }\n" +
+"      aResultSearch.add(aCovTerm)\n" +
+"      mapCovTermsByCoverage.put(aCoverage.Code, aResultSearch)\n" +
+"    }\n" +
+"  }\n" +
+"  return mapCovTermsByCoverage\n" +
+"}\n" +
+"\n" +
+"/**\n" +
+"* se usa cuando en la categoria esta la clave del mapa y en los typecodes(del primer parametro) estan los valores a concatenar\n" +
+"*/\n" +
+"function loadMapTypeListWithConcatenatedCategory(typeKeyName : String, categoryFilter : Type<TypeKey>) : HashMap<String, String> {\n" +
+"  var mapReturn = new HashMap<String, String>()\n" +
+"  var aTypeKey = TypeSystem.getByFullName(\"typekey.\" + typeKeyName) as ITypeList\n" +
+"  for (aTypeCode in aTypeKey.getTypeKeys(false)) {\n" +
+"    var categories =  aTypeCode.Categories.whereTypeIs(categoryFilter)\n" +
+"    for (aCategory in categories) {\n" +
+"      var mapResultSearch = mapReturn.get(aCategory.Code)\n" +
+"      mapReturn.put(aCategory.Code, mapResultSearch == null ? aTypeCode.Code : (mapResultSearch + \";\" + aTypeCode.Code))\n" +
+"    }\n" +
+"  }\n" +
+"  return mapReturn\n" +
+"}\n" +
+"\n" +
+"\n" +
+"/**\n" +
+"* se usa cuando en el typecode(del segundo parametro) esta la clave del mapa y en las categorias estan los valores a concatenar\n" +
+"*/\n" +
+"function loadMapTypeListWithConcatenatedCategory(categoryFilter : Type<TypeKey>, typeKeyName : String) : HashMap<String, String> {\n" +
+"  var mapReturn = new HashMap<String, String>()\n" +
+"  var aTypeKey = TypeSystem.getByFullName(\"typekey.\" + typeKeyName) as ITypeList\n" +
+"  for (aTypeCode in aTypeKey.getTypeKeys(false)) {\n" +
+"    var categoriesConcatenate =  aTypeCode.Categories.whereTypeIs(categoryFilter).where(\\aCate -> not aCate.Retired)*.Code.join(\";\")\n" +
+"    mapReturn.put(aTypeCode.Code, categoriesConcatenate)\n" +
+"  }\n" +
+"  return mapReturn\n" +
+"}";
+    }
+
 }
