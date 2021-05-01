@@ -225,6 +225,9 @@ public class GwTypeCodeJpaController implements Serializable {
     List<GwTypeCode> resultList = new ArrayList<>();
     for(GwLobModel aPosibleRepeat : listWithRepeat){
       String aSearchCode2 = getColumnForLobByCategory(aPosibleRepeat,category);
+      if(aSearchCode2==null){
+        continue;
+      }
       String[] aSplitSearchCode = aSearchCode2.split(";");
       for(String aSearchCode : aSplitSearchCode) {
         if(aSearchCode.compareTo("-")==0){

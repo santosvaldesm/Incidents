@@ -329,7 +329,6 @@ public class PanelConfiguration extends javax.swing.JPanel {
         jButton6 = new javax.swing.JButton();
         btnShowScript = new javax.swing.JButton();
         btnCargarModeloGW = new javax.swing.JButton();
-        btnShowQuery1 = new javax.swing.JButton();
 
         jSplitPane1.setDividerLocation(500);
 
@@ -735,13 +734,6 @@ public class PanelConfiguration extends javax.swing.JPanel {
             }
         });
 
-        btnShowQuery1.setIcon(new javax.swing.ImageIcon(getClass().getResource("/interrogation.png"))); // NOI18N
-        btnShowQuery1.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                btnShowQuery1ActionPerformed(evt);
-            }
-        });
-
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
         this.setLayout(layout);
         layout.setHorizontalGroup(
@@ -754,8 +746,6 @@ public class PanelConfiguration extends javax.swing.JPanel {
                         .addComponent(btnCargarModeloGW, javax.swing.GroupLayout.PREFERRED_SIZE, 144, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(btnShowScript)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(btnShowQuery1)
                         .addGap(0, 0, Short.MAX_VALUE))))
         );
         layout.setVerticalGroup(
@@ -763,7 +753,6 @@ public class PanelConfiguration extends javax.swing.JPanel {
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                    .addComponent(btnShowQuery1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addComponent(btnShowScript, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addComponent(btnCargarModeloGW, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
@@ -819,18 +808,6 @@ public class PanelConfiguration extends javax.swing.JPanel {
       costCategoryElementSelected();
   }//GEN-LAST:event_tableCostCategoryKeyReleased
 
-  private void btnShowQuery1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnShowQuery1ActionPerformed
-      DialogHelp dialog = new DialogHelp(null, true);
-      String aText = "MEJORAS POR REALIZAR\n";
-      aText = aText + "1. en las funciones de llamado para lob model permitir seleccionar si requiere retirados o no\n";
-      aText = aText + "2. en el programa cargar y tachar los retirados\n";      
-      aText = aText + "3. Cargar modelo de autos:\n";
-      aText = aText + "4. Revisar casos en que genra exceptcion en el log al seleccionar una cobertura\n";
-      
-      dialog.setTextContent(aText);
-      dialog.setVisible(true);
-  }//GEN-LAST:event_btnShowQuery1ActionPerformed
-
   private void txtFilterOfferingKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txtFilterOfferingKeyReleased
       searchOffering();
   }//GEN-LAST:event_txtFilterOfferingKeyReleased
@@ -851,7 +828,6 @@ public class PanelConfiguration extends javax.swing.JPanel {
     private javax.swing.JButton btnDetailCoverage3;
     private javax.swing.JButton btnDetailProduct;
     private javax.swing.JButton btnRefresh;
-    private javax.swing.JButton btnShowQuery1;
     private javax.swing.JButton btnShowScript;
     private javax.swing.JButton jButton3;
     private javax.swing.JButton jButton5;
