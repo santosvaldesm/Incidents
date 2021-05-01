@@ -142,7 +142,7 @@ public class GwHomologCoreToGeneralJpaController implements Serializable {
           HomologationTypeEnum homologationType, JTextField aTextField){
     String hql = "SELECT h FROM GwHomologCoreToGeneral h ";         
     if(valeToSearch.trim().length() < 3 && homologationType == HomologationTypeEnum.ALL){
-       aTextField.setText("Para el tipo de homologación todos el valor debe tener minimo 3 caracteres");
+       aTextField.setText("Para el tipo de homologación ALL, el valor debe tener minimo 3 caracteres");
        return new ArrayList<>();
     }
     if(valeToSearch.trim().length()==0 && homologationType != HomologationTypeEnum.ALL){
