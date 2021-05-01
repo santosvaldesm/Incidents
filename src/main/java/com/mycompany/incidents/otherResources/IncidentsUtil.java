@@ -96,7 +96,7 @@ public class IncidentsUtil {
         return "/*--------------------------------------------------------------------------------\n" +
 " 1. Ejecutar este codigo en Scratchpad,\n" +
 " 2. genera una carpeta en D: con el modelo de productos de claims \n" +
-" 3. esta carpeta se selecciona al realizar la importacion al programa de notas \n" +
+" 3. esta carpeta se selecciona al usar 'Cargar Modelo' \n" +
 " --------------------------------------------------------------------------------\n" +
 "*/\n" +
 "\n" +

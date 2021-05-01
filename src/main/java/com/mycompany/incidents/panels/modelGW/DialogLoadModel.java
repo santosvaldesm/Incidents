@@ -135,10 +135,16 @@ public class DialogLoadModel extends javax.swing.JDialog implements Runnable  {
       newLobModel.setLossPartyType(splitRow[7]);          //LossPartyType	
       newLobModel.setCoverageSubtype(splitRow[8]);        //CoverageSubtype	
       newLobModel.setExposureType(splitRow[9]);           //ExposureType	
-      newLobModel.setCovtermPattern(splitRow[10]);        //CovTermPattern	
-      newLobModel.setCoverageSubtypeClass(splitRow[11]);  //CoverageSubtypeClass	
-      newLobModel.setLimitOrDeductible(splitRow[12]);     //Limite o Deducible	
-      if(splitRow.length >14){
+      if(splitRow.length >10){
+        newLobModel.setCovtermPattern(splitRow[10]);        //CovTermPattern	
+      }
+      if(splitRow.length >11){
+        newLobModel.setCoverageSubtypeClass(splitRow[11]);  //CoverageSubtypeClass	
+      }
+      if(splitRow.length >12){
+        newLobModel.setLimitOrDeductible(splitRow[12]);     //Limite o Deducible	
+      }
+      if(splitRow.length >13){
         newLobModel.setLossCause(splitRow[13]);             //Causas por cobertura	
       }
       if(splitRow.length >14){

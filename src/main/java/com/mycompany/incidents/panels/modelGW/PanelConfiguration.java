@@ -61,7 +61,7 @@ public class PanelConfiguration extends javax.swing.JPanel {
         //CovTermPattern    
         covTermList = typeCodeController.createFilteredTypeCodeList(aList, TypeKeysEnum.CovTermPattern);
         configureTable(tableCovTerm, covTermList.toArray(), GwTypeCode.columNamesWhitType());
-        setPanelTitle(panelCovTerm, "(+)TERMINOS PARA COBERTURA: " + currentCoverage.getTypeCode());
+        setPanelTitle(panelCovTerm, "TERMINOS PARA COBERTURA: " + currentCoverage.getTypeCode());
         //LossCause
         lossCauseList = typeCodeController.createFilteredTypeCodeList(aList, TypeKeysEnum.LossCause);
         configureTable(tableLossCause, lossCauseList.toArray(), GwTypeCode.columNamesWhitType());
@@ -78,7 +78,7 @@ public class PanelConfiguration extends javax.swing.JPanel {
         List<GwLobModel> aList = lobModelController.findBySearchCriteria(searchCriteria);
         costCategoryList = typeCodeController.createFilteredTypeCodeList(aList, TypeKeysEnum.CostCategory);
         configureTable(tableCostCategory, costCategoryList.toArray(), GwTypeCode.columNames());
-        labelCostCategory.setText("(+)CATEGORIAS DE COSTO PARA TERMINO: " + currentCovTerm.getTypeCode());
+        labelCostCategory.setText("CATEGORIAS DE COSTO PARA TERMINO: " + currentCovTerm.getTypeCode());
     }
 
     private void setCostCategory(String costCategoryCode) {
@@ -180,7 +180,7 @@ public class PanelConfiguration extends javax.swing.JPanel {
         //Coverage
         coverageList = typeCodeController.createFilteredTypeCodeList(aList, TypeKeysEnum.CoverageType);
         configureTable(tableCoverage, coverageList.toArray(), GwTypeCode.columNames());
-        setPanelTitle(panelCoverage, "(+)COBERTURAS DEL PRODUCTO: " + currentOffering.getTypeCode());
+        setPanelTitle(panelCoverage, "COBERTURAS DEL PRODUCTO: " + currentOffering.getTypeCode());
         currentCoverage = null;
 
         //PolicyType  
@@ -192,7 +192,7 @@ public class PanelConfiguration extends javax.swing.JPanel {
 
     private void clearInfoByOfferingChange() {
         Object[] emptyArray = new Object[0];
-        setPanelTitle(panelCoverage, "(+)COBERTURAS");
+        setPanelTitle(panelCoverage, "COBERTURAS");
         configureTable(tableCoverage, emptyArray, GwTypeCode.columNames());
         labelPolicyType.setText("TIPOS DE POLIZA");
         configureTable(tablePolicyType, emptyArray, GwTypeCode.columNames());
@@ -214,7 +214,7 @@ public class PanelConfiguration extends javax.swing.JPanel {
         labelExposureType.setText("TIPO DE EXPOSICION");
         configureTable(tableExposureType, emptyArray, GwTypeCode.columNames());
         
-        setPanelTitle(panelCovTerm, "(+)TERMINOS");
+        setPanelTitle(panelCovTerm, "TERMINOS");
         configureTable(tableCovTerm, emptyArray, GwTypeCode.columNamesWhitType());
         
         labelLossCause.setText("CAUSAS");
@@ -226,7 +226,7 @@ public class PanelConfiguration extends javax.swing.JPanel {
     //covterms cambia => costcategories  
     private void clearInfoByCovTermChange() {
         Object[] emptyArray = new Object[0];
-        labelCostCategory.setText("(+)CATEGORIAS DE COSTO");
+        labelCostCategory.setText("CATEGORIAS DE COSTO");
         configureTable(tableCostCategory, emptyArray, GwTypeCode.columNames());
         labelCostType.setText("TIPOS DE COSTO");
         configureTable(tableCostType, emptyArray, GwTypeCode.columNames());
@@ -335,7 +335,7 @@ public class PanelConfiguration extends javax.swing.JPanel {
 
         jPanel1.setLayout(new java.awt.GridLayout(2, 1));
 
-        panelOffering.setBorder(javax.swing.BorderFactory.createTitledBorder(null, "(+)PRODUCTOS", javax.swing.border.TitledBorder.DEFAULT_JUSTIFICATION, javax.swing.border.TitledBorder.DEFAULT_POSITION, new java.awt.Font("Tahoma", 3, 14))); // NOI18N
+        panelOffering.setBorder(javax.swing.BorderFactory.createTitledBorder(null, "PRODUCTOS", javax.swing.border.TitledBorder.DEFAULT_JUSTIFICATION, javax.swing.border.TitledBorder.DEFAULT_POSITION, new java.awt.Font("Tahoma", 3, 14))); // NOI18N
 
         tableOffering.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
@@ -416,12 +416,12 @@ public class PanelConfiguration extends javax.swing.JPanel {
                     .addComponent(btnRefresh)
                     .addComponent(btnDetailProduct))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 243, Short.MAX_VALUE)
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 199, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(labelPolicyType)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jScrollPane4, javax.swing.GroupLayout.PREFERRED_SIZE, 97, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap())
+                .addComponent(jScrollPane4, javax.swing.GroupLayout.PREFERRED_SIZE, 86, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
         jPanel1.add(panelOffering);
@@ -519,20 +519,20 @@ public class PanelConfiguration extends javax.swing.JPanel {
                     .addComponent(jButton3)
                     .addComponent(btnDetailCoverage3))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jScrollPane6, javax.swing.GroupLayout.DEFAULT_SIZE, 130, Short.MAX_VALUE)
+                .addComponent(jScrollPane6, javax.swing.GroupLayout.PREFERRED_SIZE, 108, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(labelLossPartyType)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jScrollPane10, javax.swing.GroupLayout.PREFERRED_SIZE, 50, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(jScrollPane10, javax.swing.GroupLayout.PREFERRED_SIZE, 45, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(labelExposure)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jScrollPane11, javax.swing.GroupLayout.PREFERRED_SIZE, 49, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(jScrollPane11, javax.swing.GroupLayout.PREFERRED_SIZE, 45, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(labelExposureType)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jScrollPane12, javax.swing.GroupLayout.PREFERRED_SIZE, 59, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap())
+                .addComponent(jScrollPane12, javax.swing.GroupLayout.PREFERRED_SIZE, 45, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
         jPanel1.add(panelCoverageSubtype);
@@ -606,12 +606,12 @@ public class PanelConfiguration extends javax.swing.JPanel {
                     .addComponent(jButton7)
                     .addComponent(btnDetailCoverage))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jScrollPane2, javax.swing.GroupLayout.DEFAULT_SIZE, 253, Short.MAX_VALUE)
+                .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 197, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(labelLossCause)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jScrollPane8, javax.swing.GroupLayout.PREFERRED_SIZE, 87, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap())
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
         jPanel2.add(panelCoverage);
@@ -705,15 +705,15 @@ public class PanelConfiguration extends javax.swing.JPanel {
                     .addComponent(jButton6)
                     .addComponent(btnDetailCoverage2))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jScrollPane5, javax.swing.GroupLayout.DEFAULT_SIZE, 151, Short.MAX_VALUE)
+                .addComponent(jScrollPane5, javax.swing.GroupLayout.PREFERRED_SIZE, 134, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(labelCostCategory)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jScrollPane7, javax.swing.GroupLayout.DEFAULT_SIZE, 80, Short.MAX_VALUE)
+                .addComponent(jScrollPane7, javax.swing.GroupLayout.DEFAULT_SIZE, 90, Short.MAX_VALUE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(labelCostType)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jScrollPane9, javax.swing.GroupLayout.DEFAULT_SIZE, 83, Short.MAX_VALUE)
+                .addComponent(jScrollPane9, javax.swing.GroupLayout.PREFERRED_SIZE, 45, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap())
         );
 
@@ -824,10 +824,9 @@ public class PanelConfiguration extends javax.swing.JPanel {
       String aText = "MEJORAS POR REALIZAR\n";
       aText = aText + "1. en las funciones de llamado para lob model permitir seleccionar si requiere retirados o no\n";
       aText = aText + "2. en el programa cargar y tachar los retirados\n";      
-      aText = aText + "3. Termino lleva un campo:\n";
-      aText = aText + "   - Limit/deductible  (columna limite o deducible) sale de CovTermPattern.Type(colocarla como una nueva columna)\n";
-      aText = aText + "4. Causa lleva un campo\n";
-      aText = aText + "   - Tipo de causa(colocarla como una nueva columna)\n";      
+      aText = aText + "3. Cargar modelo de autos:\n";
+      aText = aText + "4. Revisar casos en que genra exceptcion en el log al seleccionar una cobertura\n";
+      
       dialog.setTextContent(aText);
       dialog.setVisible(true);
   }//GEN-LAST:event_btnShowQuery1ActionPerformed
