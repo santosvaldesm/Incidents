@@ -367,7 +367,7 @@ public class IncidentsUtil {
     }
 
     public static String getHomologationsHelpString() {
-        return "--HOMOLOGACIONES EXISTENTES DE GENERAL A GW (INSTANCIA PDNLNF)---------------------- 13510\n"
+        return "--HOMOLOGACIONES EXISTENTES DE GENERAL A GW (INSTANCIA PDNLNF)---------------------- 14020\n"
                 + "--El archivo  creado debe tener el nombre: general_core.csv\n"
                 + "SELECT \n"
                 + "       t.CDTIPO       AS homologation,\n"
@@ -397,7 +397,7 @@ public class IncidentsUtil {
                 + "       f.CDMAPA       = h.CDMAPA           AND\n"
                 + "       t.CDMAPA       = h.CDHOMOLOGADO;\n"
                 + "\n"
-                + "--HOMOLOGACIONES EXISTENTES DE GW A GENERAL (INSTANCIA PDNLNF)---------------------- 8098\n"
+                + "--HOMOLOGACIONES EXISTENTES DE GW A GENERAL (INSTANCIA PDNLNF)---------------------- 10380\n"
                 + "--El archivo  creado debe tener el nombre: core_general.csv\n"
                 + "\n"
                 + "SELECT \n"
@@ -427,7 +427,7 @@ public class IncidentsUtil {
                 + "       f.CDMAPA       = h.CDMAPA           AND\n"
                 + "       t.CDMAPA       = h.CDHOMOLOGADO;\n"
                 + "\n"
-                + "--LISTADO DE TODAS LAS COBERTURAS EXISTENTES EN ECOSISTEMA (INSTANCIA PDN)---------------------- 11200\n"
+                + "--LISTADO DE TODAS LAS COBERTURAS EXISTENTES EN ECOSISTEMA (INSTANCIA PDN)---------------------- 11326\n"
                 + "--El archivo  creado debe tener el nombre: coberturas_ecosistema.csv\n"
                 + "SELECT \n"
                 + "       C.CDRAMO        AS RAMO,\n"
