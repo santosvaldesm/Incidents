@@ -99,7 +99,22 @@ public class DataBaseController {
                     "        HOMOLOGATION VARCHAR(200)," +
                     "        ERROR VARCHAR(300)," +
                     "        PAYLOAD VARCHAR(500)," +
-                    "        TRANSFER VARCHAR(500))");            
+                    "        TRANSFER VARCHAR(500))"); 
+        executeNonQuery("CREATE TABLE TEMPLATE( " +
+                    "        ID INTEGER NOT NULL" +
+                    "        GENERATED ALWAYS AS IDENTITY (START WITH 1, INCREMENT BY 1)" +
+                    "        CONSTRAINT TEMPLATE_PK PRIMARY KEY," +
+                    "        AGRUPADOR    VARCHAR(200)," +
+                    "        CAUSA         VARCHAR(200)," +
+                    "        PROCESO       VARCHAR(200)," +
+                    "        RAIZAL        VARCHAR(100)," +
+                    "        ESTADO_RAIZAL VARCHAR(100)," +
+                    "        RESPONSABLE   VARCHAR(200)," +
+                    "        DIAGNOSTICO   VARCHAR(3000)," +
+                    "        ACCION        VARCHAR(3000)," +
+                    "        DESCRIPCION   VARCHAR(3000)," +
+                    "        OPERATIVIDAD  VARCHAR(100)," +
+                    "        CREDENCIALES  VARCHAR(100))"); 
     
     
     createTablesGW();

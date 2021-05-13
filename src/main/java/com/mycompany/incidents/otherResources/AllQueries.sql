@@ -19,6 +19,25 @@ SELECT COUNT(*) FROM APP.gw_homolog_general_to_core; --13510
 SELECT COUNT(*) FROM APP.gw_homolog_core_to_general;--8908
 
 -----------------------------------------------------
+--             TABLA PLANTILLA                     --
+-----------------------------------------------------
+CREATE TABLE TEMPLATE( 
+    ID INTEGER NOT NULL
+    GENERATED ALWAYS AS IDENTITY (START WITH 1, INCREMENT BY 1)
+    CONSTRAINT TEMPLATE_PK PRIMARY KEY,
+    AGRUPADOR    VARCHAR(200),
+    CAUSA         VARCHAR(200),
+    PROCESO       VARCHAR(200),
+    RAIZAL        VARCHAR(100),
+    ESTADO_RAIZAL VARCHAR(100),
+    RESPONSABLE   VARCHAR(200),
+    DIAGNOSTICO   VARCHAR(3000),
+    ACCION        VARCHAR(3000),
+    DESCRIPCION   VARCHAR(3000),
+    OPERATIVIDAD  VARCHAR(100),
+    CREDENCIALES  VARCHAR(100)) 
+
+-----------------------------------------------------
 --            TABLAS DE GUIDEWIRE                  --
 -----------------------------------------------------
 DROP TABLE gw_lob_Model;

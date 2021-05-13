@@ -35,6 +35,7 @@
     <class>com.mycompany.incidents.entities.Closure</class>
     <class>com.mycompany.incidents.entities.Lista</class>
     <class>com.mycompany.incidents.entities.ClosureClaims</class>
+    <class>com.mycompany.incidents.entities.Template</class>
     <properties>
       <!--CONEXION DB DLLO -->
       <property name="javax.persistence.jdbc.url" value="jdbc:derby:incidentesDB"/>
