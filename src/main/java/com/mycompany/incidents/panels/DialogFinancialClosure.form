@@ -41,18 +41,18 @@
                           <Component id="jLabel3" max="32767" attributes="0"/>
                       </Group>
                       <EmptySpace type="unrelated" min="-2" max="-2" attributes="0"/>
-                      <Group type="103" groupAlignment="1" max="-2" attributes="0">
-                          <Component id="progressBarProceso" alignment="0" pref="463" max="32767" attributes="0"/>
+                      <Group type="103" groupAlignment="1" attributes="0">
                           <Group type="102" alignment="0" attributes="0">
                               <Component id="spinnerLimit" min="-2" pref="67" max="-2" attributes="0"/>
                               <EmptySpace max="-2" attributes="0"/>
                               <Component id="btnSelectFile" min="-2" max="-2" attributes="0"/>
                               <EmptySpace max="-2" attributes="0"/>
-                              <Component id="labelFile" min="-2" pref="261" max="-2" attributes="0"/>
+                              <Component id="labelFile" pref="369" max="32767" attributes="0"/>
                           </Group>
-                          <Component id="progressBar" max="32767" attributes="0"/>
+                          <Component id="progressBar" alignment="0" max="32767" attributes="0"/>
+                          <Component id="progressBarProceso" alignment="0" max="32767" attributes="0"/>
                       </Group>
-                      <EmptySpace max="32767" attributes="0"/>
+                      <EmptySpace max="-2" attributes="0"/>
                       <Component id="btnStart" min="-2" pref="81" max="-2" attributes="0"/>
                   </Group>
               </Group>
@@ -88,7 +88,7 @@
                   <Component id="btnStart" max="32767" attributes="0"/>
               </Group>
               <EmptySpace min="-2" max="-2" attributes="0"/>
-              <Component id="jScrollPane1" pref="372" max="32767" attributes="0"/>
+              <Component id="jScrollPane1" pref="397" max="32767" attributes="0"/>
               <EmptySpace min="-2" max="-2" attributes="0"/>
           </Group>
       </Group>
