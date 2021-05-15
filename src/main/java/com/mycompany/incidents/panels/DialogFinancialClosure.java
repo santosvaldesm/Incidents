@@ -23,12 +23,9 @@ import java.util.Arrays;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.persistence.EntityManagerFactory;
 import javax.persistence.Persistence;
 import org.apache.poi.ss.usermodel.CellStyle;
-import org.apache.poi.ss.usermodel.CellType;
 import org.apache.poi.ss.usermodel.FillPatternType;
 import org.apache.poi.ss.usermodel.Font;
 import org.apache.poi.ss.usermodel.IndexedColors;
@@ -126,13 +123,17 @@ public class DialogFinancialClosure extends javax.swing.JDialog implements Runna
 
             }
         } catch (FileNotFoundException e1) {
-            printInOutputText("\nFileNotFoundException: " + e1.toString() + "\n" + lastRowInfo);
+            printInOutputText("\nERROR: FileNotFoundException: Ultimo registro analizado: " + lastRowInfo);
+            printStackTrace(e1);
         } catch (IOException e2) {
-            printInOutputText("\nIOException: " + e2.toString() + "\n" + lastRowInfo);
+            printStackTrace(e2);
+            printInOutputText("\nERROR: IOException: Ultimo registro analizado: " + lastRowInfo);
         } catch (SQLException ex) {
-            printInOutputText("\nSQLException: " + ex.toString() + "\n" + lastRowInfo);
+            printInOutputText("\nERROR: SQLException: Ultimo registro analizado: " + lastRowInfo);
+            printStackTrace(ex);
         } catch (Exception e3) {
-            printInOutputText("\nException: " + e3.toString() + "\n" + lastRowInfo);
+            printInOutputText("\nERROR: Exception: Ultimo registro analizado: " + lastRowInfo);            
+            printStackTrace(e3);
         }
         progressTotal(100, 100);
         progressProcess(100, 100);
@@ -153,8 +154,8 @@ public class DialogFinancialClosure extends javax.swing.JDialog implements Runna
     HashMap<String, FinalReportDTO> aFinalReportList = new HashMap<>();
     
     private void insertInFinalReportDTO(FinalReportDTO sourceDTO) {
-        String clave = sourceDTO.getRamo()   + "-" + sourceDTO.getMoneda() + "-" + 
-                       sourceDTO.getOrigen() + "-" + sourceDTO.getTipo();
+        String clave = sourceDTO.getOrigen() + "-" + sourceDTO.getTipo() + "-" + 
+                       sourceDTO.getRamo()   + "-" + sourceDTO.getMoneda();
         FinalReportDTO targetDTO = aFinalReportList.get(clave);  
         if(targetDTO==null){//no se encuentra
             aFinalReportList.put(clave,sourceDTO);
@@ -166,7 +167,7 @@ public class DialogFinancialClosure extends javax.swing.JDialog implements Runna
         }
     }
     
-    private double sumarDouble(double valueA,double valueB){
+    private double sumarDouble(Double valueA,Double valueB){
         return IncidentsUtil.determineDoubleValue(valueA) + IncidentsUtil.determineDoubleValue(valueB);
     }
     
@@ -181,7 +182,7 @@ public class DialogFinancialClosure extends javax.swing.JDialog implements Runna
       //todos los valores se almagenan en los campos de GW
       //Van a estar separada la parte de SAP con la deGW
       //Va a estar separada la parte de gastos de la de reservas
-      //hay que registrar los campos "diferencias" por cada registro
+      //hay que calcular los campos "diferencias" por cada registro
       //hay insertar un ultimo registro con los totales
     }
     
@@ -231,6 +232,17 @@ public class DialogFinancialClosure extends javax.swing.JDialog implements Runna
     }
 
     private void printInOutputText(String textToAdd) {
+        outputTxt.setText(outputTxt.getText() + textToAdd);
+        outputTxt.setCaretPosition(outputTxt.getDocument().getLength());
+    }
+    
+    private void printStackTrace(Exception e3) {
+        String textToAdd = "\n" + e3.toString();
+        
+        StackTraceElement[] elements = e3.getStackTrace();
+        for(StackTraceElement element : elements) {
+          textToAdd = textToAdd + "\n" + element.toString() ;
+        }
         outputTxt.setText(outputTxt.getText() + textToAdd);
         outputTxt.setCaretPosition(outputTxt.getDocument().getLength());
     }
