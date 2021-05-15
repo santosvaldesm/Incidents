@@ -10,123 +10,141 @@ package com.mycompany.incidents.otherResources;
  * @author santvamu
  */
 public class FinalReportDTO {
-    
-    String origen;//no sale en el informe(GW-SAP)
-    String tipo;//No sale en el informe(PAGO,RESERVA,GATO,SALVAMENTO)
-    String ramo;
-    String Moneda;
-    Double valorGW;
-    Double gastosGW;
-    Double reaseguroGW;
-    Double valorSAP;
-    Double gastosSAP;
-    Double reaseguroSAP;
-    Double diferenciaValor;
-    Double diferenciaGastos;
-    Double diferenciaReaseguro;
-    
-    public String getOrigen() {
-        return origen;
-    }
 
-    public void setOrigen(String origen) {
-        this.origen = origen;
-    }
+	String origen;   //No sale en informe(GW-SAP)
+	String tipo;     //No sale en informe(PAGO,RESERVA,GATO,SALVAMENTO)
+	Double valorCien;//No sale en informe (solo se usa temporalmente)
+	Double valorReas;//No sale en informe (solo se usa temporalmente)
+	String ramo;
+	String Moneda;
+	Double valorGW;
+	Double gastosGW;
+	Double reaseguroGW;
+	Double valorSAP;
+	Double gastosSAP;
+	Double reaseguroSAP;
+	Double diferenciaValor;
+	Double diferenciaGastos;
+	Double diferenciaReaseguro;
 
-    public String getTipo() {
-        return tipo;
-    }
+	public Double getValorCien() {
+		return valorCien;
+	}
 
-    public void setTipo(String tipo) {
-        this.tipo = tipo;
-    }
+	public void setValorCien(Double valorCien) {
+		this.valorCien = valorCien;
+	}
 
-    public String getRamo() {
-        return ramo;
-    }
+	public Double getValorReas() {
+		return valorReas;
+	}
 
-    public void setRamo(String ramo) {
-        this.ramo = ramo;
-    }
+	public void setValorReas(Double valorReas) {
+		this.valorReas = valorReas;
+	}
 
-    public String getMoneda() {
-        return Moneda;
-    }
+	public String getOrigen() {
+		return origen;
+	}
 
-    public void setMoneda(String Moneda) {
-        this.Moneda = Moneda;
-    }
+	public void setOrigen(String origen) {
+		this.origen = origen;
+	}
 
-    public Double getValorGW() {
-        return valorGW;
-    }
+	public String getTipo() {
+		return tipo;
+	}
 
-    public void setValorGW(Double valorGW) {
-        this.valorGW = valorGW;
-    }
+	public void setTipo(String tipo) {
+		this.tipo = tipo;
+	}
 
-    public Double getGastosGW() {
-        return gastosGW;
-    }
+	public String getRamo() {
+		return ramo;
+	}
 
-    public void setGastosGW(Double gastosGW) {
-        this.gastosGW = gastosGW;
-    }
+	public void setRamo(String ramo) {
+		this.ramo = ramo;
+	}
 
-    public Double getReaseguroGW() {
-        return reaseguroGW;
-    }
+	public String getMoneda() {
+		return Moneda;
+	}
 
-    public void setReaseguroGW(Double reaseguroGW) {
-        this.reaseguroGW = reaseguroGW;
-    }
+	public void setMoneda(String Moneda) {
+		this.Moneda = Moneda;
+	}
 
-    public Double getValorSAP() {
-        return valorSAP;
-    }
+	public Double getValorGW() {
+		return valorGW;
+	}
 
-    public void setValorSAP(Double valorSAP) {
-        this.valorSAP = valorSAP;
-    }
+	public void setValorGW(Double valorGW) {
+		this.valorGW = valorGW;
+	}
 
-    public Double getGastosSAP() {
-        return gastosSAP;
-    }
+	public Double getGastosGW() {
+		return gastosGW;
+	}
 
-    public void setGastosSAP(Double gastosSAP) {
-        this.gastosSAP = gastosSAP;
-    }
+	public void setGastosGW(Double gastosGW) {
+		this.gastosGW = gastosGW;
+	}
 
-    public Double getReaseguroSAP() {
-        return reaseguroSAP;
-    }
+	public Double getReaseguroGW() {
+		return reaseguroGW;
+	}
 
-    public void setReaseguroSAP(Double reaseguroSAP) {
-        this.reaseguroSAP = reaseguroSAP;
-    }
+	public void setReaseguroGW(Double reaseguroGW) {
+		this.reaseguroGW = reaseguroGW;
+	}
 
-    public Double getDiferenciaValor() {
-        return diferenciaValor;
-    }
+	public Double getValorSAP() {
+		return valorSAP;
+	}
 
-    public void setDiferenciaValor(Double diferenciaValor) {
-        this.diferenciaValor = diferenciaValor;
-    }
+	public void setValorSAP(Double valorSAP) {
+		this.valorSAP = valorSAP;
+	}
 
-    public Double getDiferenciaGastos() {
-        return diferenciaGastos;
-    }
+	public Double getGastosSAP() {
+		return gastosSAP;
+	}
 
-    public void setDiferenciaGastos(Double diferenciaGastos) {
-        this.diferenciaGastos = diferenciaGastos;
-    }
+	public void setGastosSAP(Double gastosSAP) {
+		this.gastosSAP = gastosSAP;
+	}
 
-    public Double getDiferenciaReaseguro() {
-        return diferenciaReaseguro;
-    }
+	public Double getReaseguroSAP() {
+		return reaseguroSAP;
+	}
 
-    public void setDiferenciaReaseguro(Double diferenciaReaseguro) {
-        this.diferenciaReaseguro = diferenciaReaseguro;
-    }
-    
+	public void setReaseguroSAP(Double reaseguroSAP) {
+		this.reaseguroSAP = reaseguroSAP;
+	}
+
+	public Double getDiferenciaValor() {
+		return diferenciaValor;
+	}
+
+	public void setDiferenciaValor(Double diferenciaValor) {
+		this.diferenciaValor = diferenciaValor;
+	}
+
+	public Double getDiferenciaGastos() {
+		return diferenciaGastos;
+	}
+
+	public void setDiferenciaGastos(Double diferenciaGastos) {
+		this.diferenciaGastos = diferenciaGastos;
+	}
+
+	public Double getDiferenciaReaseguro() {
+		return diferenciaReaseguro;
+	}
+
+	public void setDiferenciaReaseguro(Double diferenciaReaseguro) {
+		this.diferenciaReaseguro = diferenciaReaseguro;
+	}
+
 }
