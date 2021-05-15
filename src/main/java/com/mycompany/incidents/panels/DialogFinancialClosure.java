@@ -61,8 +61,7 @@ public class DialogFinancialClosure extends javax.swing.JDialog implements Runna
 	String headerArchivoGwGastos = "\"ID\";\"CLAIMNUMBER\";\"POLICYNUMBER\";\"FECHA_SINIESTRO\";\"FECHA_AVISO\";\"TIPO_TRANSACCION\";\"COST_CATEGORY\";\"RAMO_CONTABLE\";\"SUBTYPE\";\"ESTADO\";\"CREATETIME\";\"PUBLICID_TRA\";\"CLAIMAMOUNT\";\"FECHA_CONTABILIZACION\";\"MONEDA\";\"RESERVETYPE\";\"REFERENCEID\";\"PERCENTAJE\";\"SAP_AMOUNT\";\"LIQUIDATIONEXPENSESRESERVE\"";
 	String headerArchivoGwPagos = "\"ID\";\"TIPO_COASEGURO\";\"CLAIMNUMBER\";\"POLICYNUMBER\";\"RAMO_CONTABLE\";\"COST_CATEGORY\";\"COINSURANCE_EXT\";\"FECHA_SINIESTRO\";\"RECALCULADO\";\"TIPO\";\"NUMERO_TRANSACCION\";\"TRANSACCION_ORIGEN\";\"PAGO_SOLO_SURA\";\"MASIVO\";\"CEDIDO\";\"RETENIDO\";\"SURA_RETENIDO\";\"ESTADO\";\"FECHA_TRANSACCION\";\"VALOR_NETO\";\"MONEDA\";\"VALOR_BRUTO\";\"VALOR_CON_ICM\";\"VALOR_ICM\";\"VALOR_SIN_COASEG\";\"VALOR_BRUTO_SIN_COA\";\"DIFERENCIA\";\"REFLECTION\"";
 	String headerArchivoGwSalvamentos = "\"ID\";\"CLAIMNUMBER\";\"POLICYNUMBER\";\"RAMO_CONTABLE\";\"RECALCULADO\";\"COINSURANCE_EXT\";\"COST_CATEGORY\";\"FECHA_SINIESTRO\";\"TIPO\";\"NUMERO_TRANSACCION\";\"TRANSACCION_ORIGEN\";\"ESTADO\";\"FECHA_TRANSACCION\";\"CEDIDO\";\"RETENIDO\";\"RETENCION_PURA\";\"VALOR_NETO\";\"VALOR_BRUTO\";\"MONEDA\";\"VALOR_SIN_COASEG\";\"DIFERENCIA\";\"REFLECTION\"";
-	//"ID";"CLAIMNUMBER";"POLICYNUMBER";"RAMO_CONTABLE";"RECALCULADO";"COINSURANCE_EXT";"COST_CATEGORY";"FECHA_SINIESTRO";"TIPO";"NUMERO_TRANSACCION";"TRANSACCION_ORIGEN";"ESTADO";"FECHA_TRANSACCION";"CEDIDO";"RETENIDO";"RETENCION_PURA";"VALOR_NETO";"VALOR_BRUTO";"MONEDA";"VALOR_SIN_COASEG";"DIFERENCIA";"REFLECTION"
-
+	
 	String[] fileNamesGw = {nomArchivoGwReserva, nomArchivoGwGastos, nomArchivoGwPagos, nomArchivoGwSalvamentos};
 	String[] fileNamesSap = {nomArchivoSapReserva, nomArchivoSapGastos, nomArchivoSapPagos, nomArchivoSapSalvamentos};
 	HashMap<ClosureTypeEnum, String> searchCriteria = null;
@@ -92,7 +91,6 @@ public class DialogFinancialClosure extends javax.swing.JDialog implements Runna
 				btnSelectFile.setEnabled(false);
 				spinnerLimit.setEnabled(false);
 				limitInconsistencies = spinnerLimit.getValue().toString();
-
 				printInOutputText("\nINICIO: " + sdf.format(new Date()));
 				printInOutputText("\nValidando archivos...");
 				IncidentsUtil.validateFile(rutaCarpeta, nomArchivoSapReserva, headerArchivoSapReserva);
@@ -103,25 +101,17 @@ public class DialogFinancialClosure extends javax.swing.JDialog implements Runna
 				IncidentsUtil.validateFile(rutaCarpeta, nomArchivoSapSalvamentos, headerArchivoSapSalvamentos);
 				IncidentsUtil.validateFile(rutaCarpeta, nomArchivoGwSalvamentos, headerArchivoGwSalvamentos);
 				progressTotal(100, 5);
-
 				printInOutputText("\nLimpiando tablas...");
 				regenerateTableClosure();
 				progressTotal(100, 10);
-
 				readAndInsertRowsGw();
-
 				readAndInsertRowsSap();
-
 				searchInconsistencies();
-
 				createFinalReport();
-
 				printInOutputText("\nEliminando temporales...");
 				regenerateTableClosure();
-
 				printInOutputText("\nFIN: " + sdf.format(new Date()));
 				printInOutputText("\nFINALIZO CORRECTAMENTE");
-
 			}
 		} catch (FileNotFoundException e1) {
 			printInOutputText("\nERROR: FileNotFoundException: Ultimo registro analizado: " + lastRowInfo);
@@ -155,38 +145,173 @@ public class DialogFinancialClosure extends javax.swing.JDialog implements Runna
 	HashMap<String, FinalReportDTO> aFinalReportList = new HashMap<>();
 
 	private void insertInReportDTOList(FinalReportDTO sourceDTO) {
-		String clave = sourceDTO.getOrigen() + "-" + sourceDTO.getTipo() + "-"
-						+ sourceDTO.getRamo() + "-" + sourceDTO.getMoneda();
+		
+		//TODO: AQUI HAY QUE FILTRA POR ESTADO DEL MOVIMIENTO(solicitando, rechazado...)
+		//REALIZAR DOS VERIFICACIONES:
+		//1. que el estado este dentro de una la lista de contemplados
+		//	 que genere excepcion si es algo no contemplado, esto para garantizar que 
+		//   tanto omitidos como no omitidos sean validos y no aparezca algo nuevo no determinado
+		//2. verificar si el estado se omite o no		
+		
+		String clave = sourceDTO.getKey();
 		FinalReportDTO targetDTO = aFinalReportList.get(clave);
 		if (targetDTO == null) {//no se encuentra
 			aFinalReportList.put(clave, sourceDTO);
 		} else {//si se encuentra
-			targetDTO.setValorCien(sumarDouble(targetDTO.getValorCien(), sourceDTO.getValorCien()));
-			targetDTO.setValorReas(sumarDouble(targetDTO.getValorReas(), sourceDTO.getValorReas()));
+			targetDTO.setValorCien(IncidentsUtil.sumarDoubles(targetDTO.getValorCien(), sourceDTO.getValorCien()));
+			targetDTO.setValorReas(IncidentsUtil.sumarDoubles(targetDTO.getValorReas(), sourceDTO.getValorReas()));
 			aFinalReportList.put(clave, targetDTO);
 		}
 	}
-
-	private double sumarDouble(Double valueA, Double valueB) {
-		return IncidentsUtil.determineDoubleValue(valueA) + IncidentsUtil.determineDoubleValue(valueB);
+	
+	/**
+	 * hay que calcular los campos "diferencias" por cada registro
+	 */
+	private void calculateDiferences(){
+		
 	}
 
 	private void createFinalReport() throws IOException {
-		consolidatedResults();
+		copyTempValuesToFinalValues();					
+		joinByOrigen();				
+		joinByTipoGasto();		
+		printConsolidated();				
+		calculateDiferences();
+		//Cuando se genere el excel insertar un ultimo registro con los totales en pesos y USD
 		createExcelReport();
 	}
-
-	private void consolidatedResults() {
-
-		//Para consilidar los resultados tener en cuenta que:
-		for (Map.Entry<String, FinalReportDTO> entry : aFinalReportList.entrySet()) {
-			System.out.println("clave=" + entry.getKey() + ", valor=" + entry.getValue());
+	
+	/*
+		A partir de una Key busca el registro con el cual debería unirse	  
+	*/
+	private FinalReportDTO searchTargetDTO(String sourceKey){		
+		String targetKey = "";
+		if(sourceKey.contains("SAP")){
+			targetKey= sourceKey.replace("SAP", "GW");
+		}else{
+			targetKey= sourceKey.replace("GW", "SAP");
+		}			
+		return aFinalReportList.get(targetKey);
+	}
+	
+	/*
+		A partir de una Key de un gasto buscar el DTO tipo reserva para unirse
+	*/
+	private FinalReportDTO searchReserveDTO(String gastoKey){		
+		String reserveKey = gastoKey.replace("GASTO", "RESERVA");
+		FinalReportDTO result = aFinalReportList.get(reserveKey);		
+		if(result!=null){
+			return result;
+		}else{
+			if(reserveKey.contains("SAP")){
+				reserveKey = gastoKey.replace("SAP", "GW");
+			}else{
+				reserveKey = gastoKey.replace("GW", "SAP");
+			}			
+			return aFinalReportList.get(reserveKey);
+		}					
+	}
+	
+	private FinalReportDTO joinElements(FinalReportDTO sourceDTO,FinalReportDTO targetDTO){				
+		if(sourceDTO.getOrigen().equals("SAP")){
+			sourceDTO.setValorGW(targetDTO.getValorGW());
+			sourceDTO.setReaseguroGW(targetDTO.getReaseguroGW());
+		}else{
+			sourceDTO.setValorSAP(targetDTO.getValorSAP());
+			sourceDTO.setReaseguroSAP(targetDTO.getReaseguroSAP());
+		}			
+		return sourceDTO;
+	}
+	
+	private FinalReportDTO joinReserveElements(FinalReportDTO reserveDTO,FinalReportDTO gastoDTO){						
+		if(gastoDTO.getOrigen().equals("SAP")){
+			reserveDTO.setGastosSAP(gastoDTO.getGastosSAP());
+		} else {//es de GW
+			reserveDTO.setGastosGW(gastoDTO.getGastosGW());
 		}
-		//todos los valores se almagenan en los campos de ValorCien y ValorReas hay que pasarlos a los campos de GW y de SAP
-		//Esta en diferente registro parte de SAP y GW hay que unirla
-		//Esta en diferente registro parte parte de gastos de la de reservas hayq ue unirlo
-		//hay que calcular los campos "diferencias" por cada registro
-		//hay insertar un ultimo registro con los totales en pesos y USD
+		return reserveDTO;
+	}
+	
+	/*
+	  Esta en diferente registro parte de SAP y GW hay que unirla	
+	*/
+	private void joinByOrigen() {
+		boolean continueProcces=true;		
+		while(continueProcces){
+			continueProcces = false;
+			for (Map.Entry<String, FinalReportDTO> entry : aFinalReportList.entrySet()) {
+				if(!entry.getValue().getOrigen().equals("GASTO")){
+				  FinalReportDTO sourceDTO = entry.getValue();
+				  FinalReportDTO targetDTO = searchTargetDTO(sourceDTO.getKey());
+					if(targetDTO!=null){
+						aFinalReportList.put(sourceDTO.getKey(),joinElements(sourceDTO,targetDTO));
+						aFinalReportList.remove(targetDTO.getKey());
+						continueProcces = true;
+						break;
+					}
+				}
+			}		
+		}
+	}
+	
+	/**
+	 * Esta en diferente registro parte parte de gastos y reservas hay que unirlo
+	*/
+	private void joinByTipoGasto() {
+		boolean continueProcces=true;		
+		while(continueProcces){
+			continueProcces = false;
+			for (Map.Entry<String, FinalReportDTO> entry : aFinalReportList.entrySet()) {
+				if(entry.getValue().getTipo().equals("GASTO")){
+					FinalReportDTO gastoDTO = entry.getValue();
+				  FinalReportDTO reserveDTO = searchReserveDTO(gastoDTO.getKey());				  
+					if(reserveDTO!=null){
+						aFinalReportList.put(reserveDTO.getKey(),joinReserveElements(reserveDTO,gastoDTO));
+						aFinalReportList.remove(gastoDTO.getKey());
+						continueProcces = true;
+						break;
+					}
+				}
+			}		
+		}
+	}
+	
+	private void printConsolidated(){
+		boolean first = true;
+		for (Map.Entry<String, FinalReportDTO> entry : aFinalReportList.entrySet()) {
+			if(first){
+				System.out.println(entry.getValue().getHeaders());
+				first = false;
+			}
+			System.out.println(entry.getValue().getSummary());
+		}
+	}
+	
+	/*
+	 todos los valores se almacenan en los campos de ValorCien y ValorReas 
+	 hay que pasarlos a los campos de GW y de SAP
+	*/
+	private void copyTempValuesToFinalValues(){					
+		for (Map.Entry<String, FinalReportDTO> entry : aFinalReportList.entrySet()) {
+			FinalReportDTO sourceDTO = entry.getValue();			
+			if(sourceDTO.getOrigen().equals("SAP")){
+				if(sourceDTO.getTipo().equals("GASTO")){//se pasa valor100 a gastosSAP
+					sourceDTO.setGastosSAP(sourceDTO.getValorCien());
+				}
+				else{//se lo almacena en ValorSAP y ReaseguroSAP
+					sourceDTO.setValorSAP(sourceDTO.getValorCien());
+				  sourceDTO.setReaseguroSAP(sourceDTO.getValorReas());
+				}				
+			} else{ //Es de GW
+				if(sourceDTO.getTipo().equals("GASTO")){//se pasa valor100 a gastosGW
+					sourceDTO.setGastosGW(sourceDTO.getValorCien());
+				}
+				else{//se lo almacena en ValorGW y ReaseguroGW
+					sourceDTO.setValorGW(sourceDTO.getValorCien());
+				  sourceDTO.setReaseguroGW(sourceDTO.getValorReas());
+				}		
+			}
+		}
 	}
 
 	private void createExcelReport() throws FileNotFoundException, IOException {

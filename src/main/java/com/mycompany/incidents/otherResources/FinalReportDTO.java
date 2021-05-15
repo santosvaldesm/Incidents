@@ -27,6 +27,25 @@ public class FinalReportDTO {
 	Double diferenciaGastos;
 	Double diferenciaReaseguro;
 
+	public String getKey(){
+		return origen + "-" + tipo + "-" + ramo + "-"  + Moneda;
+	}
+	
+	public String getHeaders(){
+		return "origen\ttipo\tramo\tMoneda\t"+
+					 "valorCien\tvalorReas\t"+
+					 "valorGW\tgastosGW\treaseguroGW\t"+
+					 "valorSAP\tgastosSAP\treaseguroSAP\t"+
+					 "diferenciaValor\tdiferenciaGastos\tdiferenciaReaseguro";
+	}
+	public String getSummary(){
+		return origen    + "\t" + tipo      + "\t" + ramo + "\t"  + Moneda + "\t" + 
+					 valorCien + "\t" + valorReas + "\t" + 
+					 valorGW   + "\t" + gastosGW	+ "\t" + reaseguroGW  + "\t" + 
+					 valorSAP  + "\t" + gastosSAP	+ "\t" + reaseguroSAP	+ "\t" + 
+					 diferenciaValor	+ "\t" + diferenciaGastos	+ "\t" + diferenciaReaseguro;
+	}
+	
 	public Double getValorCien() {
 		return valorCien;
 	}

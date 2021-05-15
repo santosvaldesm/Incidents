@@ -167,8 +167,8 @@ public class DialogCoinsuranceClosure extends javax.swing.JDialog implements Run
       closureController.create(newClosure);            
     }else{//se modifica registro existente
       Closure aClosure = aClosureList.get(0);//se toma el primer encontrado      
-      aClosure.setValorCienGw(sumarDoubles(aClosure.getValorCienGw(),determineDoubleValue(participacion)));        //Sacar Suma de PARTICIPATION 
-      aClosure.setValorReasGw(sumarDoubles(aClosure.getValorReasGw(),determineDoubleValue(pttasacambio)));         //Sacar Promedio de PTTASA_CAMBIO 
+      aClosure.setValorCienGw(IncidentsUtil.sumarDoubles(aClosure.getValorCienGw(),determineDoubleValue(participacion)));        //Sacar Suma de PARTICIPATION 
+      aClosure.setValorReasGw(IncidentsUtil.sumarDoubles(aClosure.getValorReasGw(),determineDoubleValue(pttasacambio)));         //Sacar Promedio de PTTASA_CAMBIO 
       aClosure.setRowTxt(incrementIntStr(aClosure.getRowTxt()));//en RowTxt se almacenara el divisor para sacar promedio a PTTASA_CAMBIO            
       closureController.edit(aClosure);
     }    
@@ -205,8 +205,8 @@ public class DialogCoinsuranceClosure extends javax.swing.JDialog implements Run
       closureController.create(newClosure);            
     }else{//se modifica registro de gw existente
       Closure aClosure = aClosureList.get(0);//se toma el primer encontrado      
-      aClosure.setValorCienSap(sumarDoubles(aClosure.getValorCienSap(),determineDoubleValue(ABS)));      //sacar suma     de ABS
-      aClosure.setValorReasSap(sumarDoubles(aClosure.getValorReasSap(),determineDoubleValue(TRM)));      //Sacar promedio de TRM
+      aClosure.setValorCienSap(IncidentsUtil.sumarDoubles(aClosure.getValorCienSap(),determineDoubleValue(ABS)));      //sacar suma     de ABS
+      aClosure.setValorReasSap(IncidentsUtil.sumarDoubles(aClosure.getValorReasSap(),determineDoubleValue(TRM)));      //Sacar promedio de TRM
       aClosure.setEstado(incrementIntStr(aClosure.getEstado()));//en Estado se almacena divisor para sacar promedio a TRM            
       closureController.edit(aClosure);
     }    
@@ -304,8 +304,8 @@ public class DialogCoinsuranceClosure extends javax.swing.JDialog implements Run
         aClosure.setValorReasSap(dividirDoubles(aClosure.getValorReasSap(),determineDoubleValue(aClosure.getEstado())));
       }      
       
-      aClosure.setDiferCien(restarDoubles(aClosure.getValorCienGw(),aClosure.getValorCienSap()));
-      aClosure.setDiferReas(restarDoubles(aClosure.getValorReasGw(),aClosure.getValorReasSap()));
+      aClosure.setDiferCien(IncidentsUtil.restarDoubles(aClosure.getValorCienGw(),aClosure.getValorCienSap()));
+      aClosure.setDiferReas(IncidentsUtil.restarDoubles(aClosure.getValorReasGw(),aClosure.getValorReasSap()));
       closureController.edit(aClosure); 
     }
   }
@@ -316,33 +316,7 @@ public class DialogCoinsuranceClosure extends javax.swing.JDialog implements Run
     }    
     return first / second;
   }  
-  
-  private Double restarDoubles(Double first,Double second){
-    if(first == null && second == null) {
-      return null;
-    }
-    if(first == null ) {
-      return second * -1;
-    }
-    if(second == null ) {
-      return first;
-    }    
-    return first - second;
-  }  
-  
-  private Double sumarDoubles(Double first,Double second){
-    if(first == null && second == null) {
-      return null;
-    }
-    if(first == null ) {
-      return second;
-    }
-    if(second == null ) {
-      return first;
-    }    
-    return first + second;
-  }
-  
+    
   private double calculateSUM(String[] strValues) {
     double result=0;
     for(String value : strValues){
