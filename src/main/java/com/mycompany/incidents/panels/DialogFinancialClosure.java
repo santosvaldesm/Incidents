@@ -15,6 +15,8 @@ import java.io.FileOutputStream;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
 import java.sql.SQLException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -66,6 +68,8 @@ public class DialogFinancialClosure extends javax.swing.JDialog implements Runna
 	String[] fileNamesGw = {nomArchivoGwReserva, nomArchivoGwGastos, nomArchivoGwPagos, nomArchivoGwSalvamentos};
 	String[] fileNamesSap = {nomArchivoSapReserva, nomArchivoSapGastos, nomArchivoSapPagos, nomArchivoSapSalvamentos};
 	HashMap<ClosureTypeEnum, String> searchCriteria = null;
+	HashMap<String, FinalReportDTO> aFinalReportList = new HashMap<>();
+	HashMap<String, Boolean> ommitedStatus = new HashMap<>();
 	String limitInconsistencies = "-";
 	SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss");
 	SimpleDateFormat sdfHora = new SimpleDateFormat("HH:mm:ss");
@@ -84,6 +88,23 @@ public class DialogFinancialClosure extends javax.swing.JDialog implements Runna
 		initComponents();
 		btnStart.setEnabled(false);
 		spinnerLimit.setValue(1);
+		loadOmmitedStatus();
+	}
+	
+	/*
+		De no encontrar un estado en esta lista se generara 
+		una excepcion para adicionarlo evaluarlo y adicionarlo al HashMap
+	*/
+	private void loadOmmitedStatus(){
+		//Se contabilizan:
+		ommitedStatus.put("Anulado",false);
+		ommitedStatus.put("Solicitado",false);
+		ommitedStatus.put("Legalizado",false);
+		ommitedStatus.put("RECIBIDO SAP",false);
+		//No se contabilizan
+		ommitedStatus.put("Aprobación pendiente",true);
+		ommitedStatus.put("En espera de envío",true);
+		ommitedStatus.put("Solicitando",true);
 	}
 
 	@Override
@@ -135,17 +156,18 @@ public class DialogFinancialClosure extends javax.swing.JDialog implements Runna
 		progressProcess(100, 100);
 		runProcess = false;
 	}
+
 	
-	HashMap<String, FinalReportDTO> aFinalReportList = new HashMap<>();
-
-	private void insertInReportDTOList(FinalReportDTO sourceDTO) {
-
-		//TODO: AQUI HAY QUE FILTRA POR ESTADO DEL MOVIMIENTO(solicitando, rechazado...)
-		//REALIZAR DOS VERIFICACIONES:
-		//1. que el estado este dentro de una la lista de contemplados
-		//	 que genere excepcion si es algo no contemplado, esto para garantizar que 
-		//   tanto omitidos como no omitidos sean validos y no aparezca algo nuevo no determinado
-		//2. verificar si el estado se omite o no		
+	private void insertInReportDTOList(FinalReportDTO sourceDTO) throws Exception {			
+		if(sourceDTO.getOrigen().equals("GW")){//Solo se omiten registros de GW
+			Boolean isOmmited = ommitedStatus.get(sourceDTO.getStatus());
+			if(isOmmited==null){
+				throw new Exception("El estado '"+sourceDTO.getStatus()+"' no ha sido contemplado");
+			}
+			if(isOmmited){
+				return; //no se continua, estado del registro debe ser omitido
+			}
+		}
 		String clave = sourceDTO.getKey();
 		FinalReportDTO targetDTO = aFinalReportList.get(clave);
 		if (targetDTO == null) {//no se encuentra
@@ -161,7 +183,7 @@ public class DialogFinancialClosure extends javax.swing.JDialog implements Runna
 		copyTempValuesToFinalValues(); //printConsolidated();		
 		joinByOrigen();		             //printConsolidated();
 		joinByTipoGasto();		         //printConsolidated();		
-		calculateDiferences();				 //printConsolidated();		
+		calculateDiferences();				//printConsolidated();		
 		createExcelReport();
 	}
 	
@@ -535,8 +557,11 @@ public class DialogFinancialClosure extends javax.swing.JDialog implements Runna
 			progressProcess(100, 0);
 			String fileUrl = rutaCarpeta + "\\" + fileNameGw;
 			File archivo = new File(fileUrl);
-			FileReader fr = new FileReader(archivo);
-			BufferedReader br = new BufferedReader(fr);
+			//FileReader fr = new FileReader(archivo);
+			//BufferedReader br = new BufferedReader(fr);
+			
+			BufferedReader br = Files.newBufferedReader(archivo.toPath(), StandardCharsets.UTF_8);
+			
 			currentItemNumber = 0;
 			String rowInfo = br.readLine();//la primer linea es cabecera                  
 			int rowNum = (int) (archivo.length() / 220);//220 bytes es el promedio del tamaño de una linea
@@ -545,7 +570,7 @@ public class DialogFinancialClosure extends javax.swing.JDialog implements Runna
 				insertGwInfoInDB(rowInfo, columnIdentifiers);
 				progressProcess(rowNum, ++currentItemNumber);
 			}
-			fr.close();
+			//fr.close();
 			br.close();
 			currentBarProgress = currentBarProgress + 10;
 			progressTotal(100, currentBarProgress);
@@ -606,6 +631,7 @@ public class DialogFinancialClosure extends javax.swing.JDialog implements Runna
 		aDTO.setValorCien(IncidentsUtil.determineDoubleValue(columnIdentifiers.get(6), rowInfoSplit));
 		aDTO.setValorReas(IncidentsUtil.determineDoubleValue(columnIdentifiers.get(7), rowInfoSplit));
 		aDTO.setMoneda(IncidentsUtil.determineStringValue(columnIdentifiers.get(8), rowInfoSplit).toUpperCase());
+		aDTO.setStatus(IncidentsUtil.determineStringValue(columnIdentifiers.get(9), rowInfoSplit));
 
 		insertInReportDTOList(aDTO);
 
@@ -644,7 +670,7 @@ public class DialogFinancialClosure extends javax.swing.JDialog implements Runna
 		aDTO.setValorCien(IncidentsUtil.determineDoubleValue(columnIdentifiers.get(6), rowInfoSplit));//sacado del excel
 		aDTO.setValorReas(IncidentsUtil.determineDoubleValue(columnIdentifiers.get(7), rowInfoSplit));//sacado del excel        
 		aDTO.setMoneda(IncidentsUtil.determineStringValue(columnIdentifiers.get(8), rowInfoSplit).toUpperCase());
-
+		
 		insertInReportDTOList(aDTO);
 
 		currentClosure = closureController.findClosureByReferenciaOrigenTipo("GW", aDTO.getTipo(), referencia);
@@ -723,7 +749,7 @@ public class DialogFinancialClosure extends javax.swing.JDialog implements Runna
 				return new ArrayList<>(Arrays.asList("SAP", "GASTO", null, 3, 2, 4, 7, null, 0, null));
 			case "GW_GASTOS.csv":
 				//ORIGEN TIPO Claim# Poli# Ramo Ref liqResExp VlrRea Moneda Estado
-				return new ArrayList<>(Arrays.asList("GW", "GASTO", 1, 2, 7, 11, 19, null, 14, null));
+				return new ArrayList<>(Arrays.asList("GW", "GASTO", 1, 2, 7, 11, 19, null, 14, 9));
 			case "SAP_PAGOS.csv":
 				//ORIGEN TIPO Claim# Poli# Ramo Ref PagImpMD  ReaImpMD Moneda Estado
 				return new ArrayList<>(Arrays.asList("SAP", "PAGO", null, 3, 2, 4, 6, 8, 0, null));
@@ -822,10 +848,10 @@ public class DialogFinancialClosure extends javax.swing.JDialog implements Runna
 						&& aResult.getValorCienGw() == 0 && aResult.getValorReasGw() == 0) {
 			return true;
 		}
-		if (aResult.getEstado().contains("Aprobaci")) {
+		if (aResult.getEstado().contains("Aprobaci")) {//Apobacion pendiente no se analiza 
 			return true;
 		}
-		return aResult.getEstado().contains("En espera");
+		return aResult.getEstado().contains("En espera");//En espera de envío no se analiza 
 	}
 
 	private void insertInconsistencyInFile(String origen, String tipo, ClosureTypeEnum criterio, BufferedWriter bw)

@@ -15,6 +15,7 @@ public class FinalReportDTO {
 	String tipo;     //No sale en informe(PAGO,RESERVA,GATO,SALVAMENTO)
 	Double valorCien;//No sale en informe (solo se usa temporalmente)
 	Double valorReas;//No sale en informe (solo se usa temporalmente)
+	String status; //se utilizara para determinar si se omite o no un registro
 	String ramo;
 	String Moneda;
 	Double valorGW;
@@ -26,6 +27,7 @@ public class FinalReportDTO {
 	Double diferenciaValor;
 	Double diferenciaGastos;
 	Double diferenciaReaseguro;
+	
 
 	public String getKey(){
 		return origen + "-" + tipo + "-" + ramo + "-"  + Moneda;
@@ -165,5 +167,14 @@ public class FinalReportDTO {
 	public void setDiferenciaReaseguro(Double diferenciaReaseguro) {
 		this.diferenciaReaseguro = diferenciaReaseguro;
 	}
+
+	public String getStatus() {
+		return status;
+	}
+
+	public void setStatus(String status) {
+		this.status = status;
+	}
+	
 
 }
