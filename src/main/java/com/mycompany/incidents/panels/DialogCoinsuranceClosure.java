@@ -213,7 +213,7 @@ public class DialogCoinsuranceClosure extends javax.swing.JDialog implements Run
   }  
   
   private void searchInconsistencies() throws IOException, SQLException, ClassNotFoundException{    
-    String rutaResult = IncidentsUtil.determineUrl(rutaCarpeta,"CruceCoaseguro");
+    String rutaResult = IncidentsUtil.determineUrl(rutaCarpeta,"CruceCoaseguro",".csv");
     File file = new File(rutaResult);                
     if (!file.exists()) {// Si el archivo no existe es creado
         file.createNewFile();

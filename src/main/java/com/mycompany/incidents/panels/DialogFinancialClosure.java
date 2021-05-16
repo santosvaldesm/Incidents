@@ -26,11 +26,16 @@ import java.util.List;
 import java.util.Map;
 import javax.persistence.EntityManagerFactory;
 import javax.persistence.Persistence;
-import org.apache.poi.ss.usermodel.CellStyle;
+import org.apache.poi.ss.usermodel.BorderStyle;
+import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.FillPatternType;
 import org.apache.poi.ss.usermodel.Font;
-import org.apache.poi.ss.usermodel.IndexedColors;
+import org.apache.poi.ss.usermodel.Row;
+import org.apache.poi.ss.util.CellRangeAddress;
+import org.apache.poi.xssf.usermodel.IndexedColorMap;
 import org.apache.poi.xssf.usermodel.XSSFCell;
+import org.apache.poi.xssf.usermodel.XSSFCellStyle;
+import org.apache.poi.xssf.usermodel.XSSFColor;
 import org.apache.poi.xssf.usermodel.XSSFRow;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
@@ -61,7 +66,7 @@ public class DialogFinancialClosure extends javax.swing.JDialog implements Runna
 	String headerArchivoGwGastos = "\"ID\";\"CLAIMNUMBER\";\"POLICYNUMBER\";\"FECHA_SINIESTRO\";\"FECHA_AVISO\";\"TIPO_TRANSACCION\";\"COST_CATEGORY\";\"RAMO_CONTABLE\";\"SUBTYPE\";\"ESTADO\";\"CREATETIME\";\"PUBLICID_TRA\";\"CLAIMAMOUNT\";\"FECHA_CONTABILIZACION\";\"MONEDA\";\"RESERVETYPE\";\"REFERENCEID\";\"PERCENTAJE\";\"SAP_AMOUNT\";\"LIQUIDATIONEXPENSESRESERVE\"";
 	String headerArchivoGwPagos = "\"ID\";\"TIPO_COASEGURO\";\"CLAIMNUMBER\";\"POLICYNUMBER\";\"RAMO_CONTABLE\";\"COST_CATEGORY\";\"COINSURANCE_EXT\";\"FECHA_SINIESTRO\";\"RECALCULADO\";\"TIPO\";\"NUMERO_TRANSACCION\";\"TRANSACCION_ORIGEN\";\"PAGO_SOLO_SURA\";\"MASIVO\";\"CEDIDO\";\"RETENIDO\";\"SURA_RETENIDO\";\"ESTADO\";\"FECHA_TRANSACCION\";\"VALOR_NETO\";\"MONEDA\";\"VALOR_BRUTO\";\"VALOR_CON_ICM\";\"VALOR_ICM\";\"VALOR_SIN_COASEG\";\"VALOR_BRUTO_SIN_COA\";\"DIFERENCIA\";\"REFLECTION\"";
 	String headerArchivoGwSalvamentos = "\"ID\";\"CLAIMNUMBER\";\"POLICYNUMBER\";\"RAMO_CONTABLE\";\"RECALCULADO\";\"COINSURANCE_EXT\";\"COST_CATEGORY\";\"FECHA_SINIESTRO\";\"TIPO\";\"NUMERO_TRANSACCION\";\"TRANSACCION_ORIGEN\";\"ESTADO\";\"FECHA_TRANSACCION\";\"CEDIDO\";\"RETENIDO\";\"RETENCION_PURA\";\"VALOR_NETO\";\"VALOR_BRUTO\";\"MONEDA\";\"VALOR_SIN_COASEG\";\"DIFERENCIA\";\"REFLECTION\"";
-	
+
 	String[] fileNamesGw = {nomArchivoGwReserva, nomArchivoGwGastos, nomArchivoGwPagos, nomArchivoGwSalvamentos};
 	String[] fileNamesSap = {nomArchivoSapReserva, nomArchivoSapGastos, nomArchivoSapPagos, nomArchivoSapSalvamentos};
 	HashMap<ClosureTypeEnum, String> searchCriteria = null;
@@ -130,29 +135,17 @@ public class DialogFinancialClosure extends javax.swing.JDialog implements Runna
 		progressProcess(100, 100);
 		runProcess = false;
 	}
-
-	//TODO: Borrar todo esta lista
-	private static List<Object> DATA;
-
-	static {
-		DATA = Arrays.asList(new Object[]{
-			new Object[]{"PlayStation 4 (PS4) - Consola 500GB", new BigDecimal("340.95"), "https://www.amazon.es/PlayStation-4-PS4-Consola-500GB/dp/B013U9CW8A"},
-			new Object[]{"Raspberry Pi 3 Modelo B (1,2 GHz Quad-core ARM Cortex-A53, 1GB RAM, USB 2.0)", new BigDecimal("41.95"), "https://www.amazon.es/Raspberry-Modelo-GHz-Quad-core-Cortex-A53/dp/B01CD5VC92/"},
-			new Object[]{"Gigabyte Brix - Barebón (Intel, Core i5, 2,6 GHz, 6, 35 cm (2.5\"), Serial ATA III, SO-DIMM) Negro ", new BigDecimal("421.36"), "https://www.amazon.es/Gigabyte-Brix-Bareb%C3%B3n-Serial-SO-DIMM/dp/B00HFCTUPM/"}
-		});
-	}
-
+	
 	HashMap<String, FinalReportDTO> aFinalReportList = new HashMap<>();
 
 	private void insertInReportDTOList(FinalReportDTO sourceDTO) {
-		
+
 		//TODO: AQUI HAY QUE FILTRA POR ESTADO DEL MOVIMIENTO(solicitando, rechazado...)
 		//REALIZAR DOS VERIFICACIONES:
 		//1. que el estado este dentro de una la lista de contemplados
 		//	 que genere excepcion si es algo no contemplado, esto para garantizar que 
 		//   tanto omitidos como no omitidos sean validos y no aparezca algo nuevo no determinado
 		//2. verificar si el estado se omite o no		
-		
 		String clave = sourceDTO.getKey();
 		FinalReportDTO targetDTO = aFinalReportList.get(clave);
 		if (targetDTO == null) {//no se encuentra
@@ -163,200 +156,339 @@ public class DialogFinancialClosure extends javax.swing.JDialog implements Runna
 			aFinalReportList.put(clave, targetDTO);
 		}
 	}
-	
+
+	private void createFinalReport() throws IOException {
+		copyTempValuesToFinalValues();
+		printConsolidated();
+		joinByOrigen();
+		printConsolidated();
+		joinByTipoGasto();
+		printConsolidated();
+		printConsolidated();
+		calculateDiferences();
+		printConsolidated();		
+		createExcelReport();
+	}
+
 	/**
 	 * hay que calcular los campos "diferencias" por cada registro
 	 */
-	private void calculateDiferences(){
-		
+	private void calculateDiferences() {
+		for (Map.Entry<String, FinalReportDTO> entry : aFinalReportList.entrySet()) {
+			FinalReportDTO aDTO = entry.getValue();
+
+			//Restar la parte de GW de la de SAP
+			aDTO.setDiferenciaGastos(IncidentsUtil.restarDoubles(aDTO.getGastosGW(), aDTO.getGastosSAP()));
+			aDTO.setDiferenciaValor(IncidentsUtil.restarDoubles(aDTO.getValorGW(), aDTO.getValorSAP()));
+			aDTO.setDiferenciaReaseguro(IncidentsUtil.restarDoubles(aDTO.getReaseguroGW(), aDTO.getReaseguroSAP()));
+
+			//Cambiar resultados en null por 0
+			aDTO.setDiferenciaGastos(aDTO.getDiferenciaGastos() == null ? 0 : aDTO.getDiferenciaGastos());
+			aDTO.setValorGW(aDTO.getValorGW() == null ? 0 : aDTO.getValorGW());
+			aDTO.setGastosGW(aDTO.getGastosGW() == null ? 0 : aDTO.getGastosGW());
+			aDTO.setReaseguroGW(aDTO.getReaseguroGW() == null ? 0 : aDTO.getReaseguroGW());
+			aDTO.setValorSAP(aDTO.getValorSAP() == null ? 0 : aDTO.getValorSAP());
+			aDTO.setGastosSAP(aDTO.getGastosSAP() == null ? 0 : aDTO.getGastosSAP());
+			aDTO.setReaseguroSAP(aDTO.getReaseguroSAP() == null ? 0 : aDTO.getReaseguroSAP());
+			aDTO.setDiferenciaValor(aDTO.getDiferenciaValor() == null ? 0 : aDTO.getDiferenciaValor());
+			aDTO.setDiferenciaGastos(aDTO.getDiferenciaGastos() == null ? 0 : aDTO.getDiferenciaGastos());
+			aDTO.setDiferenciaReaseguro(aDTO.getDiferenciaReaseguro() == null ? 0 : aDTO.getDiferenciaReaseguro());
+
+			entry.setValue(aDTO);
+		}
 	}
 
-	private void createFinalReport() throws IOException {
-		copyTempValuesToFinalValues();					
-		joinByOrigen();				
-		joinByTipoGasto();		
-		printConsolidated();				
-		calculateDiferences();
-		//Cuando se genere el excel insertar un ultimo registro con los totales en pesos y USD
-		createExcelReport();
-	}
-	
 	/*
 		A partir de una Key busca el registro con el cual debería unirse	  
-	*/
-	private FinalReportDTO searchTargetDTO(String sourceKey){		
+	 */
+	private FinalReportDTO searchTargetDTO(String sourceKey) {
 		String targetKey = "";
-		if(sourceKey.contains("SAP")){
-			targetKey= sourceKey.replace("SAP", "GW");
-		}else{
-			targetKey= sourceKey.replace("GW", "SAP");
-		}			
+		if (sourceKey.contains("SAP")) {
+			targetKey = sourceKey.replace("SAP", "GW");
+		} else {
+			targetKey = sourceKey.replace("GW", "SAP");
+		}
 		return aFinalReportList.get(targetKey);
 	}
-	
+
 	/*
 		A partir de una Key de un gasto buscar el DTO tipo reserva para unirse
-	*/
-	private FinalReportDTO searchReserveDTO(String gastoKey){		
+	 */
+	private FinalReportDTO searchReserveDTO(String gastoKey) {
 		String reserveKey = gastoKey.replace("GASTO", "RESERVA");
-		FinalReportDTO result = aFinalReportList.get(reserveKey);		
-		if(result!=null){
+		FinalReportDTO result = aFinalReportList.get(reserveKey);
+		if (result != null) {
 			return result;
-		}else{
-			if(reserveKey.contains("SAP")){
+		} else {
+			if (reserveKey.contains("SAP")) {
 				reserveKey = gastoKey.replace("SAP", "GW");
-			}else{
+			} else {
 				reserveKey = gastoKey.replace("GW", "SAP");
-			}			
+			}
 			return aFinalReportList.get(reserveKey);
-		}					
+		}
 	}
-	
-	private FinalReportDTO joinElements(FinalReportDTO sourceDTO,FinalReportDTO targetDTO){				
-		if(sourceDTO.getOrigen().equals("SAP")){
+
+	private FinalReportDTO joinElements(FinalReportDTO sourceDTO, FinalReportDTO targetDTO) {
+		if (sourceDTO.getOrigen().equals("SAP")) {
 			sourceDTO.setValorGW(targetDTO.getValorGW());
 			sourceDTO.setReaseguroGW(targetDTO.getReaseguroGW());
-		}else{
+		} else {
 			sourceDTO.setValorSAP(targetDTO.getValorSAP());
 			sourceDTO.setReaseguroSAP(targetDTO.getReaseguroSAP());
-		}			
+		}
 		return sourceDTO;
 	}
-	
-	private FinalReportDTO joinReserveElements(FinalReportDTO reserveDTO,FinalReportDTO gastoDTO){						
-		if(gastoDTO.getOrigen().equals("SAP")){
+
+	private FinalReportDTO joinReserveElements(FinalReportDTO reserveDTO, FinalReportDTO gastoDTO) {
+		if (gastoDTO.getOrigen().equals("SAP")) {
 			reserveDTO.setGastosSAP(gastoDTO.getGastosSAP());
 		} else {//es de GW
 			reserveDTO.setGastosGW(gastoDTO.getGastosGW());
 		}
 		return reserveDTO;
 	}
-	
+
 	/*
 	  Esta en diferente registro parte de SAP y GW hay que unirla	
-	*/
+	 */
 	private void joinByOrigen() {
-		boolean continueProcces=true;		
-		while(continueProcces){
+		boolean continueProcces = true;
+		while (continueProcces) {
 			continueProcces = false;
 			for (Map.Entry<String, FinalReportDTO> entry : aFinalReportList.entrySet()) {
-				if(!entry.getValue().getOrigen().equals("GASTO")){
-				  FinalReportDTO sourceDTO = entry.getValue();
-				  FinalReportDTO targetDTO = searchTargetDTO(sourceDTO.getKey());
-					if(targetDTO!=null){
-						aFinalReportList.put(sourceDTO.getKey(),joinElements(sourceDTO,targetDTO));
+				if (!entry.getValue().getOrigen().equals("GASTO")) {
+					FinalReportDTO sourceDTO = entry.getValue();
+					FinalReportDTO targetDTO = searchTargetDTO(sourceDTO.getKey());
+					if (targetDTO != null) {
+						aFinalReportList.put(sourceDTO.getKey(), joinElements(sourceDTO, targetDTO));
 						aFinalReportList.remove(targetDTO.getKey());
 						continueProcces = true;
 						break;
 					}
 				}
-			}		
+			}
 		}
 	}
-	
+
 	/**
 	 * Esta en diferente registro parte parte de gastos y reservas hay que unirlo
-	*/
+	 */
 	private void joinByTipoGasto() {
-		boolean continueProcces=true;		
-		while(continueProcces){
+		boolean continueProcces = true;
+		while (continueProcces) {
 			continueProcces = false;
 			for (Map.Entry<String, FinalReportDTO> entry : aFinalReportList.entrySet()) {
-				if(entry.getValue().getTipo().equals("GASTO")){
+				if (entry.getValue().getTipo().equals("GASTO")) {
 					FinalReportDTO gastoDTO = entry.getValue();
-				  FinalReportDTO reserveDTO = searchReserveDTO(gastoDTO.getKey());				  
-					if(reserveDTO!=null){
-						aFinalReportList.put(reserveDTO.getKey(),joinReserveElements(reserveDTO,gastoDTO));
+					FinalReportDTO reserveDTO = searchReserveDTO(gastoDTO.getKey());
+					if (reserveDTO != null) {
+						aFinalReportList.put(reserveDTO.getKey(), joinReserveElements(reserveDTO, gastoDTO));
 						aFinalReportList.remove(gastoDTO.getKey());
 						continueProcces = true;
 						break;
 					}
 				}
-			}		
+			}
 		}
 	}
-	
-	private void printConsolidated(){
+
+	private void printConsolidated() {
 		boolean first = true;
 		for (Map.Entry<String, FinalReportDTO> entry : aFinalReportList.entrySet()) {
-			if(first){
+			if (first) {
+				System.out.println("--------------------------------------------------");
 				System.out.println(entry.getValue().getHeaders());
 				first = false;
 			}
 			System.out.println(entry.getValue().getSummary());
 		}
 	}
-	
+
 	/*
 	 todos los valores se almacenan en los campos de ValorCien y ValorReas 
 	 hay que pasarlos a los campos de GW y de SAP
-	*/
-	private void copyTempValuesToFinalValues(){					
+	 */
+	private void copyTempValuesToFinalValues() {
 		for (Map.Entry<String, FinalReportDTO> entry : aFinalReportList.entrySet()) {
-			FinalReportDTO sourceDTO = entry.getValue();			
-			if(sourceDTO.getOrigen().equals("SAP")){
-				if(sourceDTO.getTipo().equals("GASTO")){//se pasa valor100 a gastosSAP
+			FinalReportDTO sourceDTO = entry.getValue();
+			if (sourceDTO.getOrigen().equals("SAP")) {
+				if (sourceDTO.getTipo().equals("GASTO")) {//se pasa valor100 a gastosSAP
 					sourceDTO.setGastosSAP(sourceDTO.getValorCien());
-				}
-				else{//se lo almacena en ValorSAP y ReaseguroSAP
+				} else {//se lo almacena en ValorSAP y ReaseguroSAP
 					sourceDTO.setValorSAP(sourceDTO.getValorCien());
-				  sourceDTO.setReaseguroSAP(sourceDTO.getValorReas());
-				}				
-			} else{ //Es de GW
-				if(sourceDTO.getTipo().equals("GASTO")){//se pasa valor100 a gastosGW
-					sourceDTO.setGastosGW(sourceDTO.getValorCien());
+					sourceDTO.setReaseguroSAP(sourceDTO.getValorReas());
 				}
-				else{//se lo almacena en ValorGW y ReaseguroGW
+			} else { //Es de GW
+				if (sourceDTO.getTipo().equals("GASTO")) {//se pasa valor100 a gastosGW
+					sourceDTO.setGastosGW(sourceDTO.getValorCien());
+				} else {//se lo almacena en ValorGW y ReaseguroGW
 					sourceDTO.setValorGW(sourceDTO.getValorCien());
-				  sourceDTO.setReaseguroGW(sourceDTO.getValorReas());
-				}		
+					sourceDTO.setReaseguroGW(sourceDTO.getValorReas());
+				}
 			}
 		}
 	}
 
+	/*
+	 Cuando se genere el excel insertar un ultimo registro con los totales en pesos y USD
+	*/
 	private void createExcelReport() throws FileNotFoundException, IOException {
-		String rutaResult = IncidentsUtil.determineUrl(rutaCarpeta, "Consolidado");
-		rutaResult = rutaResult.replaceAll(".csv", ".xlsx");
-		XSSFWorkbook anExcelWorbook = new XSSFWorkbook();
-		XSSFSheet sheet = anExcelWorbook.createSheet();
-		anExcelWorbook.setSheetName(0, "Hoja excel");
-		String[] headers = new String[]{
-			"Producto",
-			"Precio",
-			"Enlace"
-		};
-		CellStyle headerStyle = anExcelWorbook.createCellStyle();
-		Font font = anExcelWorbook.createFont();
-		font.setBold(true);
-		headerStyle.setFont(font);
-		CellStyle style = anExcelWorbook.createCellStyle();
-		style.setFillForegroundColor(IndexedColors.LIGHT_YELLOW.getIndex());
-		style.setFillPattern(FillPatternType.SOLID_FOREGROUND);
-		XSSFRow headerRow = sheet.createRow(0);
-		for (int i = 0; i < headers.length; ++i) {
-			String header = headers[i];
-			XSSFCell cell = headerRow.createCell(i);
-			cell.setCellStyle(headerStyle);
-			cell.setCellValue(header);
-		}
-		for (int i = 0; i < DATA.size(); ++i) {
-			XSSFRow dataRow = sheet.createRow(i + 1);
-
-			Object[] d = (Object[]) DATA.get(i);
-			String product = (String) d[0];
-			BigDecimal price = (BigDecimal) d[1];
-			String link = (String) d[2];
-
-			dataRow.createCell(0).setCellValue(product);
-			dataRow.createCell(1).setCellValue(price.doubleValue());
-			dataRow.createCell(2).setCellValue(link);
-		}
-
+		String rutaResult = IncidentsUtil.determineUrl(rutaCarpeta, "Consolidado", ".xlsx");		
+		XSSFWorkbook anExcelWorbook = new XSSFWorkbook();		
+		XSSFSheet sheetPago = anExcelWorbook.createSheet("PAGOS");
+		XSSFSheet sheetReserva = anExcelWorbook.createSheet("RESERVA");
+		XSSFSheet sheetSalvamento = anExcelWorbook.createSheet("SALVAMENTO");		
+		String[] headerPagSalv       = new String[]{"Ramo","Moneda","Valor GW","Reaseguro GW","Valor SAP","Reaseguro SAP","Dif. Valor GW-SAP","Dif. Reaseguro GW-SAP"};
+		String[] headerReserva    = new String[]{"Ramo","Moneda","Valor GW","Gastos GW","Reaseguro GW","Valor SAP","Gastos SAP","Reaseguro SAP","Dif. Valor GW-SAP","Dif. Gastos GW-SAP","Dif. Reaseguro GW-SAP"};
+		XSSFCellStyle headerStyle = createHeaderStyle(anExcelWorbook);
+		XSSFCellStyle aCellStyle = createCellStyle(anExcelWorbook);		
+		insertDataInExcel(sheetPago,headerPagSalv,"PAGO",headerStyle,aCellStyle);
+		insertDataInExcel(sheetReserva,headerReserva,"RESERVA",headerStyle,aCellStyle);
+		insertDataInExcel(sheetSalvamento,headerPagSalv,"SALVAMENTO",headerStyle,aCellStyle);
 		FileOutputStream file = new FileOutputStream(rutaResult);
 		anExcelWorbook.write(file);
 		file.close();
-
 	}
+	
+	private XSSFCellStyle createHeaderStyle(XSSFWorkbook anExcelWorbook) {
+		XSSFCellStyle headerStyle = (XSSFCellStyle)anExcelWorbook.createCellStyle();
+		Font font = anExcelWorbook.createFont();
+		font.setBold(true);
+		headerStyle.setFont(font);		
+		headerStyle.setBorderBottom(BorderStyle.THIN);
+		headerStyle.setBorderTop(BorderStyle.THIN);
+		headerStyle.setBorderRight(BorderStyle.THIN);
+		headerStyle.setBorderLeft(BorderStyle.THIN);
+		byte[] rgb = new byte[]{(byte)221, (byte)235, (byte)247};
+		headerStyle.setFillForegroundColor(new XSSFColor(rgb, null));
+		headerStyle.setFillPattern(FillPatternType.SOLID_FOREGROUND);
+		return headerStyle;
+	}
+	
+	private XSSFCellStyle createCellStyle(XSSFWorkbook anExcelWorbook) {
+		XSSFCellStyle aCellStyle = anExcelWorbook.createCellStyle();		
+		aCellStyle.setBorderBottom(BorderStyle.THIN);
+		aCellStyle.setBorderTop(BorderStyle.THIN);
+		aCellStyle.setBorderRight(BorderStyle.THIN);
+		aCellStyle.setBorderLeft(BorderStyle.THIN);
+		return aCellStyle;
+	}
+	
+	private void insertDataInExcel(XSSFSheet aSheet, String[] headers, String tipo,					
+	  XSSFCellStyle headerStyle,XSSFCellStyle cellStyle) {		
+		int rowPosition = 0;				
+		
+		String[] headerTmp = new String[]{tipo+" COP"};
+		insertHeader(aSheet,headerTmp,rowPosition++,headerStyle,headers.length);
+		insertHeader(aSheet,headers,rowPosition++,headerStyle,1);
+		rowPosition = insertDataByCurrency(aSheet,rowPosition,tipo,"COP",cellStyle,headerStyle);				
+		rowPosition = rowPosition + 3;
+		
+		headerTmp = new String[]{tipo+" USD"};
+		insertHeader(aSheet,headerTmp,rowPosition++,headerStyle,headers.length);
+		insertHeader(aSheet,headers,rowPosition++,headerStyle,1);
+		rowPosition = insertDataByCurrency(aSheet,rowPosition,tipo,"USD",cellStyle,headerStyle);		
+	}
+	
+	private void insertHeader(XSSFSheet aSheet, String[] headers,int rowPosition, 
+					XSSFCellStyle headerStyle,int sizeCell){
+		XSSFRow headerRow = aSheet.createRow(rowPosition++);
+		if(sizeCell>1){			
+			aSheet.addMergedRegion(new CellRangeAddress(rowPosition-1,rowPosition-1,0,sizeCell-1)); 
+		}
+		for (int i = 0; i < headers.length; ++i) {			
+			createCellInRow(headerRow,i,headers[i],headerStyle);			
+		}		
+	}
+	
+	private int insertDataByCurrency(XSSFSheet aSheet,int rowPosition,String tipo, 
+					                          String currency,XSSFCellStyle cellStyle,XSSFCellStyle headerStyle) {
+		FinalReportDTO totalsDTO = new FinalReportDTO();
+		totalsDTO.setRamo("Total");
+		for (Map.Entry<String, FinalReportDTO> entry : aFinalReportList.entrySet()) {			
+			FinalReportDTO aDTO = entry.getValue();
+			int colPosition = 0;
+			if(!aDTO.getTipo().equals(tipo) || !aDTO.getMoneda().equals(currency)){
+				continue;
+			}			
+			XSSFRow newRow = aSheet.createRow(rowPosition++);			
+			createCellInRow(newRow,colPosition++,aDTO.getRamo(),cellStyle);
+			createCellInRow(newRow,colPosition++,aDTO.getMoneda(),cellStyle);			
+			totalsDTO.setMoneda(aDTO.getMoneda());
+			totalsDTO.setTipo(aDTO.getTipo());
+			createCellInRow(newRow,colPosition++,aDTO.getValorGW(),cellStyle);			
+			totalsDTO.setValorGW(IncidentsUtil.sumarDoubles(totalsDTO.getValorGW(),aDTO.getValorGW()));			
+			if(aDTO.getTipo().equals("RESERVA")) {
+			  createCellInRow(newRow,colPosition++,aDTO.getGastosGW(),cellStyle);
+				totalsDTO.setGastosGW(IncidentsUtil.sumarDoubles(totalsDTO.getGastosGW(),aDTO.getGastosGW()));
+			}			
+			createCellInRow(newRow,colPosition++,aDTO.getReaseguroGW(),cellStyle);
+			totalsDTO.setReaseguroGW(IncidentsUtil.sumarDoubles(totalsDTO.getReaseguroGW(),aDTO.getReaseguroGW()));			
+			createCellInRow(newRow,colPosition++,aDTO.getValorSAP(),cellStyle);
+			totalsDTO.setValorSAP(IncidentsUtil.sumarDoubles(totalsDTO.getValorSAP(),aDTO.getValorSAP()));			
+			if(aDTO.getTipo().equals("RESERVA")) {
+			  createCellInRow(newRow,colPosition++,aDTO.getGastosSAP(),cellStyle);
+				totalsDTO.setGastosSAP(IncidentsUtil.sumarDoubles(totalsDTO.getGastosSAP(),aDTO.getGastosSAP()));
+			}			
+			createCellInRow(newRow,colPosition++,aDTO.getReaseguroSAP(),cellStyle);
+			totalsDTO.setReaseguroSAP(IncidentsUtil.sumarDoubles(totalsDTO.getReaseguroSAP(),aDTO.getReaseguroSAP()));			
+			createCellInRow(newRow,colPosition++,aDTO.getDiferenciaValor(),cellStyle);
+			totalsDTO.setDiferenciaValor(IncidentsUtil.sumarDoubles(totalsDTO.getDiferenciaValor(),aDTO.getDiferenciaValor()));			
+			if(aDTO.getTipo().equals("RESERVA")) {
+			  createCellInRow(newRow,colPosition++,aDTO.getDiferenciaGastos(),cellStyle);
+				totalsDTO.setDiferenciaGastos(IncidentsUtil.sumarDoubles(totalsDTO.getDiferenciaGastos(),aDTO.getDiferenciaGastos()));
+			}			
+			createCellInRow(newRow,colPosition++,aDTO.getDiferenciaReaseguro(),cellStyle);			
+			totalsDTO.setDiferenciaReaseguro(IncidentsUtil.sumarDoubles(totalsDTO.getDiferenciaReaseguro(),aDTO.getDiferenciaReaseguro()));
+		}
+		if(totalsDTO.getTipo()!=null){//Ingresar los totales
+			int colPosition = 0;
+			XSSFRow newRow = aSheet.createRow(rowPosition++);			
+			createCellInRow(newRow,colPosition++,totalsDTO.getRamo(),headerStyle);
+			createCellInRow(newRow,colPosition++,totalsDTO.getMoneda(),headerStyle);			
+			createCellInRow(newRow,colPosition++,totalsDTO.getValorGW(),headerStyle);					
+			if(totalsDTO.getTipo().equals("RESERVA")) {
+				createCellInRow(newRow,colPosition++,totalsDTO.getGastosGW(),headerStyle);			
+			}			
+			createCellInRow(newRow,colPosition++,totalsDTO.getReaseguroGW(),headerStyle);
+			createCellInRow(newRow,colPosition++,totalsDTO.getValorSAP(),headerStyle);
+			if(totalsDTO.getTipo().equals("RESERVA")) {
+				createCellInRow(newRow,colPosition++,totalsDTO.getGastosSAP(),headerStyle);
+			}			
+			createCellInRow(newRow,colPosition++,totalsDTO.getReaseguroSAP(),headerStyle);
+			createCellInRow(newRow,colPosition++,totalsDTO.getDiferenciaValor(),headerStyle);
+			if(totalsDTO.getTipo().equals("RESERVA")) {
+				createCellInRow(newRow,colPosition++,totalsDTO.getDiferenciaGastos(),headerStyle);
+			}			
+			createCellInRow(newRow,colPosition++,totalsDTO.getDiferenciaReaseguro(),headerStyle);					
+		}
+		
+		return rowPosition;
+	}
+	
+	/*
+		Crea una celda en una fila especificada
+			aRow:			fila donde se insertara la celda
+			cellNum:	numero de columnad donde se insertra la celda
+	    sizeCell:	numero de columnas que se combinaran 
+			obj:      texto, numero, booleano que se insertara en la celda
+	    aStyle:  Estilo de la celda
+	*/
+	private void createCellInRow(XSSFRow aRow,int cellNum,
+					                     Object obj,XSSFCellStyle aStyle){
+    XSSFCell aCell = aRow.createCell(cellNum);
+		aCell.setCellStyle(aStyle);
+    if (obj instanceof String) { 
+        aCell.setCellValue((String) obj); 
+    } else if (obj instanceof Boolean) { 
+      aCell.setCellValue((Boolean) obj); 
+    } else if (obj instanceof Date) { 
+      aCell.setCellValue((Date) obj); 
+    } else if (obj instanceof Double) { 
+      aCell.setCellValue((Double) obj); 
+    }      
+  }
 
 	private void printInOutputText(String textToAdd) {
 		outputTxt.setText(outputTxt.getText() + textToAdd);
@@ -557,44 +689,36 @@ public class DialogFinancialClosure extends javax.swing.JDialog implements Runna
 	 */
 	private ArrayList<Object> determineColumns(String fileName) {
 		switch (fileName) {
-
-			//                                                               ORIGEN TIPO          Claim# Poli# Ramo Ref     ReseImpMD ReaImpMD  Moneda Estado  
 			case "SAP_RESERVAS.csv":
+				//ORIGEN TIPO Claim# Poli# Ramo Ref ReseImpMD ReaImpMD  Moneda Estado
 				return new ArrayList<>(Arrays.asList("SAP", "RESERVA", null, 3, 2, 4, 5, 9, 0, null));
-
-			//                                                               ORIGEN TIPO          Claim# Poli# Ramo PuIdTra VlrBruto  Cedido    Moneda Estado  
 			case "GW_RESERVAS.csv":
+				//ORIGEN TIPO Claim# Poli# Ramo PuIdTra VlrBruto Cedido Moneda Estado
 				return new ArrayList<>(Arrays.asList("GW", "RESERVA", 1, 3, 7, 10, 16, 13, 17, 8));
-
-			//                                                               ORIGEN TIPO          Claim# Poli# Ramo Ref     GtLiImpMD ReaImpMD  Moneda Estado  
 			case "SAP_GASTOS.csv":
+				//ORIGEN TIPO Claim# Poli# Ramo Ref GtLiImpMD ReaImpMD Moneda Estado
 				return new ArrayList<>(Arrays.asList("SAP", "GASTO", null, 3, 2, 4, 7, null, 0, null));
-
-			//                                                               ORIGEN TIPO          Claim# Poli# Ramo Ref     liqResExp VlrRea    Moneda Estado  
 			case "GW_GASTOS.csv":
+				//ORIGEN TIPO Claim# Poli# Ramo Ref liqResExp VlrRea Moneda Estado
 				return new ArrayList<>(Arrays.asList("GW", "GASTO", 1, 2, 7, 11, 19, null, 14, null));
-
-			//                                                               ORIGEN TIPO          Claim# Poli# Ramo Ref     PagImpMD  ReaImpMD  Moneda Estado  
 			case "SAP_PAGOS.csv":
+				//ORIGEN TIPO Claim# Poli# Ramo Ref PagImpMD  ReaImpMD Moneda Estado
 				return new ArrayList<>(Arrays.asList("SAP", "PAGO", null, 3, 2, 4, 6, 8, 0, null));
-
-			//                                                               ORIGEN TIPO          Claim# Poli# Ramo NumTra  VlrSinCoa Cedido    Moneda Estado ARREGLADO  
 			case "GW_PAGOS.csv":
+				//ORIGEN TIPO Claim# Poli# Ramo NumTra VlrSinCoa Cedido Moneda Estado
 				return new ArrayList<>(Arrays.asList("GW", "PAGO", 2, 3, 4, 10, 24, 14, 20, 17));
-
-			//                                                               ORIGEN TIPO          Claim# Poli# Ramo Ref     SalImpMD  ReaImpMD  Moneda Estado  
 			case "SAP_SALVAMENTOS.csv":
+				//ORIGEN TIPO Claim# Poli# Ramo Ref SalImpMD ReaImpMD  Moneda Estado
 				return new ArrayList<>(Arrays.asList("SAP", "SALVAMENTO", null, 3, 2, 4, 6, 8, 0, null));
-
-			//                                                               ORIGEN TIPO          Claim# Poli# Ramo NumTra  VlrSinCoa Cedido    Moneda Estado  
 			case "GW_SALVAMENTOS.csv":
+				//ORIGEN TIPO Claim# Poli# Ramo NumTra VlrSinCoa Cedido Moneda Estado
 				return new ArrayList<>(Arrays.asList("GW", "SALVAMENTO", 1, 2, 3, 9, 19, 13, 18, 11));
 		}
 		return null;
 	}
 
 	private void searchInconsistencies() throws FileNotFoundException, IOException {
-		String rutaResult = IncidentsUtil.determineUrl(rutaCarpeta, "CruceFinanciero");
+		String rutaResult = IncidentsUtil.determineUrl(rutaCarpeta, "DiferenciasCierreFinanciero", ".csv");
 		File file = new File(rutaResult);
 		if (!file.exists()) {// Si el archivo no existe es creado
 			file.createNewFile();

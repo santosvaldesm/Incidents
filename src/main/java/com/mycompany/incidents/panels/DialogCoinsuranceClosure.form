@@ -107,7 +107,6 @@
     <Component class="javax.swing.JButton" name="btnSelectFileGW">
       <Properties>
         <Property name="text" type="java.lang.String" value="Seleccionar"/>
-        <Property name="actionCommand" type="java.lang.String" value="Seleccionar"/>
         <Property name="horizontalAlignment" type="int" value="4"/>
       </Properties>
       <Events>

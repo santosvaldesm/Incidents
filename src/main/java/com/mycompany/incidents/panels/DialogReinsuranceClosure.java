@@ -238,7 +238,7 @@ public class DialogReinsuranceClosure extends javax.swing.JDialog implements Run
   
   
   private void searchInconsistencies() throws IOException, SQLException, ClassNotFoundException{
-    String rutaResult = IncidentsUtil.determineUrl(rutaCarpeta,"CruceReaseguro");
+    String rutaResult = IncidentsUtil.determineUrl(rutaCarpeta,"CruceReaseguro",".csv");
     File file = new File(rutaResult);                
     if (!file.exists()) {// Si el archivo no existe es creado
         file.createNewFile();

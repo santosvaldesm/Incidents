@@ -38,12 +38,12 @@ public class IncidentsUtil {
 		}
 	}
 
-	public static String determineUrl(String rutaInicial, String name) {
+	public static String determineUrl(String rutaInicial, String name,String ext) {
 		int version = 1;
 		boolean continuar = true;
 		String rutaFinal = "";
 		while (continuar) {
-			rutaFinal = rutaInicial + "\\" + name + "_v" + version + ".csv";
+			rutaFinal = rutaInicial + "\\" + name + "_v" + version + ext;
 			File file = new File(rutaFinal);
 			if (!file.exists()) {// Si el archivo no existe es creado
 				continuar = false;
