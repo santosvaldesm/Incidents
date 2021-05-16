@@ -15,7 +15,6 @@ import java.io.FileOutputStream;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.math.BigDecimal;
 import java.sql.SQLException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -27,12 +26,9 @@ import java.util.Map;
 import javax.persistence.EntityManagerFactory;
 import javax.persistence.Persistence;
 import org.apache.poi.ss.usermodel.BorderStyle;
-import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.FillPatternType;
 import org.apache.poi.ss.usermodel.Font;
-import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.util.CellRangeAddress;
-import org.apache.poi.xssf.usermodel.IndexedColorMap;
 import org.apache.poi.xssf.usermodel.XSSFCell;
 import org.apache.poi.xssf.usermodel.XSSFCellStyle;
 import org.apache.poi.xssf.usermodel.XSSFColor;
@@ -78,6 +74,10 @@ public class DialogFinancialClosure extends javax.swing.JDialog implements Runna
 	int currentBarProgress = 0;
 	int currentItemNumber = 0;//cuantos items ha finalizado en el proceso actual 
 	int totalItemNumber = 0;//total de items en el proceso actual
+	
+	XSSFCellStyle headerStyle;
+	XSSFCellStyle cellStyle;
+	XSSFCellStyle cellStyleGray;
 
 	public DialogFinancialClosure(java.awt.Frame parent, boolean modal) {
 		super(parent, modal);
@@ -157,18 +157,20 @@ public class DialogFinancialClosure extends javax.swing.JDialog implements Runna
 		}
 	}
 
-	private void createFinalReport() throws IOException {
-		copyTempValuesToFinalValues();
-		printConsolidated();
-		joinByOrigen();
-		printConsolidated();
-		joinByTipoGasto();
-		printConsolidated();
-		printConsolidated();
-		calculateDiferences();
-		printConsolidated();		
+	private void createFinalReport() throws IOException {		
+		copyTempValuesToFinalValues(); //printConsolidated();		
+		joinByOrigen();		             //printConsolidated();
+		joinByTipoGasto();		         //printConsolidated();		
+		calculateDiferences();				 //printConsolidated();		
 		createExcelReport();
 	}
+	
+	private void createStyles(XSSFWorkbook anExcelWorbook){
+		headerStyle = createHeaderStyle(anExcelWorbook);
+	  cellStyle = createCellStyle(anExcelWorbook);		
+	  cellStyleGray = createCellStyleGray(anExcelWorbook);		
+	}
+	
 
 	/**
 	 * hay que calcular los campos "diferencias" por cada registro
@@ -177,11 +179,24 @@ public class DialogFinancialClosure extends javax.swing.JDialog implements Runna
 		for (Map.Entry<String, FinalReportDTO> entry : aFinalReportList.entrySet()) {
 			FinalReportDTO aDTO = entry.getValue();
 
-			//Restar la parte de GW de la de SAP
-			aDTO.setDiferenciaGastos(IncidentsUtil.restarDoubles(aDTO.getGastosGW(), aDTO.getGastosSAP()));
-			aDTO.setDiferenciaValor(IncidentsUtil.restarDoubles(aDTO.getValorGW(), aDTO.getValorSAP()));
-			aDTO.setDiferenciaReaseguro(IncidentsUtil.restarDoubles(aDTO.getReaseguroGW(), aDTO.getReaseguroSAP()));
-
+			//Encontrar diferencia entre GW y SAP
+			switch(aDTO.getTipo()){
+				case "PAGO":
+					aDTO.setDiferenciaValor(IncidentsUtil.restarDoubles(aDTO.getValorGW(), aDTO.getValorSAP()));
+					aDTO.setDiferenciaReaseguro(IncidentsUtil.sumarDoubles(aDTO.getReaseguroGW(), aDTO.getReaseguroSAP()));
+					break;
+				case "RESERVA":
+					aDTO.setDiferenciaValor(IncidentsUtil.sumarDoubles(aDTO.getValorGW(), aDTO.getValorSAP()));
+					aDTO.setDiferenciaGastos(IncidentsUtil.sumarDoubles(aDTO.getGastosGW(), aDTO.getGastosSAP()));
+					aDTO.setDiferenciaReaseguro(IncidentsUtil.restarDoubles(aDTO.getReaseguroGW(), aDTO.getReaseguroSAP()));
+					break;
+				case "SALVAMENTO":
+					aDTO.setDiferenciaValor(IncidentsUtil.sumarDoubles(aDTO.getValorGW(), aDTO.getValorSAP()));
+					aDTO.setDiferenciaReaseguro(IncidentsUtil.restarDoubles(aDTO.getReaseguroGW(), aDTO.getReaseguroSAP()));
+					break;
+			}
+			
+			
 			//Cambiar resultados en null por 0
 			aDTO.setDiferenciaGastos(aDTO.getDiferenciaGastos() == null ? 0 : aDTO.getDiferenciaGastos());
 			aDTO.setValorGW(aDTO.getValorGW() == null ? 0 : aDTO.getValorGW());
@@ -221,9 +236,9 @@ public class DialogFinancialClosure extends javax.swing.JDialog implements Runna
 			return result;
 		} else {
 			if (reserveKey.contains("SAP")) {
-				reserveKey = gastoKey.replace("SAP", "GW");
+				reserveKey = reserveKey.replace("SAP", "GW");
 			} else {
-				reserveKey = gastoKey.replace("GW", "SAP");
+				reserveKey = reserveKey.replace("GW", "SAP");
 			}
 			return aFinalReportList.get(reserveKey);
 		}
@@ -257,7 +272,7 @@ public class DialogFinancialClosure extends javax.swing.JDialog implements Runna
 		while (continueProcces) {
 			continueProcces = false;
 			for (Map.Entry<String, FinalReportDTO> entry : aFinalReportList.entrySet()) {
-				if (!entry.getValue().getOrigen().equals("GASTO")) {
+				if (!entry.getValue().getTipo().equals("GASTO")) {
 					FinalReportDTO sourceDTO = entry.getValue();
 					FinalReportDTO targetDTO = searchTargetDTO(sourceDTO.getKey());
 					if (targetDTO != null) {
@@ -336,63 +351,72 @@ public class DialogFinancialClosure extends javax.swing.JDialog implements Runna
 	private void createExcelReport() throws FileNotFoundException, IOException {
 		String rutaResult = IncidentsUtil.determineUrl(rutaCarpeta, "Consolidado", ".xlsx");		
 		XSSFWorkbook anExcelWorbook = new XSSFWorkbook();		
+		createStyles(anExcelWorbook);
 		XSSFSheet sheetPago = anExcelWorbook.createSheet("PAGOS");
 		XSSFSheet sheetReserva = anExcelWorbook.createSheet("RESERVA");
 		XSSFSheet sheetSalvamento = anExcelWorbook.createSheet("SALVAMENTO");		
 		String[] headerPagSalv       = new String[]{"Ramo","Moneda","Valor GW","Reaseguro GW","Valor SAP","Reaseguro SAP","Dif. Valor GW-SAP","Dif. Reaseguro GW-SAP"};
-		String[] headerReserva    = new String[]{"Ramo","Moneda","Valor GW","Gastos GW","Reaseguro GW","Valor SAP","Gastos SAP","Reaseguro SAP","Dif. Valor GW-SAP","Dif. Gastos GW-SAP","Dif. Reaseguro GW-SAP"};
-		XSSFCellStyle headerStyle = createHeaderStyle(anExcelWorbook);
-		XSSFCellStyle aCellStyle = createCellStyle(anExcelWorbook);		
-		insertDataInExcel(sheetPago,headerPagSalv,"PAGO",headerStyle,aCellStyle);
-		insertDataInExcel(sheetReserva,headerReserva,"RESERVA",headerStyle,aCellStyle);
-		insertDataInExcel(sheetSalvamento,headerPagSalv,"SALVAMENTO",headerStyle,aCellStyle);
+		String[] headerReserva    = new String[]{"Ramo","Moneda","Valor GW","Gastos GW","Reaseguro GW","Valor SAP","Gastos SAP","Reaseguro SAP","Dif. Valor GW-SAP","Dif. Gastos GW-SAP","Dif. Reaseguro GW-SAP"};		
+		insertDataInExcel(sheetPago,headerPagSalv,"PAGO");
+		insertDataInExcel(sheetReserva,headerReserva,"RESERVA");
+		insertDataInExcel(sheetSalvamento,headerPagSalv,"SALVAMENTO");
 		FileOutputStream file = new FileOutputStream(rutaResult);
 		anExcelWorbook.write(file);
 		file.close();
 	}
 	
 	private XSSFCellStyle createHeaderStyle(XSSFWorkbook anExcelWorbook) {
-		XSSFCellStyle headerStyle = (XSSFCellStyle)anExcelWorbook.createCellStyle();
+		XSSFCellStyle aStyle = (XSSFCellStyle)anExcelWorbook.createCellStyle();
 		Font font = anExcelWorbook.createFont();
 		font.setBold(true);
-		headerStyle.setFont(font);		
-		headerStyle.setBorderBottom(BorderStyle.THIN);
-		headerStyle.setBorderTop(BorderStyle.THIN);
-		headerStyle.setBorderRight(BorderStyle.THIN);
-		headerStyle.setBorderLeft(BorderStyle.THIN);
+		aStyle.setFont(font);		
+		aStyle.setBorderBottom(BorderStyle.THIN);
+		aStyle.setBorderTop(BorderStyle.THIN);
+		aStyle.setBorderRight(BorderStyle.THIN);
+		aStyle.setBorderLeft(BorderStyle.THIN);
 		byte[] rgb = new byte[]{(byte)221, (byte)235, (byte)247};
-		headerStyle.setFillForegroundColor(new XSSFColor(rgb, null));
-		headerStyle.setFillPattern(FillPatternType.SOLID_FOREGROUND);
-		return headerStyle;
+		aStyle.setFillForegroundColor(new XSSFColor(rgb, null));
+		aStyle.setFillPattern(FillPatternType.SOLID_FOREGROUND);
+		return aStyle;
 	}
 	
 	private XSSFCellStyle createCellStyle(XSSFWorkbook anExcelWorbook) {
-		XSSFCellStyle aCellStyle = anExcelWorbook.createCellStyle();		
-		aCellStyle.setBorderBottom(BorderStyle.THIN);
-		aCellStyle.setBorderTop(BorderStyle.THIN);
-		aCellStyle.setBorderRight(BorderStyle.THIN);
-		aCellStyle.setBorderLeft(BorderStyle.THIN);
-		return aCellStyle;
+		XSSFCellStyle aStyle = anExcelWorbook.createCellStyle();		
+		aStyle.setBorderBottom(BorderStyle.THIN);
+		aStyle.setBorderTop(BorderStyle.THIN);
+		aStyle.setBorderRight(BorderStyle.THIN);
+		aStyle.setBorderLeft(BorderStyle.THIN);
+		return aStyle;
 	}
 	
-	private void insertDataInExcel(XSSFSheet aSheet, String[] headers, String tipo,					
-	  XSSFCellStyle headerStyle,XSSFCellStyle cellStyle) {		
+	private XSSFCellStyle createCellStyleGray(XSSFWorkbook anExcelWorbook) {
+		XSSFCellStyle aStyle = anExcelWorbook.createCellStyle();		
+		aStyle.setBorderBottom(BorderStyle.THIN);
+		aStyle.setBorderTop(BorderStyle.THIN);
+		aStyle.setBorderRight(BorderStyle.THIN);
+		aStyle.setBorderLeft(BorderStyle.THIN);
+		byte[] rgb = new byte[]{(byte)214, (byte)220, (byte)228};
+		aStyle.setFillForegroundColor(new XSSFColor(rgb, null));
+		aStyle.setFillPattern(FillPatternType.SOLID_FOREGROUND);
+		return aStyle;
+	}
+	
+	private void insertDataInExcel(XSSFSheet aSheet, String[] headers, String tipo) {		
 		int rowPosition = 0;				
 		
 		String[] headerTmp = new String[]{tipo+" COP"};
-		insertHeader(aSheet,headerTmp,rowPosition++,headerStyle,headers.length);
-		insertHeader(aSheet,headers,rowPosition++,headerStyle,1);
-		rowPosition = insertDataByCurrency(aSheet,rowPosition,tipo,"COP",cellStyle,headerStyle);				
+		insertHeader(aSheet,headerTmp,rowPosition++,headers.length);
+		insertHeader(aSheet,headers,rowPosition++,1);
+		rowPosition = insertDataByCurrency(aSheet,rowPosition,tipo,"COP");				
 		rowPosition = rowPosition + 3;
 		
 		headerTmp = new String[]{tipo+" USD"};
-		insertHeader(aSheet,headerTmp,rowPosition++,headerStyle,headers.length);
-		insertHeader(aSheet,headers,rowPosition++,headerStyle,1);
-		rowPosition = insertDataByCurrency(aSheet,rowPosition,tipo,"USD",cellStyle,headerStyle);		
+		insertHeader(aSheet,headerTmp,rowPosition++,headers.length);
+		insertHeader(aSheet,headers,rowPosition++,1);
+		rowPosition = insertDataByCurrency(aSheet,rowPosition,tipo,"USD");		
 	}
 	
-	private void insertHeader(XSSFSheet aSheet, String[] headers,int rowPosition, 
-					XSSFCellStyle headerStyle,int sizeCell){
+	private void insertHeader(XSSFSheet aSheet, String[] headers,int rowPosition,int sizeCell){
 		XSSFRow headerRow = aSheet.createRow(rowPosition++);
 		if(sizeCell>1){			
 			aSheet.addMergedRegion(new CellRangeAddress(rowPosition-1,rowPosition-1,0,sizeCell-1)); 
@@ -402,8 +426,7 @@ public class DialogFinancialClosure extends javax.swing.JDialog implements Runna
 		}		
 	}
 	
-	private int insertDataByCurrency(XSSFSheet aSheet,int rowPosition,String tipo, 
-					                          String currency,XSSFCellStyle cellStyle,XSSFCellStyle headerStyle) {
+	private int insertDataByCurrency(XSSFSheet aSheet,int rowPosition,String tipo,String currency) {
 		FinalReportDTO totalsDTO = new FinalReportDTO();
 		totalsDTO.setRamo("Total");
 		for (Map.Entry<String, FinalReportDTO> entry : aFinalReportList.entrySet()) {			
@@ -433,13 +456,13 @@ public class DialogFinancialClosure extends javax.swing.JDialog implements Runna
 			}			
 			createCellInRow(newRow,colPosition++,aDTO.getReaseguroSAP(),cellStyle);
 			totalsDTO.setReaseguroSAP(IncidentsUtil.sumarDoubles(totalsDTO.getReaseguroSAP(),aDTO.getReaseguroSAP()));			
-			createCellInRow(newRow,colPosition++,aDTO.getDiferenciaValor(),cellStyle);
+			createCellInRow(newRow,colPosition++,aDTO.getDiferenciaValor(),cellStyleGray);
 			totalsDTO.setDiferenciaValor(IncidentsUtil.sumarDoubles(totalsDTO.getDiferenciaValor(),aDTO.getDiferenciaValor()));			
 			if(aDTO.getTipo().equals("RESERVA")) {
-			  createCellInRow(newRow,colPosition++,aDTO.getDiferenciaGastos(),cellStyle);
+			  createCellInRow(newRow,colPosition++,aDTO.getDiferenciaGastos(),cellStyleGray);
 				totalsDTO.setDiferenciaGastos(IncidentsUtil.sumarDoubles(totalsDTO.getDiferenciaGastos(),aDTO.getDiferenciaGastos()));
 			}			
-			createCellInRow(newRow,colPosition++,aDTO.getDiferenciaReaseguro(),cellStyle);			
+			createCellInRow(newRow,colPosition++,aDTO.getDiferenciaReaseguro(),cellStyleGray);			
 			totalsDTO.setDiferenciaReaseguro(IncidentsUtil.sumarDoubles(totalsDTO.getDiferenciaReaseguro(),aDTO.getDiferenciaReaseguro()));
 		}
 		if(totalsDTO.getTipo()!=null){//Ingresar los totales
@@ -879,119 +902,119 @@ public class DialogFinancialClosure extends javax.swing.JDialog implements Runna
 	}
 
 	@SuppressWarnings("unchecked")
-    // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
-    private void initComponents() {
+  // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
+  private void initComponents() {
 
-        progressBar = new javax.swing.JProgressBar();
-        btnSelectFile = new javax.swing.JButton();
-        btnStart = new javax.swing.JButton();
-        labelFile = new javax.swing.JLabel();
-        jScrollPane1 = new javax.swing.JScrollPane();
-        outputTxt = new javax.swing.JTextArea();
-        jLabel1 = new javax.swing.JLabel();
-        jLabel3 = new javax.swing.JLabel();
-        jLabel4 = new javax.swing.JLabel();
-        progressBarProceso = new javax.swing.JProgressBar();
-        spinnerLimit = new javax.swing.JSpinner();
+    progressBar = new javax.swing.JProgressBar();
+    btnSelectFile = new javax.swing.JButton();
+    btnStart = new javax.swing.JButton();
+    labelFile = new javax.swing.JLabel();
+    jScrollPane1 = new javax.swing.JScrollPane();
+    outputTxt = new javax.swing.JTextArea();
+    jLabel1 = new javax.swing.JLabel();
+    jLabel3 = new javax.swing.JLabel();
+    jLabel4 = new javax.swing.JLabel();
+    progressBarProceso = new javax.swing.JProgressBar();
+    spinnerLimit = new javax.swing.JSpinner();
 
-        setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
-        setTitle("CIERRE FINANCIERO");
-        addWindowListener(new java.awt.event.WindowAdapter() {
-            public void windowClosing(java.awt.event.WindowEvent evt) {
-                formWindowClosing(evt);
-            }
-        });
+    setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
+    setTitle("CIERRE FINANCIERO");
+    addWindowListener(new java.awt.event.WindowAdapter() {
+      public void windowClosing(java.awt.event.WindowEvent evt) {
+        formWindowClosing(evt);
+      }
+    });
 
-        progressBar.setStringPainted(true);
+    progressBar.setStringPainted(true);
 
-        btnSelectFile.setText("Seleccionar");
-        btnSelectFile.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                btnSelectFileActionPerformed(evt);
-            }
-        });
+    btnSelectFile.setText("Seleccionar");
+    btnSelectFile.addActionListener(new java.awt.event.ActionListener() {
+      public void actionPerformed(java.awt.event.ActionEvent evt) {
+        btnSelectFileActionPerformed(evt);
+      }
+    });
 
-        btnStart.setText("Iniciar");
-        btnStart.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                btnStartActionPerformed(evt);
-            }
-        });
+    btnStart.setText("Iniciar");
+    btnStart.addActionListener(new java.awt.event.ActionListener() {
+      public void actionPerformed(java.awt.event.ActionEvent evt) {
+        btnStartActionPerformed(evt);
+      }
+    });
 
-        outputTxt.setEditable(false);
-        outputTxt.setColumns(20);
-        outputTxt.setRows(5);
-        outputTxt.setName(""); // NOI18N
-        jScrollPane1.setViewportView(outputTxt);
+    outputTxt.setEditable(false);
+    outputTxt.setColumns(20);
+    outputTxt.setRows(5);
+    outputTxt.setName(""); // NOI18N
+    jScrollPane1.setViewportView(outputTxt);
 
-        jLabel1.setText("Limite Monetario");
+    jLabel1.setText("Limite Monetario");
 
-        jLabel3.setText("PROCESO ACTUAL: ");
+    jLabel3.setText("PROCESO ACTUAL: ");
 
-        jLabel4.setText("PROGRESO TOTAL: ");
+    jLabel4.setText("PROGRESO TOTAL: ");
 
-        progressBarProceso.setStringPainted(true);
+    progressBarProceso.setStringPainted(true);
 
-        javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
-        getContentPane().setLayout(layout);
-        layout.setHorizontalGroup(
-            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(layout.createSequentialGroup()
-                .addContainerGap()
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jScrollPane1)
-                    .addGroup(layout.createSequentialGroup()
-                        .addGap(6, 6, 6)
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                            .addComponent(jLabel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                            .addComponent(jLabel4, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                            .addComponent(jLabel3, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                            .addGroup(javax.swing.GroupLayout.Alignment.LEADING, layout.createSequentialGroup()
-                                .addComponent(spinnerLimit, javax.swing.GroupLayout.PREFERRED_SIZE, 67, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(btnSelectFile)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(labelFile, javax.swing.GroupLayout.DEFAULT_SIZE, 369, Short.MAX_VALUE))
-                            .addComponent(progressBar, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                            .addComponent(progressBarProceso, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(btnStart, javax.swing.GroupLayout.PREFERRED_SIZE, 81, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                .addContainerGap())
-        );
-        layout.setVerticalGroup(
-            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(layout.createSequentialGroup()
-                .addContainerGap()
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                    .addGroup(layout.createSequentialGroup()
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                            .addComponent(progressBar, javax.swing.GroupLayout.PREFERRED_SIZE, 24, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(jLabel4, javax.swing.GroupLayout.PREFERRED_SIZE, 23, javax.swing.GroupLayout.PREFERRED_SIZE))
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                            .addComponent(jLabel3, javax.swing.GroupLayout.PREFERRED_SIZE, 23, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(progressBarProceso, javax.swing.GroupLayout.PREFERRED_SIZE, 24, javax.swing.GroupLayout.PREFERRED_SIZE))
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                                .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 23, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addComponent(spinnerLimit, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addComponent(btnSelectFile))
-                            .addComponent(labelFile, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 23, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                    .addComponent(btnStart, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+    javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
+    getContentPane().setLayout(layout);
+    layout.setHorizontalGroup(
+      layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+      .addGroup(layout.createSequentialGroup()
+        .addContainerGap()
+        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+          .addComponent(jScrollPane1)
+          .addGroup(layout.createSequentialGroup()
+            .addGap(6, 6, 6)
+            .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+              .addComponent(jLabel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+              .addComponent(jLabel4, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+              .addComponent(jLabel3, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+            .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+            .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+              .addGroup(javax.swing.GroupLayout.Alignment.LEADING, layout.createSequentialGroup()
+                .addComponent(spinnerLimit, javax.swing.GroupLayout.PREFERRED_SIZE, 67, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 397, Short.MAX_VALUE)
-                .addContainerGap())
-        );
+                .addComponent(btnSelectFile)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(labelFile, javax.swing.GroupLayout.PREFERRED_SIZE, 369, javax.swing.GroupLayout.PREFERRED_SIZE))
+              .addComponent(progressBar, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+              .addComponent(progressBarProceso, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+            .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+            .addComponent(btnStart, javax.swing.GroupLayout.PREFERRED_SIZE, 81, javax.swing.GroupLayout.PREFERRED_SIZE)))
+        .addContainerGap())
+    );
+    layout.setVerticalGroup(
+      layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+      .addGroup(layout.createSequentialGroup()
+        .addContainerGap()
+        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+          .addGroup(layout.createSequentialGroup()
+            .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+              .addComponent(progressBar, javax.swing.GroupLayout.PREFERRED_SIZE, 24, javax.swing.GroupLayout.PREFERRED_SIZE)
+              .addComponent(jLabel4, javax.swing.GroupLayout.PREFERRED_SIZE, 23, javax.swing.GroupLayout.PREFERRED_SIZE))
+            .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+            .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+              .addComponent(jLabel3, javax.swing.GroupLayout.PREFERRED_SIZE, 23, javax.swing.GroupLayout.PREFERRED_SIZE)
+              .addComponent(progressBarProceso, javax.swing.GroupLayout.PREFERRED_SIZE, 24, javax.swing.GroupLayout.PREFERRED_SIZE))
+            .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+            .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+              .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 23, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(spinnerLimit, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(btnSelectFile))
+              .addComponent(labelFile, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 23, javax.swing.GroupLayout.PREFERRED_SIZE)))
+          .addComponent(btnStart, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+        .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 397, Short.MAX_VALUE)
+        .addContainerGap())
+    );
 
-        btnStart.getAccessibleContext().setAccessibleName("btnStart");
-        btnStart.getAccessibleContext().setAccessibleDescription("");
+    btnStart.getAccessibleContext().setAccessibleName("btnStart");
+    btnStart.getAccessibleContext().setAccessibleDescription("");
 
-        setSize(new java.awt.Dimension(769, 549));
-        setLocationRelativeTo(null);
-    }// </editor-fold>//GEN-END:initComponents
+    setSize(new java.awt.Dimension(769, 549));
+    setLocationRelativeTo(null);
+  }// </editor-fold>//GEN-END:initComponents
 
   private void btnSelectFileActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnSelectFileActionPerformed
 		JFileChooser fileChooser = new JFileChooser();
@@ -1053,18 +1076,18 @@ public class DialogFinancialClosure extends javax.swing.JDialog implements Runna
 		});
 	}
 
-    // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JButton btnSelectFile;
-    private javax.swing.JButton btnStart;
-    private javax.swing.JLabel jLabel1;
-    private javax.swing.JLabel jLabel3;
-    private javax.swing.JLabel jLabel4;
-    private javax.swing.JScrollPane jScrollPane1;
-    private javax.swing.JLabel labelFile;
-    private javax.swing.JTextArea outputTxt;
-    private javax.swing.JProgressBar progressBar;
-    private javax.swing.JProgressBar progressBarProceso;
-    private javax.swing.JSpinner spinnerLimit;
-    // End of variables declaration//GEN-END:variables
+  // Variables declaration - do not modify//GEN-BEGIN:variables
+  private javax.swing.JButton btnSelectFile;
+  private javax.swing.JButton btnStart;
+  private javax.swing.JLabel jLabel1;
+  private javax.swing.JLabel jLabel3;
+  private javax.swing.JLabel jLabel4;
+  private javax.swing.JScrollPane jScrollPane1;
+  private javax.swing.JLabel labelFile;
+  private javax.swing.JTextArea outputTxt;
+  private javax.swing.JProgressBar progressBar;
+  private javax.swing.JProgressBar progressBarProceso;
+  private javax.swing.JSpinner spinnerLimit;
+  // End of variables declaration//GEN-END:variables
 
 }

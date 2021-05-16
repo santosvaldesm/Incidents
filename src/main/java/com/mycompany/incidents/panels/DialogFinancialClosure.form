@@ -47,7 +47,7 @@
                               <EmptySpace max="-2" attributes="0"/>
                               <Component id="btnSelectFile" min="-2" max="-2" attributes="0"/>
                               <EmptySpace max="-2" attributes="0"/>
-                              <Component id="labelFile" pref="369" max="32767" attributes="0"/>
+                              <Component id="labelFile" min="-2" pref="369" max="-2" attributes="0"/>
                           </Group>
                           <Component id="progressBar" alignment="0" max="32767" attributes="0"/>
                           <Component id="progressBarProceso" alignment="0" max="32767" attributes="0"/>
