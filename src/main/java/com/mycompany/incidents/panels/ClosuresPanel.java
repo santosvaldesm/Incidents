@@ -36,6 +36,7 @@ public class ClosuresPanel extends javax.swing.JPanel {
     btnImport4 = new javax.swing.JButton();
     btnShowQuery3 = new javax.swing.JButton();
     btnShowQuery4 = new javax.swing.JButton();
+    btnImport5 = new javax.swing.JButton();
 
     btnImport2.setText("CIERRE FINANCIERO");
     btnImport2.addActionListener(new java.awt.event.ActionListener() {
@@ -87,24 +88,32 @@ public class ClosuresPanel extends javax.swing.JPanel {
       }
     });
 
+    btnImport5.setText("GENERAR CONSULTAS");
+    btnImport5.addActionListener(new java.awt.event.ActionListener() {
+      public void actionPerformed(java.awt.event.ActionEvent evt) {
+        btnImport5ActionPerformed(evt);
+      }
+    });
+
     javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
     this.setLayout(layout);
     layout.setHorizontalGroup(
       layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
       .addGroup(layout.createSequentialGroup()
         .addContainerGap()
-        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-          .addComponent(btnShowQuery4, javax.swing.GroupLayout.PREFERRED_SIZE, 194, javax.swing.GroupLayout.PREFERRED_SIZE)
-          .addGroup(layout.createSequentialGroup()
+        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
+          .addComponent(btnImport5, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+          .addGroup(javax.swing.GroupLayout.Alignment.LEADING, layout.createSequentialGroup()
             .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
               .addComponent(btnImport2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
               .addComponent(btnImport3, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-              .addComponent(btnImport4, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+              .addComponent(btnImport4))
             .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
             .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
               .addComponent(btnShowQuery2)
               .addComponent(btnShowQuery3, javax.swing.GroupLayout.PREFERRED_SIZE, 53, javax.swing.GroupLayout.PREFERRED_SIZE)
-              .addComponent(btnShowQuery1))))
+              .addComponent(btnShowQuery1)))
+          .addComponent(btnShowQuery4, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
     );
     layout.setVerticalGroup(
@@ -112,6 +121,8 @@ public class ClosuresPanel extends javax.swing.JPanel {
       .addGroup(layout.createSequentialGroup()
         .addContainerGap()
         .addComponent(btnShowQuery4)
+        .addGap(5, 5, 5)
+        .addComponent(btnImport5, javax.swing.GroupLayout.PREFERRED_SIZE, 29, javax.swing.GroupLayout.PREFERRED_SIZE)
         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
           .addComponent(btnImport2, javax.swing.GroupLayout.PREFERRED_SIZE, 29, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -259,11 +270,17 @@ public class ClosuresPanel extends javax.swing.JPanel {
     dialog.setVisible(true);    
   }//GEN-LAST:event_btnShowQuery4ActionPerformed
 
+  private void btnImport5ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnImport5ActionPerformed
+    DialogGenerateClosureQuery dialog = new DialogGenerateClosureQuery(null,true);
+		dialog.setVisible(true);  
+  }//GEN-LAST:event_btnImport5ActionPerformed
+
 
   // Variables declaration - do not modify//GEN-BEGIN:variables
   private javax.swing.JButton btnImport2;
   private javax.swing.JButton btnImport3;
   private javax.swing.JButton btnImport4;
+  private javax.swing.JButton btnImport5;
   private javax.swing.JButton btnShowQuery1;
   private javax.swing.JButton btnShowQuery2;
   private javax.swing.JButton btnShowQuery3;

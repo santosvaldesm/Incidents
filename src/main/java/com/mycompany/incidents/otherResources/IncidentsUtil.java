@@ -10,6 +10,7 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
 import java.text.DecimalFormat;
+import javax.swing.JTextArea;
 
 /**
  *
@@ -21,6 +22,16 @@ public class IncidentsUtil {
 
 	static {
 		df.setMaximumFractionDigits(3);
+	}
+	
+	public static void printStackTrace(Exception e3,JTextArea outputTxt) {
+		String textToAdd = "\n" + e3.toString();
+		StackTraceElement[] elements = e3.getStackTrace();
+		for (StackTraceElement element : elements) {
+			textToAdd = textToAdd + "\n" + element.toString();
+		}
+		outputTxt.setText(outputTxt.getText() + textToAdd);
+		outputTxt.setCaretPosition(outputTxt.getDocument().getLength());
 	}
 
 	public static void validateFile(String rutaCarp, String fileName, String header) throws Exception {

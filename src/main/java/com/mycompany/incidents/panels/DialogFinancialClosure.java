@@ -141,16 +141,16 @@ public class DialogFinancialClosure extends javax.swing.JDialog implements Runna
 			}
 		} catch (FileNotFoundException e1) {
 			printInOutputText("\nERROR: FileNotFoundException: Ultimo registro analizado: " + lastRowInfo);
-			printStackTrace(e1);
+			IncidentsUtil.printStackTrace(e1,outputTxt);
 		} catch (IOException e2) {
-			printStackTrace(e2);
+			IncidentsUtil.printStackTrace(e2,outputTxt);
 			printInOutputText("\nERROR: IOException: Ultimo registro analizado: " + lastRowInfo);
 		} catch (SQLException ex) {
 			printInOutputText("\nERROR: SQLException: Ultimo registro analizado: " + lastRowInfo);
-			printStackTrace(ex);
+			IncidentsUtil.printStackTrace(ex,outputTxt);
 		} catch (Exception e3) {
 			printInOutputText("\nERROR: Exception: Ultimo registro analizado: " + lastRowInfo);
-			printStackTrace(e3);
+			IncidentsUtil.printStackTrace(e3,outputTxt);
 		}
 		progressTotal(100, 100);
 		progressProcess(100, 100);
@@ -216,8 +216,7 @@ public class DialogFinancialClosure extends javax.swing.JDialog implements Runna
 					aDTO.setDiferenciaValor(IncidentsUtil.sumarDoubles(aDTO.getValorGW(), aDTO.getValorSAP()));
 					aDTO.setDiferenciaReaseguro(IncidentsUtil.restarDoubles(aDTO.getReaseguroGW(), aDTO.getReaseguroSAP()));
 					break;
-			}
-			
+			}		
 			
 			//Cambiar resultados en null por 0
 			aDTO.setDiferenciaGastos(aDTO.getDiferenciaGastos() == null ? 0 : aDTO.getDiferenciaGastos());
@@ -230,7 +229,6 @@ public class DialogFinancialClosure extends javax.swing.JDialog implements Runna
 			aDTO.setDiferenciaValor(aDTO.getDiferenciaValor() == null ? 0 : aDTO.getDiferenciaValor());
 			aDTO.setDiferenciaGastos(aDTO.getDiferenciaGastos() == null ? 0 : aDTO.getDiferenciaGastos());
 			aDTO.setDiferenciaReaseguro(aDTO.getDiferenciaReaseguro() == null ? 0 : aDTO.getDiferenciaReaseguro());
-
 			entry.setValue(aDTO);
 		}
 	}
@@ -507,25 +505,16 @@ public class DialogFinancialClosure extends javax.swing.JDialog implements Runna
 				createCellInRow(newRow,colPosition++,totalsDTO.getDiferenciaGastos(),headerStyle);
 			}			
 			createCellInRow(newRow,colPosition++,totalsDTO.getDiferenciaReaseguro(),headerStyle);					
-		}
-		
+		}		
 		return rowPosition;
 	}
 	
-	/*
-		Crea una celda en una fila especificada
-			aRow:			fila donde se insertara la celda
-			cellNum:	numero de columnad donde se insertra la celda
-	    sizeCell:	numero de columnas que se combinaran 
-			obj:      texto, numero, booleano que se insertara en la celda
-	    aStyle:  Estilo de la celda
-	*/
 	private void createCellInRow(XSSFRow aRow,int cellNum,
 					                     Object obj,XSSFCellStyle aStyle){
     XSSFCell aCell = aRow.createCell(cellNum);
 		aCell.setCellStyle(aStyle);
     if (obj instanceof String) { 
-        aCell.setCellValue((String) obj); 
+      aCell.setCellValue((String) obj); 
     } else if (obj instanceof Boolean) { 
       aCell.setCellValue((Boolean) obj); 
     } else if (obj instanceof Date) { 
@@ -538,18 +527,7 @@ public class DialogFinancialClosure extends javax.swing.JDialog implements Runna
 	private void printInOutputText(String textToAdd) {
 		outputTxt.setText(outputTxt.getText() + textToAdd);
 		outputTxt.setCaretPosition(outputTxt.getDocument().getLength());
-	}
-
-	private void printStackTrace(Exception e3) {
-		String textToAdd = "\n" + e3.toString();
-
-		StackTraceElement[] elements = e3.getStackTrace();
-		for (StackTraceElement element : elements) {
-			textToAdd = textToAdd + "\n" + element.toString();
-		}
-		outputTxt.setText(outputTxt.getText() + textToAdd);
-		outputTxt.setCaretPosition(outputTxt.getDocument().getLength());
-	}
+	}	
 
 	public void readAndInsertRowsGw() throws Exception {
 		for (String fileNameGw : fileNamesGw) {
@@ -557,11 +535,7 @@ public class DialogFinancialClosure extends javax.swing.JDialog implements Runna
 			progressProcess(100, 0);
 			String fileUrl = rutaCarpeta + "\\" + fileNameGw;
 			File archivo = new File(fileUrl);
-			//FileReader fr = new FileReader(archivo);
-			//BufferedReader br = new BufferedReader(fr);
-			
-			BufferedReader br = Files.newBufferedReader(archivo.toPath(), StandardCharsets.UTF_8);
-			
+			BufferedReader br = Files.newBufferedReader(archivo.toPath(), StandardCharsets.UTF_8);			
 			currentItemNumber = 0;
 			String rowInfo = br.readLine();//la primer linea es cabecera                  
 			int rowNum = (int) (archivo.length() / 220);//220 bytes es el promedio del tamaño de una linea
@@ -570,7 +544,6 @@ public class DialogFinancialClosure extends javax.swing.JDialog implements Runna
 				insertGwInfoInDB(rowInfo, columnIdentifiers);
 				progressProcess(rowNum, ++currentItemNumber);
 			}
-			//fr.close();
 			br.close();
 			currentBarProgress = currentBarProgress + 10;
 			progressTotal(100, currentBarProgress);
@@ -581,9 +554,9 @@ public class DialogFinancialClosure extends javax.swing.JDialog implements Runna
 		for (String fileNameSap : fileNamesSap) {
 			printInOutputText("\nRegistrando " + fileNameSap + "...");
 			progressProcess(100, 0);
-			String fileUrl = fileNameSap.compareTo(nomArchivoSapGastos) == 0 ? rutaCarpeta + "\\" + nomArchivoSapReserva
-							: //para gastos usar el de reservas
-							rutaCarpeta + "\\" + fileNameSap;
+			String fileUrl = fileNameSap.compareTo(nomArchivoSapGastos) == 0 ? 
+							 rutaCarpeta + "\\" + nomArchivoSapReserva : //para gastos usar el de reservas
+							 rutaCarpeta + "\\" + fileNameSap; 
 			File archivo = new File(fileUrl);
 			FileReader fr = new FileReader(archivo);
 			BufferedReader br = new BufferedReader(fr);
