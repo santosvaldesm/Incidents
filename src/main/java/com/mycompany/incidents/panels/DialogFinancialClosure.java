@@ -105,6 +105,7 @@ public class DialogFinancialClosure extends javax.swing.JDialog implements Runna
 		ommitedStatus.put("Aprobación pendiente",true);
 		ommitedStatus.put("En espera de envío",true);
 		ommitedStatus.put("Solicitando",true);
+		ommitedStatus.put("Rechazado",true);
 	}
 
 	@Override
