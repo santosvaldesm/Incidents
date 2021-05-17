@@ -70,7 +70,7 @@ public class DialogFinancialClosure extends javax.swing.JDialog implements Runna
 	HashMap<ClosureTypeEnum, String> searchCriteria = null;
 	HashMap<String, FinalReportDTO> aFinalReportList = new HashMap<>();
 	HashMap<String, Boolean> ommitedStatus = new HashMap<>();
-	String limitInconsistencies = "-";
+	String monetaryLimit = "-";
 	SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss");
 	SimpleDateFormat sdfHora = new SimpleDateFormat("HH:mm:ss");
 	DataBaseController conection = new DataBaseController();
@@ -78,6 +78,8 @@ public class DialogFinancialClosure extends javax.swing.JDialog implements Runna
 	int currentBarProgress = 0;
 	int currentItemNumber = 0;//cuantos items ha finalizado en el proceso actual 
 	int totalItemNumber = 0;//total de items en el proceso actual
+	ArrayList<String[]> inconsistencesList=new ArrayList<>();
+	int inconsistencesLimit = 1000;
 	
 	XSSFCellStyle headerStyle;
 	XSSFCellStyle cellStyle;
@@ -87,6 +89,7 @@ public class DialogFinancialClosure extends javax.swing.JDialog implements Runna
 		super(parent, modal);
 		initComponents();
 		btnStart.setEnabled(false);
+		spinnerMaxErrors.setValue(1000);
 		spinnerLimit.setValue(1);
 		loadOmmitedStatus();
 	}
@@ -117,7 +120,9 @@ public class DialogFinancialClosure extends javax.swing.JDialog implements Runna
 				btnStart.setEnabled(false);
 				btnSelectFile.setEnabled(false);
 				spinnerLimit.setEnabled(false);
-				limitInconsistencies = spinnerLimit.getValue().toString();
+				spinnerMaxErrors.setEnabled(false);
+				monetaryLimit = spinnerLimit.getValue().toString();
+				inconsistencesLimit = (int)spinnerMaxErrors.getValue();
 				printInOutputText("\nINICIO: " + sdf.format(new Date()));
 				printInOutputText("\nValidando archivos...");
 				IncidentsUtil.validateFile(rutaCarpeta, nomArchivoSapReserva, headerArchivoSapReserva);
@@ -376,11 +381,15 @@ public class DialogFinancialClosure extends javax.swing.JDialog implements Runna
 		XSSFSheet sheetPago = anExcelWorbook.createSheet("PAGOS");
 		XSSFSheet sheetReserva = anExcelWorbook.createSheet("RESERVA");
 		XSSFSheet sheetSalvamento = anExcelWorbook.createSheet("SALVAMENTO");		
+		XSSFSheet sheetInconsistences = anExcelWorbook.createSheet("DIFERENCIAS");		
 		String[] headerPagSalv       = new String[]{"Ramo","Moneda","Valor GW","Reaseguro GW","Valor SAP","Reaseguro SAP","Dif. Valor GW-SAP","Dif. Reaseguro GW-SAP"};
 		String[] headerReserva    = new String[]{"Ramo","Moneda","Valor GW","Gastos GW","Reaseguro GW","Valor SAP","Gastos SAP","Reaseguro SAP","Dif. Valor GW-SAP","Dif. Gastos GW-SAP","Dif. Reaseguro GW-SAP"};		
+		String[] headerInconsistences   = new String[]{"TIPO ERROR","REFERENCIA","RAMO","CLAIM NUMBER","POLCY NUMBER","MONEDA","ESTADO","VALOR 100 GW","REAS GW","VALOR 100 SAP","REAS SAP","DIF 100","DIF REAS","DETALLE"};		
+		
 		insertDataInExcel(sheetPago,headerPagSalv,"PAGO");
 		insertDataInExcel(sheetReserva,headerReserva,"RESERVA");
 		insertDataInExcel(sheetSalvamento,headerPagSalv,"SALVAMENTO");
+		insertInconsistencesInExcel(sheetInconsistences,headerInconsistences);
 		FileOutputStream file = new FileOutputStream(rutaResult);
 		anExcelWorbook.write(file);
 		file.close();
@@ -435,6 +444,25 @@ public class DialogFinancialClosure extends javax.swing.JDialog implements Runna
 		insertHeader(aSheet,headerTmp,rowPosition++,headers.length);
 		insertHeader(aSheet,headers,rowPosition++,1);
 		rowPosition = insertDataByCurrency(aSheet,rowPosition,tipo,"USD");		
+	}
+	
+	private void insertInconsistencesInExcel(XSSFSheet aSheet,String[] headers) {		
+		int rowPosition = 0;
+		insertHeader(aSheet,headers,rowPosition++,1);
+		for(String[] anInconsistence : inconsistencesList){		  
+			XSSFRow newRow = aSheet.createRow(rowPosition++);			
+			int colPosition = 0;	
+			for(String aValue : anInconsistence){
+				XSSFCellStyle aStyle;
+				if(colPosition==0 || colPosition==11 || colPosition==12){
+					aStyle = cellStyleGray;
+				}else{
+					aStyle = cellStyle;
+				}				
+				createCellInRow(newRow,colPosition++,aValue,aStyle);
+			}			
+		}
+		
 	}
 	
 	private void insertHeader(XSSFSheet aSheet, String[] headers,int rowPosition,int sizeCell){
@@ -739,67 +767,40 @@ public class DialogFinancialClosure extends javax.swing.JDialog implements Runna
 		}
 		return null;
 	}
-
-	private void searchInconsistencies() throws FileNotFoundException, IOException {
-		String rutaResult = IncidentsUtil.determineUrl(rutaCarpeta, "DiferenciasCierreFinanciero", ".csv");
-		File file = new File(rutaResult);
-		if (!file.exists()) {// Si el archivo no existe es creado
-			file.createNewFile();
-		}
-		FileWriter fw = new FileWriter(file);
-		BufferedWriter bw = new BufferedWriter(fw);
-		bw.write(createHeaderRow());
-
+	
+	private void searchInconsistencies() {
+		inconsistencesList = new ArrayList<>();
+		
 		currentBarProgress = 70;
 		progressTotal(100, currentBarProgress);
 
-		insertInconsistencyInFile("GW", "RESERVA", ClosureTypeEnum.diferenciaCienMayorQue, bw);
-		insertInconsistencyInFile("GW", "RESERVA", ClosureTypeEnum.diferenciaCienMenorQue, bw);
-		insertInconsistencyInFile("GW", "RESERVA", ClosureTypeEnum.diferenciaReaseguroMayorQue, bw);
-		insertInconsistencyInFile("GW", "RESERVA", ClosureTypeEnum.diferenciaReaseguroMenorQue, bw);
-		insertInconsistencyInFile("GW", "RESERVA", ClosureTypeEnum.cienNoEncontradoEnSap, bw);
-		insertInconsistencyInFile("SAP", "RESERVA", ClosureTypeEnum.cienNoEncontradoEnGW, bw);
+		insertInconsistencyInFile("GW", "RESERVA", ClosureTypeEnum.diferenciaCienMayorQue);
+		insertInconsistencyInFile("GW", "RESERVA", ClosureTypeEnum.diferenciaCienMenorQue);
+		insertInconsistencyInFile("GW", "RESERVA", ClosureTypeEnum.diferenciaReaseguroMayorQue);
+		insertInconsistencyInFile("GW", "RESERVA", ClosureTypeEnum.diferenciaReaseguroMenorQue);
+		insertInconsistencyInFile("GW", "RESERVA", ClosureTypeEnum.cienNoEncontradoEnSap);
+		insertInconsistencyInFile("SAP", "RESERVA", ClosureTypeEnum.cienNoEncontradoEnGW);
 
-		insertInconsistencyInFile("GW", "PAGO", ClosureTypeEnum.diferenciaCienMayorQue, bw);
-		insertInconsistencyInFile("GW", "PAGO", ClosureTypeEnum.diferenciaCienMenorQue, bw);
-		insertInconsistencyInFile("GW", "PAGO", ClosureTypeEnum.diferenciaReaseguroMayorQue, bw);
-		insertInconsistencyInFile("GW", "PAGO", ClosureTypeEnum.diferenciaReaseguroMenorQue, bw);
-		insertInconsistencyInFile("GW", "PAGO", ClosureTypeEnum.cienNoEncontradoEnSap, bw);
-		insertInconsistencyInFile("SAP", "PAGO", ClosureTypeEnum.cienNoEncontradoEnGW, bw);
+		insertInconsistencyInFile("GW", "PAGO", ClosureTypeEnum.diferenciaCienMayorQue);
+		insertInconsistencyInFile("GW", "PAGO", ClosureTypeEnum.diferenciaCienMenorQue);
+		insertInconsistencyInFile("GW", "PAGO", ClosureTypeEnum.diferenciaReaseguroMayorQue);
+		insertInconsistencyInFile("GW", "PAGO", ClosureTypeEnum.diferenciaReaseguroMenorQue);
+		insertInconsistencyInFile("GW", "PAGO", ClosureTypeEnum.cienNoEncontradoEnSap);
+		insertInconsistencyInFile("SAP", "PAGO", ClosureTypeEnum.cienNoEncontradoEnGW);
 
-		insertInconsistencyInFile("GW", "GASTO", ClosureTypeEnum.diferenciaCienMayorQue, bw);
-		insertInconsistencyInFile("GW", "GASTO", ClosureTypeEnum.diferenciaCienMenorQue, bw);
-		insertInconsistencyInFile("GW", "GASTO", ClosureTypeEnum.diferenciaReaseguroMayorQue, bw);
-		insertInconsistencyInFile("GW", "GASTO", ClosureTypeEnum.diferenciaReaseguroMenorQue, bw);
-		insertInconsistencyInFile("GW", "GASTO", ClosureTypeEnum.cienNoEncontradoEnSap, bw);
-		insertInconsistencyInFile("SAP", "GASTO", ClosureTypeEnum.cienNoEncontradoEnGW, bw);
+		insertInconsistencyInFile("GW", "GASTO", ClosureTypeEnum.diferenciaCienMayorQue);
+		insertInconsistencyInFile("GW", "GASTO", ClosureTypeEnum.diferenciaCienMenorQue);
+		insertInconsistencyInFile("GW", "GASTO", ClosureTypeEnum.diferenciaReaseguroMayorQue);
+		insertInconsistencyInFile("GW", "GASTO", ClosureTypeEnum.diferenciaReaseguroMenorQue);
+		insertInconsistencyInFile("GW", "GASTO", ClosureTypeEnum.cienNoEncontradoEnSap);
+		insertInconsistencyInFile("SAP", "GASTO", ClosureTypeEnum.cienNoEncontradoEnGW);
 
-		insertInconsistencyInFile("GW", "SALVAMENTO", ClosureTypeEnum.diferenciaCienMayorQue, bw);
-		insertInconsistencyInFile("GW", "SALVAMENTO", ClosureTypeEnum.diferenciaCienMenorQue, bw);
-		insertInconsistencyInFile("GW", "SALVAMENTO", ClosureTypeEnum.diferenciaReaseguroMayorQue, bw);
-		insertInconsistencyInFile("GW", "SALVAMENTO", ClosureTypeEnum.diferenciaReaseguroMenorQue, bw);
-		insertInconsistencyInFile("GW", "SALVAMENTO", ClosureTypeEnum.cienNoEncontradoEnSap, bw);
-		insertInconsistencyInFile("SAP", "SALVAMENTO", ClosureTypeEnum.cienNoEncontradoEnGW, bw);
-
-		bw.close();
-		fw.close();
-	}
-
-	private String createHeaderRow() {
-		return "\"TIPO ERROR\";"
-						+ "\"REFERENCIA\";"
-						+ "\"RAMO\";"
-						+ "\"CLAIM NUMBER\";"
-						+ "\"POLCY NUMBER\";"
-						+ "\"MONEDA\";"
-						+ "\"ESTADO\";"
-						+ "\"VALOR 100 GW\";"
-						+ "\"REAS GW\";"
-						+ "\"VALOR 100 SAP\";"
-						+ "\"REAS SAP\";"
-						+ "\"DIF 100\";"
-						+ "\"DIF REAS\";"
-						+ "\"DETALLE\";\n";
+		insertInconsistencyInFile("GW", "SALVAMENTO", ClosureTypeEnum.diferenciaCienMayorQue);
+		insertInconsistencyInFile("GW", "SALVAMENTO", ClosureTypeEnum.diferenciaCienMenorQue);
+		insertInconsistencyInFile("GW", "SALVAMENTO", ClosureTypeEnum.diferenciaReaseguroMayorQue);
+		insertInconsistencyInFile("GW", "SALVAMENTO", ClosureTypeEnum.diferenciaReaseguroMenorQue);
+		insertInconsistencyInFile("GW", "SALVAMENTO", ClosureTypeEnum.cienNoEncontradoEnSap);
+		insertInconsistencyInFile("SAP", "SALVAMENTO", ClosureTypeEnum.cienNoEncontradoEnGW);
 	}
 
 	private boolean isZeroOrNull(Double value) {
@@ -828,53 +829,60 @@ public class DialogFinancialClosure extends javax.swing.JDialog implements Runna
 		return aResult.getEstado().contains("En espera");//En espera de envío no se analiza 
 	}
 
-	private void insertInconsistencyInFile(String origen, String tipo, ClosureTypeEnum criterio, BufferedWriter bw)
-					throws FileNotFoundException, IOException {
+	private void insertInconsistencyInFile(String origen, String tipo, ClosureTypeEnum criterio) {
 		progressProcess(100, 0);
 		progressTotal(100, ++currentBarProgress);
 		printInOutputText("\nAnalizando " + tipo + " - " + criterio.name() + "...");
 
-		List<Closure> resultList = searchInconsistency(origen, tipo, criterio, limitInconsistencies);
+		if(inconsistencesList.size()>inconsistencesLimit){
+			return;
+		}
+		
+		
+		List<Closure> resultList = searchInconsistency(origen, tipo, criterio, monetaryLimit);
 		if (resultList.isEmpty()) {
 			return;
 		} else {
 			totalItemNumber = resultList.size();
 			currentItemNumber = 0;
 		}
-		String strRow = "";
+		
 		for (Closure aResult : resultList) {
+			int colNum = 0;
+			String[] strRow = new String[13];			
+			if(inconsistencesList.size()==inconsistencesLimit){
+				strRow[colNum]="ERROR Limite de "+ inconsistencesLimit +" se ha superado, se debe verificar informes y volver a ejectuar.";
+				return;
+			}
 			lastRowInfo = IncidentsUtil.determineRowInfo(aResult);
 			progressProcess(totalItemNumber, ++currentItemNumber);
 			if (isOmitedItem(aResult)) {
 				continue;
 			}
-			strRow = "\"" + tipo + " " + criterio.name() + "\";\""
-							+ aResult.getReferencia() + "\";\""
-							+ aResult.getRamo() + "\";\""
-							+ aResult.getClaimnumber() + "\";\""
-							+ aResult.getPolicynumber() + "\";\""
-							+ aResult.getMoneda() + "\";\""
-							+ aResult.getEstado() + "\";";
+			strRow[colNum++] = tipo + " " + criterio.name();			
+			strRow[colNum++] = aResult.getReferencia();
+			strRow[colNum++] = aResult.getRamo();
+			strRow[colNum++] = aResult.getClaimnumber();
+			strRow[colNum++] = aResult.getPolicynumber();
+			strRow[colNum++] = aResult.getMoneda();
+			strRow[colNum++] = aResult.getEstado();
 
 			if (tipo.equals("GASTO")) {//gasto no realiza analisis de reaseguro
-				strRow = strRow + "\""
-								+ IncidentsUtil.determineStringValue(aResult.getValorCienGw()) + "\";\""
-								+ "NO APLICA" + "\";\""
-								+ IncidentsUtil.determineStringValue(aResult.getValorCienSap()) + "\";\""
-								+ "NO APLICA" + "\";\""
-								+ IncidentsUtil.determineStringValue(aResult.getDiferCien()) + "\";\""
-								+ "NO APLICA" + "\";";
+				strRow[colNum++] = IncidentsUtil.determineStringValue(aResult.getValorCienGw());
+				strRow[colNum++] = "NO APLICA";
+				strRow[colNum++] = IncidentsUtil.determineStringValue(aResult.getValorCienSap());
+				strRow[colNum++] = "NO APLICA";
+				strRow[colNum++] = IncidentsUtil.determineStringValue(aResult.getDiferCien());
+				strRow[colNum++] = "NO APLICA";
 			} else {
-				strRow = strRow + "\""
-								+ IncidentsUtil.determineStringValue(aResult.getValorCienGw()) + "\";\""
-								+ IncidentsUtil.determineStringValue(aResult.getValorReasGw()) + "\";\""
-								+ IncidentsUtil.determineStringValue(aResult.getValorCienSap()) + "\";\""
-								+ IncidentsUtil.determineStringValue(aResult.getValorReasSap()) + "\";\""
-								+ IncidentsUtil.determineStringValue(aResult.getDiferCien()) + "\";\""
-								+ IncidentsUtil.determineStringValue(aResult.getDiferReas()) + "\";";
-			}
-			strRow = strRow + "\n";
-			bw.write(strRow);
+				strRow[colNum++] = IncidentsUtil.determineStringValue(aResult.getValorCienGw());
+				strRow[colNum++] = IncidentsUtil.determineStringValue(aResult.getValorReasGw());
+				strRow[colNum++] = IncidentsUtil.determineStringValue(aResult.getValorCienSap());
+				strRow[colNum++] = IncidentsUtil.determineStringValue(aResult.getValorReasSap());
+				strRow[colNum++] = IncidentsUtil.determineStringValue(aResult.getDiferCien());
+				strRow[colNum++] = IncidentsUtil.determineStringValue(aResult.getDiferReas());
+			}			
+			inconsistencesList.add(strRow);			
 		}
 	}
 
@@ -911,10 +919,12 @@ public class DialogFinancialClosure extends javax.swing.JDialog implements Runna
     labelFile = new javax.swing.JLabel();
     jScrollPane1 = new javax.swing.JScrollPane();
     outputTxt = new javax.swing.JTextArea();
-    jLabel1 = new javax.swing.JLabel();
     jLabel3 = new javax.swing.JLabel();
     jLabel4 = new javax.swing.JLabel();
     progressBarProceso = new javax.swing.JProgressBar();
+    spinnerMaxErrors = new javax.swing.JSpinner();
+    jLabel2 = new javax.swing.JLabel();
+    jLabel5 = new javax.swing.JLabel();
     spinnerLimit = new javax.swing.JSpinner();
 
     setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
@@ -927,7 +937,7 @@ public class DialogFinancialClosure extends javax.swing.JDialog implements Runna
 
     progressBar.setStringPainted(true);
 
-    btnSelectFile.setText("Seleccionar");
+    btnSelectFile.setText("Seleccionar Carpeta");
     btnSelectFile.addActionListener(new java.awt.event.ActionListener() {
       public void actionPerformed(java.awt.event.ActionEvent evt) {
         btnSelectFileActionPerformed(evt);
@@ -947,13 +957,15 @@ public class DialogFinancialClosure extends javax.swing.JDialog implements Runna
     outputTxt.setName(""); // NOI18N
     jScrollPane1.setViewportView(outputTxt);
 
-    jLabel1.setText("Limite Monetario");
-
     jLabel3.setText("PROCESO ACTUAL: ");
 
     jLabel4.setText("PROGRESO TOTAL: ");
 
     progressBarProceso.setStringPainted(true);
+
+    jLabel2.setText("Limite Monetario");
+
+    jLabel5.setText("Num Max Errores");
 
     javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
     getContentPane().setLayout(layout);
@@ -966,53 +978,63 @@ public class DialogFinancialClosure extends javax.swing.JDialog implements Runna
           .addGroup(layout.createSequentialGroup()
             .addGap(6, 6, 6)
             .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-              .addComponent(jLabel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-              .addComponent(jLabel4, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-              .addComponent(jLabel3, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+              .addGroup(layout.createSequentialGroup()
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                  .addComponent(jLabel4, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                  .addComponent(jLabel3, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                  .addComponent(progressBarProceso, javax.swing.GroupLayout.DEFAULT_SIZE, 355, Short.MAX_VALUE)
+                  .addComponent(progressBar, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
+              .addComponent(labelFile, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
             .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-            .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-              .addGroup(javax.swing.GroupLayout.Alignment.LEADING, layout.createSequentialGroup()
-                .addComponent(spinnerLimit, javax.swing.GroupLayout.PREFERRED_SIZE, 67, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(btnSelectFile)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(labelFile, javax.swing.GroupLayout.PREFERRED_SIZE, 369, javax.swing.GroupLayout.PREFERRED_SIZE))
-              .addComponent(progressBar, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-              .addComponent(progressBarProceso, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-            .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-            .addComponent(btnStart, javax.swing.GroupLayout.PREFERRED_SIZE, 81, javax.swing.GroupLayout.PREFERRED_SIZE)))
+            .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+              .addGroup(layout.createSequentialGroup()
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                  .addComponent(jLabel2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                  .addComponent(jLabel5, javax.swing.GroupLayout.DEFAULT_SIZE, 91, Short.MAX_VALUE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                  .addComponent(spinnerMaxErrors, javax.swing.GroupLayout.PREFERRED_SIZE, 67, javax.swing.GroupLayout.PREFERRED_SIZE)
+                  .addComponent(spinnerLimit, javax.swing.GroupLayout.PREFERRED_SIZE, 67, javax.swing.GroupLayout.PREFERRED_SIZE)))
+              .addComponent(btnSelectFile, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+            .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+            .addComponent(btnStart, javax.swing.GroupLayout.PREFERRED_SIZE, 84, javax.swing.GroupLayout.PREFERRED_SIZE)
+            .addGap(0, 0, Short.MAX_VALUE)))
         .addContainerGap())
     );
     layout.setVerticalGroup(
       layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
       .addGroup(layout.createSequentialGroup()
         .addContainerGap()
-        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
           .addGroup(layout.createSequentialGroup()
-            .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-              .addComponent(progressBar, javax.swing.GroupLayout.PREFERRED_SIZE, 24, javax.swing.GroupLayout.PREFERRED_SIZE)
-              .addComponent(jLabel4, javax.swing.GroupLayout.PREFERRED_SIZE, 23, javax.swing.GroupLayout.PREFERRED_SIZE))
+            .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+              .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE, false)
+                .addComponent(progressBar, javax.swing.GroupLayout.DEFAULT_SIZE, 24, Short.MAX_VALUE)
+                .addComponent(jLabel4, javax.swing.GroupLayout.PREFERRED_SIZE, 23, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(jLabel2, javax.swing.GroupLayout.PREFERRED_SIZE, 25, javax.swing.GroupLayout.PREFERRED_SIZE))
+              .addComponent(spinnerLimit, javax.swing.GroupLayout.PREFERRED_SIZE, 26, javax.swing.GroupLayout.PREFERRED_SIZE))
             .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
             .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
               .addComponent(jLabel3, javax.swing.GroupLayout.PREFERRED_SIZE, 23, javax.swing.GroupLayout.PREFERRED_SIZE)
-              .addComponent(progressBarProceso, javax.swing.GroupLayout.PREFERRED_SIZE, 24, javax.swing.GroupLayout.PREFERRED_SIZE))
+              .addComponent(progressBarProceso, javax.swing.GroupLayout.PREFERRED_SIZE, 24, javax.swing.GroupLayout.PREFERRED_SIZE)
+              .addComponent(jLabel5, javax.swing.GroupLayout.DEFAULT_SIZE, 25, Short.MAX_VALUE)
+              .addComponent(spinnerMaxErrors, javax.swing.GroupLayout.PREFERRED_SIZE, 26, javax.swing.GroupLayout.PREFERRED_SIZE))
             .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-            .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-              .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 23, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addComponent(spinnerLimit, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addComponent(btnSelectFile))
-              .addComponent(labelFile, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 23, javax.swing.GroupLayout.PREFERRED_SIZE)))
+            .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+              .addComponent(labelFile, javax.swing.GroupLayout.PREFERRED_SIZE, 23, javax.swing.GroupLayout.PREFERRED_SIZE)
+              .addComponent(btnSelectFile)))
           .addComponent(btnStart, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-        .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 397, Short.MAX_VALUE)
+        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+        .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 389, javax.swing.GroupLayout.PREFERRED_SIZE)
         .addContainerGap())
     );
 
     btnStart.getAccessibleContext().setAccessibleName("btnStart");
     btnStart.getAccessibleContext().setAccessibleDescription("");
 
-    setSize(new java.awt.Dimension(769, 549));
+    setSize(new java.awt.Dimension(776, 549));
     setLocationRelativeTo(null);
   }// </editor-fold>//GEN-END:initComponents
 
@@ -1079,15 +1101,17 @@ public class DialogFinancialClosure extends javax.swing.JDialog implements Runna
   // Variables declaration - do not modify//GEN-BEGIN:variables
   private javax.swing.JButton btnSelectFile;
   private javax.swing.JButton btnStart;
-  private javax.swing.JLabel jLabel1;
+  private javax.swing.JLabel jLabel2;
   private javax.swing.JLabel jLabel3;
   private javax.swing.JLabel jLabel4;
+  private javax.swing.JLabel jLabel5;
   private javax.swing.JScrollPane jScrollPane1;
   private javax.swing.JLabel labelFile;
   private javax.swing.JTextArea outputTxt;
   private javax.swing.JProgressBar progressBar;
   private javax.swing.JProgressBar progressBarProceso;
   private javax.swing.JSpinner spinnerLimit;
+  private javax.swing.JSpinner spinnerMaxErrors;
   // End of variables declaration//GEN-END:variables
 
 }
