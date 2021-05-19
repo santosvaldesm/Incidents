@@ -219,12 +219,12 @@ public class Template implements Serializable,PrintableTable {
     
   public static String[] columNames(){
     return new String[]{"ID",
-                        "AGRUPADOR             ",
-                        "CAUSA                 ",
-                        "PROCESO               ",
-                        "RAIZAL                ",
-                        "ESTADO                ",
-                        "RESPONSABLE           ",
+                        "AGRUPADOR",
+                        "CAUSA",
+                        "PROCESO",
+                        "RAIZAL                                ",
+                        "ESTADO",
+                        "RESPONSABLE",
                         "DIAGNOSTICO                                                                                    ",
                         "ACCION                                                                           ",
                         "DESCIPCION                                                                       ",
