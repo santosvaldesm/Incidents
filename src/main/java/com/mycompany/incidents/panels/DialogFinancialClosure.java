@@ -7,13 +7,11 @@ import com.mycompany.incidents.otherResources.DataBaseController;
 import com.mycompany.incidents.otherResources.FinalReportDTO;
 import com.mycompany.incidents.otherResources.IncidentsUtil;
 import java.io.BufferedReader;
-import java.io.BufferedWriter;
 import javax.swing.JFileChooser;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.FileReader;
-import java.io.FileWriter;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
@@ -194,9 +192,9 @@ public class DialogFinancialClosure extends javax.swing.JDialog implements Runna
 	}
 	
 	private void createStyles(XSSFWorkbook anExcelWorbook){
-		headerStyle = createHeaderStyle(anExcelWorbook);
-	  cellStyle = createCellStyle(anExcelWorbook);		
-	  cellStyleGray = createCellStyleGray(anExcelWorbook);		
+		headerStyle = IncidentsUtil.createHeaderStyle(anExcelWorbook);
+	  cellStyle = IncidentsUtil.createCellStyle(anExcelWorbook);		
+	  cellStyleGray = IncidentsUtil.createCellStyleGray(anExcelWorbook);		
 	}
 	
 
@@ -395,42 +393,6 @@ public class DialogFinancialClosure extends javax.swing.JDialog implements Runna
 		file.close();
 	}
 	
-	private XSSFCellStyle createHeaderStyle(XSSFWorkbook anExcelWorbook) {
-		XSSFCellStyle aStyle = (XSSFCellStyle)anExcelWorbook.createCellStyle();
-		Font font = anExcelWorbook.createFont();
-		font.setBold(true);
-		aStyle.setFont(font);		
-		aStyle.setBorderBottom(BorderStyle.THIN);
-		aStyle.setBorderTop(BorderStyle.THIN);
-		aStyle.setBorderRight(BorderStyle.THIN);
-		aStyle.setBorderLeft(BorderStyle.THIN);
-		byte[] rgb = new byte[]{(byte)221, (byte)235, (byte)247};
-		aStyle.setFillForegroundColor(new XSSFColor(rgb, null));
-		aStyle.setFillPattern(FillPatternType.SOLID_FOREGROUND);
-		return aStyle;
-	}
-	
-	private XSSFCellStyle createCellStyle(XSSFWorkbook anExcelWorbook) {
-		XSSFCellStyle aStyle = anExcelWorbook.createCellStyle();		
-		aStyle.setBorderBottom(BorderStyle.THIN);
-		aStyle.setBorderTop(BorderStyle.THIN);
-		aStyle.setBorderRight(BorderStyle.THIN);
-		aStyle.setBorderLeft(BorderStyle.THIN);
-		return aStyle;
-	}
-	
-	private XSSFCellStyle createCellStyleGray(XSSFWorkbook anExcelWorbook) {
-		XSSFCellStyle aStyle = anExcelWorbook.createCellStyle();		
-		aStyle.setBorderBottom(BorderStyle.THIN);
-		aStyle.setBorderTop(BorderStyle.THIN);
-		aStyle.setBorderRight(BorderStyle.THIN);
-		aStyle.setBorderLeft(BorderStyle.THIN);
-		byte[] rgb = new byte[]{(byte)214, (byte)220, (byte)228};
-		aStyle.setFillForegroundColor(new XSSFColor(rgb, null));
-		aStyle.setFillPattern(FillPatternType.SOLID_FOREGROUND);
-		return aStyle;
-	}
-	
 	private void insertDataInExcel(XSSFSheet aSheet, String[] headers, String tipo) {		
 		int rowPosition = 0;				
 		
@@ -459,7 +421,7 @@ public class DialogFinancialClosure extends javax.swing.JDialog implements Runna
 				}else{
 					aStyle = cellStyle;
 				}				
-				createCellInRow(newRow,colPosition++,aValue,aStyle);
+				IncidentsUtil.createCellInRow(newRow,colPosition++,aValue,aStyle);
 			}			
 		}
 		
@@ -471,7 +433,7 @@ public class DialogFinancialClosure extends javax.swing.JDialog implements Runna
 			aSheet.addMergedRegion(new CellRangeAddress(rowPosition-1,rowPosition-1,0,sizeCell-1)); 
 		}
 		for (int i = 0; i < headers.length; ++i) {			
-			createCellInRow(headerRow,i,headers[i],headerStyle);			
+			IncidentsUtil.createCellInRow(headerRow,i,headers[i],headerStyle);			
 		}		
 	}
 	
@@ -485,73 +447,58 @@ public class DialogFinancialClosure extends javax.swing.JDialog implements Runna
 				continue;
 			}			
 			XSSFRow newRow = aSheet.createRow(rowPosition++);			
-			createCellInRow(newRow,colPosition++,aDTO.getRamo(),cellStyle);
-			createCellInRow(newRow,colPosition++,aDTO.getMoneda(),cellStyle);			
+			IncidentsUtil.createCellInRow(newRow,colPosition++,aDTO.getRamo(),cellStyle);
+			IncidentsUtil.createCellInRow(newRow,colPosition++,aDTO.getMoneda(),cellStyle);			
 			totalsDTO.setMoneda(aDTO.getMoneda());
 			totalsDTO.setTipo(aDTO.getTipo());
-			createCellInRow(newRow,colPosition++,aDTO.getValorGW(),cellStyle);			
+			IncidentsUtil.createCellInRow(newRow,colPosition++,aDTO.getValorGW(),cellStyle);			
 			totalsDTO.setValorGW(IncidentsUtil.sumarDoubles(totalsDTO.getValorGW(),aDTO.getValorGW()));			
 			if(aDTO.getTipo().equals("RESERVA")) {
-			  createCellInRow(newRow,colPosition++,aDTO.getGastosGW(),cellStyle);
+			  IncidentsUtil.createCellInRow(newRow,colPosition++,aDTO.getGastosGW(),cellStyle);
 				totalsDTO.setGastosGW(IncidentsUtil.sumarDoubles(totalsDTO.getGastosGW(),aDTO.getGastosGW()));
 			}			
-			createCellInRow(newRow,colPosition++,aDTO.getReaseguroGW(),cellStyle);
+			IncidentsUtil.createCellInRow(newRow,colPosition++,aDTO.getReaseguroGW(),cellStyle);
 			totalsDTO.setReaseguroGW(IncidentsUtil.sumarDoubles(totalsDTO.getReaseguroGW(),aDTO.getReaseguroGW()));			
-			createCellInRow(newRow,colPosition++,aDTO.getValorSAP(),cellStyle);
+			IncidentsUtil.createCellInRow(newRow,colPosition++,aDTO.getValorSAP(),cellStyle);
 			totalsDTO.setValorSAP(IncidentsUtil.sumarDoubles(totalsDTO.getValorSAP(),aDTO.getValorSAP()));			
 			if(aDTO.getTipo().equals("RESERVA")) {
-			  createCellInRow(newRow,colPosition++,aDTO.getGastosSAP(),cellStyle);
+			  IncidentsUtil.createCellInRow(newRow,colPosition++,aDTO.getGastosSAP(),cellStyle);
 				totalsDTO.setGastosSAP(IncidentsUtil.sumarDoubles(totalsDTO.getGastosSAP(),aDTO.getGastosSAP()));
 			}			
-			createCellInRow(newRow,colPosition++,aDTO.getReaseguroSAP(),cellStyle);
+			IncidentsUtil.createCellInRow(newRow,colPosition++,aDTO.getReaseguroSAP(),cellStyle);
 			totalsDTO.setReaseguroSAP(IncidentsUtil.sumarDoubles(totalsDTO.getReaseguroSAP(),aDTO.getReaseguroSAP()));			
-			createCellInRow(newRow,colPosition++,aDTO.getDiferenciaValor(),cellStyleGray);
+			IncidentsUtil.createCellInRow(newRow,colPosition++,aDTO.getDiferenciaValor(),cellStyleGray);
 			totalsDTO.setDiferenciaValor(IncidentsUtil.sumarDoubles(totalsDTO.getDiferenciaValor(),aDTO.getDiferenciaValor()));			
 			if(aDTO.getTipo().equals("RESERVA")) {
-			  createCellInRow(newRow,colPosition++,aDTO.getDiferenciaGastos(),cellStyleGray);
+			  IncidentsUtil.createCellInRow(newRow,colPosition++,aDTO.getDiferenciaGastos(),cellStyleGray);
 				totalsDTO.setDiferenciaGastos(IncidentsUtil.sumarDoubles(totalsDTO.getDiferenciaGastos(),aDTO.getDiferenciaGastos()));
 			}			
-			createCellInRow(newRow,colPosition++,aDTO.getDiferenciaReaseguro(),cellStyleGray);			
+			IncidentsUtil.createCellInRow(newRow,colPosition++,aDTO.getDiferenciaReaseguro(),cellStyleGray);			
 			totalsDTO.setDiferenciaReaseguro(IncidentsUtil.sumarDoubles(totalsDTO.getDiferenciaReaseguro(),aDTO.getDiferenciaReaseguro()));
 		}
 		if(totalsDTO.getTipo()!=null){//Ingresar los totales
 			int colPosition = 0;
 			XSSFRow newRow = aSheet.createRow(rowPosition++);			
-			createCellInRow(newRow,colPosition++,totalsDTO.getRamo(),headerStyle);
-			createCellInRow(newRow,colPosition++,totalsDTO.getMoneda(),headerStyle);			
-			createCellInRow(newRow,colPosition++,totalsDTO.getValorGW(),headerStyle);					
+			IncidentsUtil.createCellInRow(newRow,colPosition++,totalsDTO.getRamo(),headerStyle);
+			IncidentsUtil.createCellInRow(newRow,colPosition++,totalsDTO.getMoneda(),headerStyle);			
+			IncidentsUtil.createCellInRow(newRow,colPosition++,totalsDTO.getValorGW(),headerStyle);					
 			if(totalsDTO.getTipo().equals("RESERVA")) {
-				createCellInRow(newRow,colPosition++,totalsDTO.getGastosGW(),headerStyle);			
+				IncidentsUtil.createCellInRow(newRow,colPosition++,totalsDTO.getGastosGW(),headerStyle);			
 			}			
-			createCellInRow(newRow,colPosition++,totalsDTO.getReaseguroGW(),headerStyle);
-			createCellInRow(newRow,colPosition++,totalsDTO.getValorSAP(),headerStyle);
+			IncidentsUtil.createCellInRow(newRow,colPosition++,totalsDTO.getReaseguroGW(),headerStyle);
+			IncidentsUtil.createCellInRow(newRow,colPosition++,totalsDTO.getValorSAP(),headerStyle);
 			if(totalsDTO.getTipo().equals("RESERVA")) {
-				createCellInRow(newRow,colPosition++,totalsDTO.getGastosSAP(),headerStyle);
+				IncidentsUtil.createCellInRow(newRow,colPosition++,totalsDTO.getGastosSAP(),headerStyle);
 			}			
-			createCellInRow(newRow,colPosition++,totalsDTO.getReaseguroSAP(),headerStyle);
-			createCellInRow(newRow,colPosition++,totalsDTO.getDiferenciaValor(),headerStyle);
+			IncidentsUtil.createCellInRow(newRow,colPosition++,totalsDTO.getReaseguroSAP(),headerStyle);
+			IncidentsUtil.createCellInRow(newRow,colPosition++,totalsDTO.getDiferenciaValor(),headerStyle);
 			if(totalsDTO.getTipo().equals("RESERVA")) {
-				createCellInRow(newRow,colPosition++,totalsDTO.getDiferenciaGastos(),headerStyle);
+				IncidentsUtil.createCellInRow(newRow,colPosition++,totalsDTO.getDiferenciaGastos(),headerStyle);
 			}			
-			createCellInRow(newRow,colPosition++,totalsDTO.getDiferenciaReaseguro(),headerStyle);					
+			IncidentsUtil.createCellInRow(newRow,colPosition++,totalsDTO.getDiferenciaReaseguro(),headerStyle);					
 		}		
 		return rowPosition;
 	}
-	
-	private void createCellInRow(XSSFRow aRow,int cellNum,
-					                     Object obj,XSSFCellStyle aStyle){
-    XSSFCell aCell = aRow.createCell(cellNum);
-		aCell.setCellStyle(aStyle);
-    if (obj instanceof String) { 
-      aCell.setCellValue((String) obj); 
-    } else if (obj instanceof Boolean) { 
-      aCell.setCellValue((Boolean) obj); 
-    } else if (obj instanceof Date) { 
-      aCell.setCellValue((Date) obj); 
-    } else if (obj instanceof Double) { 
-      aCell.setCellValue((Double) obj); 
-    }      
-  }
 
 	private void printInOutputText(String textToAdd) {
 		outputTxt.setText(outputTxt.getText() + textToAdd);
@@ -972,11 +919,10 @@ public class DialogFinancialClosure extends javax.swing.JDialog implements Runna
     layout.setHorizontalGroup(
       layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
       .addGroup(layout.createSequentialGroup()
-        .addContainerGap()
-        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-          .addComponent(jScrollPane1)
+        .addGap(15, 15, 15)
+        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+          .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 862, javax.swing.GroupLayout.PREFERRED_SIZE)
           .addGroup(layout.createSequentialGroup()
-            .addGap(6, 6, 6)
             .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
               .addGroup(layout.createSequentialGroup()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
@@ -992,16 +938,15 @@ public class DialogFinancialClosure extends javax.swing.JDialog implements Runna
               .addGroup(layout.createSequentialGroup()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                   .addComponent(jLabel2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                  .addComponent(jLabel5, javax.swing.GroupLayout.DEFAULT_SIZE, 91, Short.MAX_VALUE))
+                  .addComponent(jLabel5, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                   .addComponent(spinnerMaxErrors, javax.swing.GroupLayout.PREFERRED_SIZE, 67, javax.swing.GroupLayout.PREFERRED_SIZE)
                   .addComponent(spinnerLimit, javax.swing.GroupLayout.PREFERRED_SIZE, 67, javax.swing.GroupLayout.PREFERRED_SIZE)))
               .addComponent(btnSelectFile, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
             .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-            .addComponent(btnStart, javax.swing.GroupLayout.PREFERRED_SIZE, 84, javax.swing.GroupLayout.PREFERRED_SIZE)
-            .addGap(0, 0, Short.MAX_VALUE)))
-        .addContainerGap())
+            .addComponent(btnStart, javax.swing.GroupLayout.PREFERRED_SIZE, 107, javax.swing.GroupLayout.PREFERRED_SIZE)))
+        .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
     );
     layout.setVerticalGroup(
       layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -1036,7 +981,7 @@ public class DialogFinancialClosure extends javax.swing.JDialog implements Runna
     btnStart.getAccessibleContext().setAccessibleName("btnStart");
     btnStart.getAccessibleContext().setAccessibleDescription("");
 
-    setSize(new java.awt.Dimension(776, 549));
+    setSize(new java.awt.Dimension(914, 593));
     setLocationRelativeTo(null);
   }// </editor-fold>//GEN-END:initComponents
 

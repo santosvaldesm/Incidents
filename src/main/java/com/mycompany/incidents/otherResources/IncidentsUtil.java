@@ -10,7 +10,16 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
 import java.text.DecimalFormat;
+import java.util.Date;
 import javax.swing.JTextArea;
+import org.apache.poi.ss.usermodel.BorderStyle;
+import org.apache.poi.ss.usermodel.FillPatternType;
+import org.apache.poi.ss.usermodel.Font;
+import org.apache.poi.xssf.usermodel.XSSFCell;
+import org.apache.poi.xssf.usermodel.XSSFCellStyle;
+import org.apache.poi.xssf.usermodel.XSSFColor;
+import org.apache.poi.xssf.usermodel.XSSFRow;
+import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
 /**
  *
@@ -23,6 +32,57 @@ public class IncidentsUtil {
 	static {
 		df.setMaximumFractionDigits(3);
 	}
+	
+	public static XSSFCellStyle createHeaderStyle(XSSFWorkbook anExcelWorbook) {
+		XSSFCellStyle aStyle = (XSSFCellStyle)anExcelWorbook.createCellStyle();
+		Font font = anExcelWorbook.createFont();
+		font.setBold(true);
+		aStyle.setFont(font);		
+		aStyle.setBorderBottom(BorderStyle.THIN);
+		aStyle.setBorderTop(BorderStyle.THIN);
+		aStyle.setBorderRight(BorderStyle.THIN);
+		aStyle.setBorderLeft(BorderStyle.THIN);
+		byte[] rgb = new byte[]{(byte)221, (byte)235, (byte)247};
+		aStyle.setFillForegroundColor(new XSSFColor(rgb, null));
+		aStyle.setFillPattern(FillPatternType.SOLID_FOREGROUND);
+		return aStyle;
+	}
+	
+	public static XSSFCellStyle createCellStyle(XSSFWorkbook anExcelWorbook) {
+		XSSFCellStyle aStyle = anExcelWorbook.createCellStyle();		
+		aStyle.setBorderBottom(BorderStyle.THIN);
+		aStyle.setBorderTop(BorderStyle.THIN);
+		aStyle.setBorderRight(BorderStyle.THIN);
+		aStyle.setBorderLeft(BorderStyle.THIN);
+		return aStyle;
+	}
+	
+	public static XSSFCellStyle createCellStyleGray(XSSFWorkbook anExcelWorbook) {
+		XSSFCellStyle aStyle = anExcelWorbook.createCellStyle();		
+		aStyle.setBorderBottom(BorderStyle.THIN);
+		aStyle.setBorderTop(BorderStyle.THIN);
+		aStyle.setBorderRight(BorderStyle.THIN);
+		aStyle.setBorderLeft(BorderStyle.THIN);
+		byte[] rgb = new byte[]{(byte)214, (byte)220, (byte)228};
+		aStyle.setFillForegroundColor(new XSSFColor(rgb, null));
+		aStyle.setFillPattern(FillPatternType.SOLID_FOREGROUND);
+		return aStyle;
+	}
+	
+	public static void createCellInRow(XSSFRow aRow,int cellNum,
+					                     Object obj,XSSFCellStyle aStyle){
+    XSSFCell aCell = aRow.createCell(cellNum);
+		aCell.setCellStyle(aStyle);
+    if (obj instanceof String) { 
+      aCell.setCellValue((String) obj); 
+    } else if (obj instanceof Boolean) { 
+      aCell.setCellValue((Boolean) obj); 
+    } else if (obj instanceof Date) { 
+      aCell.setCellValue((Date) obj); 
+    } else if (obj instanceof Double) { 
+      aCell.setCellValue((Double) obj); 
+    }      
+  }
 	
 	public static void printStackTrace(Exception e3,JTextArea outputTxt) {
 		String textToAdd = "\n" + e3.toString();

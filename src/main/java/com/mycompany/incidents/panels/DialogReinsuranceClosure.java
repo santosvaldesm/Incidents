@@ -10,6 +10,7 @@ import java.io.BufferedWriter;
 import javax.swing.JFileChooser;
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
@@ -20,6 +21,11 @@ import java.util.HashMap;
 import java.util.List;
 import javax.persistence.EntityManagerFactory;
 import javax.persistence.Persistence;
+import org.apache.poi.ss.util.CellRangeAddress;
+import org.apache.poi.xssf.usermodel.XSSFCellStyle;
+import org.apache.poi.xssf.usermodel.XSSFRow;
+import org.apache.poi.xssf.usermodel.XSSFSheet;
+import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
 public class DialogReinsuranceClosure extends javax.swing.JDialog implements Runnable {
   
@@ -38,7 +44,10 @@ public class DialogReinsuranceClosure extends javax.swing.JDialog implements Run
   SimpleDateFormat sdfHora = new SimpleDateFormat("HH:mm:ss");
   DataBaseController conection = new DataBaseController();
   int currentItemNumber = 0;//cuantos items ha finalizado en el proceso actual 
-  int totalItemNumber = 0;//total de items en el proceso actual    
+  int totalItemNumber = 0;//total de items en el proceso actual  
+	XSSFCellStyle headerStyle;
+	XSSFCellStyle cellStyle;
+	XSSFCellStyle cellStyleGray;
     
   public DialogReinsuranceClosure(java.awt.Frame parent, boolean modal) {
     super(parent, modal);
@@ -152,11 +161,11 @@ public class DialogReinsuranceClosure extends javax.swing.JDialog implements Run
     String participationAmount = rowInfoSplit[12].replaceAll("\"", "");
     String contrato            = rowInfoSplit[8].replaceAll("\"", "");
     String referenciaSeparada  = 
-            reflectionId        + "\";\"" + 
+            reflectionId        + ";" + 
             cdTransaction       + "-" +     //En ECO cdTranaccion esta unida a PublicID
-            publicId            + "\";\"" +
-            reinsuranceCode     + "\";\"" +
-            participationAmount + "\";\"" +
+            publicId            + ";" +
+            reinsuranceCode     + ";" +
+            participationAmount + ";" +
             contrato;
     
     String claveReferencia;
@@ -203,10 +212,10 @@ public class DialogReinsuranceClosure extends javax.swing.JDialog implements Run
     String reinsuranceCode     = rowInfoSplit[30].replaceAll("\"", "");
     String participationAmount = rowInfoSplit[19].replaceAll("\"", "");
     String contrato            = rowInfoSplit[10].replaceAll("\"", "");
-    String referenciaSeparada  =      "\";\"" + //reflectionId no se si se pueda sacar de ecosistema
-            cdTransaction           + "\";\"" + //en ECO transaction y publicId van juntos            
-            reinsuranceCode         + "\";\"" +
-            participationAmount     + "\";\"" +
+    String referenciaSeparada  =      ";" + //reflectionId no se si se pueda sacar de ecosistema
+            cdTransaction           + ";" + //en ECO transaction y publicId van juntos            
+            reinsuranceCode         + ";" +
+            participationAmount     + ";" +
             contrato; 
     String claveReferencia = cdTransaction + "-" + reinsuranceCode + "-" + participationAmount;           
     searchCriteria = new HashMap<>();
@@ -238,49 +247,63 @@ public class DialogReinsuranceClosure extends javax.swing.JDialog implements Run
   
   
   private void searchInconsistencies() throws IOException, SQLException, ClassNotFoundException{
-    String rutaResult = IncidentsUtil.determineUrl(rutaCarpeta,"CruceReaseguro",".csv");
-    File file = new File(rutaResult);                
-    if (!file.exists()) {// Si el archivo no existe es creado
-        file.createNewFile();
-    }
-    FileWriter fw = new FileWriter(file);
-    BufferedWriter bw = new BufferedWriter(fw);
-    bw.write( "\"TIPO ERROR\";\"SINIESTRO\";\"POLIZA\";\"RAMO\";\"ESTADO\";"
-            + "\"MONEDA\";\"REFLECTION_ID\";\"CD_TRANSACTION\";\"REINSURANCE_CODE\";"
-            + "\"PARTICIPATION_AMOUNT\";\"CONTRATO\";\"REFERENCIA\";"
-            + "\"DETALLE\";\n");
-    
-    if(checkGwNoEstaEco.isSelected()){
-      insertInconsistencyInFile(bw,"GW",ClosureTypeEnum.NoEncontradaEnEco);
+    String rutaResult = IncidentsUtil.determineUrl(rutaCarpeta,"CruceReaseguro", ".xlsx");
+		int rowPosition = 0;
+    XSSFWorkbook anExcelWorbook = new XSSFWorkbook();		
+		createStyles(anExcelWorbook);
+		XSSFSheet sheetInconsistency = anExcelWorbook.createSheet("Inconsistency");
+		String[] headerReinsurance = new String[]{"TIPO ERROR","SINIESTRO","POLIZA","RAMO","ESTADO",
+            "MONEDA","REFLECTION_ID","CD_TRANSACTION","REINSURANCE_CODE",
+            "PARTICIPATION_AMOUNT","CONTRATO","REFERENCIA","DETALLE"};
+		insertHeader(sheetInconsistency,headerReinsurance,rowPosition++);
+		
+		if(checkGwNoEstaEco.isSelected()){
+      rowPosition = insertInconsistencyInFile(sheetInconsistency,"GW",ClosureTypeEnum.NoEncontradaEnEco,rowPosition);
     }
     if(checkEcoNoEstaGw.isSelected()){
-      insertInconsistencyInFile(bw,"ECO",ClosureTypeEnum.NoEncontradaEnGw);    
+      insertInconsistencyInFile(sheetInconsistency,"ECO",ClosureTypeEnum.NoEncontradaEnGw,rowPosition);    
     }    
     
-    bw.close();
-    fw.close();
+		FileOutputStream file = new FileOutputStream(rutaResult);
+		anExcelWorbook.write(file);
+		file.close();
   }
+	
+	private void insertHeader(XSSFSheet aSheet, String[] headers,int rowPosition){
+		XSSFRow headerRow = aSheet.createRow(rowPosition++);		
+		for (int i = 0; i < headers.length; ++i) {			
+			IncidentsUtil.createCellInRow(headerRow,i,headers[i],headerStyle);			
+		}		
+	}
+	
+	private void createStyles(XSSFWorkbook anExcelWorbook){
+		headerStyle = IncidentsUtil.createHeaderStyle(anExcelWorbook);
+	  cellStyle = IncidentsUtil.createCellStyle(anExcelWorbook);		
+	  cellStyleGray = IncidentsUtil.createCellStyleGray(anExcelWorbook);		
+	}
   
-  private void insertInconsistencyInFile(BufferedWriter bw, String origen, 
-          ClosureTypeEnum criterio) throws IOException{
-    
+  private int insertInconsistencyInFile(XSSFSheet aSheet, String origen, 
+                                    ClosureTypeEnum criterio, int rowPosition) {
     printInOutputText("\nAnalizando  - " + criterio.name());
-    currentItemNumber=0;            
-        
-    List<Closure> resultList=searchInconsistency(origen,criterio);              
-    String strRow = "";
-    for(Closure aClosure : resultList) {  
-      strRow = "\"REF DE " + origen + " " + criterio.name() + "\";\"" +               
-              aClosure.getClaimnumber()  + "\";\"" +               
-              aClosure.getPolicynumber() + "\";\"" +               
-              aClosure.getRamo()         + "\";\"" +               
-              aClosure.getEstado()       + "\";\"" +               
-              aClosure.getMoneda()       + "\";\"" +              
-              aClosure.getRowTxt()       + "\";\"" +              
-              aClosure.getReferencia()   + "\";\n";
-      bw.write(strRow);
+    currentItemNumber=0;
+    List<Closure> resultList=searchInconsistency(origen,criterio);
+    for(Closure aClosure : resultList) {
+			int numcol = 0;
+			XSSFRow newRow = aSheet.createRow(rowPosition++);
+			IncidentsUtil.createCellInRow(newRow,numcol++,"REF DE " + origen + " " + criterio.name(),cellStyleGray);
+			IncidentsUtil.createCellInRow(newRow,numcol++,aClosure.getClaimnumber(),cellStyle);
+			IncidentsUtil.createCellInRow(newRow,numcol++,aClosure.getPolicynumber(),cellStyle);
+			IncidentsUtil.createCellInRow(newRow,numcol++,aClosure.getRamo(),cellStyle);
+			IncidentsUtil.createCellInRow(newRow,numcol++,aClosure.getEstado(),cellStyle);
+			IncidentsUtil.createCellInRow(newRow,numcol++,aClosure.getMoneda(),cellStyle);
+			String[] rowTxtSplit = aClosure.getRowTxt().split(";");
+			for(String value : rowTxtSplit) {
+			  IncidentsUtil.createCellInRow(newRow,numcol++,value,cellStyle);
+			}
+			IncidentsUtil.createCellInRow(newRow,11,aClosure.getReferencia(),cellStyle);
       progressProcess(resultList.size(), ++currentItemNumber);
     }    
+		return rowPosition;
   }   
   
   private List<Closure> searchInconsistency(String origen,ClosureTypeEnum typeDif) {    
@@ -391,7 +414,7 @@ public class DialogReinsuranceClosure extends javax.swing.JDialog implements Run
           .addGroup(layout.createSequentialGroup()
             .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
               .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
-                .addComponent(jLabel3, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, 119, Short.MAX_VALUE)
+                .addComponent(jLabel3, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addComponent(btnSelectFileGW, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addComponent(jLabel4, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
               .addComponent(checkGwNoEstaEco))
@@ -399,7 +422,7 @@ public class DialogReinsuranceClosure extends javax.swing.JDialog implements Run
               .addGroup(layout.createSequentialGroup()
                 .addGap(4, 4, 4)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                  .addComponent(progressBarProceso, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                  .addComponent(progressBarProceso, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, 414, Short.MAX_VALUE)
                   .addComponent(progressBar, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                   .addComponent(labelFileGW, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.PREFERRED_SIZE, 395, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
@@ -440,7 +463,7 @@ public class DialogReinsuranceClosure extends javax.swing.JDialog implements Run
     btnStart.getAccessibleContext().setAccessibleName("btnStart");
     btnStart.getAccessibleContext().setAccessibleDescription("");
 
-    setSize(new java.awt.Dimension(652, 549));
+    setSize(new java.awt.Dimension(742, 549));
     setLocationRelativeTo(null);
   }// </editor-fold>//GEN-END:initComponents
 
