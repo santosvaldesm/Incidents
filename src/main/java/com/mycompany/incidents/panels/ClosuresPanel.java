@@ -36,7 +36,8 @@ public class ClosuresPanel extends javax.swing.JPanel {
     btnImport4 = new javax.swing.JButton();
     btnShowQuery3 = new javax.swing.JButton();
     btnShowQuery4 = new javax.swing.JButton();
-    btnImport5 = new javax.swing.JButton();
+    btnConsultasCierre = new javax.swing.JButton();
+    btnConsutasPoliza = new javax.swing.JButton();
 
     btnImport2.setText("CIERRE FINANCIERO");
     btnImport2.addActionListener(new java.awt.event.ActionListener() {
@@ -88,10 +89,17 @@ public class ClosuresPanel extends javax.swing.JPanel {
       }
     });
 
-    btnImport5.setText("GENERAR CONSULTAS");
-    btnImport5.addActionListener(new java.awt.event.ActionListener() {
+    btnConsultasCierre.setText("CONSULTAS CIERRE");
+    btnConsultasCierre.addActionListener(new java.awt.event.ActionListener() {
       public void actionPerformed(java.awt.event.ActionEvent evt) {
-        btnImport5ActionPerformed(evt);
+        btnConsultasCierreActionPerformed(evt);
+      }
+    });
+
+    btnConsutasPoliza.setText("CONSULTAS POLIZA");
+    btnConsutasPoliza.addActionListener(new java.awt.event.ActionListener() {
+      public void actionPerformed(java.awt.event.ActionEvent evt) {
+        btnConsutasPolizaActionPerformed(evt);
       }
     });
 
@@ -101,9 +109,12 @@ public class ClosuresPanel extends javax.swing.JPanel {
       layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
       .addGroup(layout.createSequentialGroup()
         .addContainerGap()
-        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
-          .addComponent(btnImport5, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-          .addGroup(javax.swing.GroupLayout.Alignment.LEADING, layout.createSequentialGroup()
+        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+          .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
+            .addComponent(btnConsultasCierre, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+            .addComponent(btnShowQuery4, javax.swing.GroupLayout.DEFAULT_SIZE, 194, Short.MAX_VALUE))
+          .addComponent(btnConsutasPoliza, javax.swing.GroupLayout.PREFERRED_SIZE, 194, javax.swing.GroupLayout.PREFERRED_SIZE)
+          .addGroup(layout.createSequentialGroup()
             .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
               .addComponent(btnImport2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
               .addComponent(btnImport3, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
@@ -112,9 +123,8 @@ public class ClosuresPanel extends javax.swing.JPanel {
             .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
               .addComponent(btnShowQuery2)
               .addComponent(btnShowQuery3, javax.swing.GroupLayout.PREFERRED_SIZE, 53, javax.swing.GroupLayout.PREFERRED_SIZE)
-              .addComponent(btnShowQuery1)))
-          .addComponent(btnShowQuery4, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-        .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+              .addComponent(btnShowQuery1))))
+        .addContainerGap(54, Short.MAX_VALUE))
     );
     layout.setVerticalGroup(
       layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -122,7 +132,9 @@ public class ClosuresPanel extends javax.swing.JPanel {
         .addContainerGap()
         .addComponent(btnShowQuery4)
         .addGap(5, 5, 5)
-        .addComponent(btnImport5, javax.swing.GroupLayout.PREFERRED_SIZE, 29, javax.swing.GroupLayout.PREFERRED_SIZE)
+        .addComponent(btnConsultasCierre, javax.swing.GroupLayout.PREFERRED_SIZE, 29, javax.swing.GroupLayout.PREFERRED_SIZE)
+        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+        .addComponent(btnConsutasPoliza, javax.swing.GroupLayout.PREFERRED_SIZE, 29, javax.swing.GroupLayout.PREFERRED_SIZE)
         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
           .addComponent(btnImport2, javax.swing.GroupLayout.PREFERRED_SIZE, 29, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -270,17 +282,23 @@ public class ClosuresPanel extends javax.swing.JPanel {
     dialog.setVisible(true);    
   }//GEN-LAST:event_btnShowQuery4ActionPerformed
 
-  private void btnImport5ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnImport5ActionPerformed
+  private void btnConsultasCierreActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnConsultasCierreActionPerformed
     DialogGenerateClosureQuery dialog = new DialogGenerateClosureQuery(null,true);
 		dialog.setVisible(true);  
-  }//GEN-LAST:event_btnImport5ActionPerformed
+  }//GEN-LAST:event_btnConsultasCierreActionPerformed
+
+  private void btnConsutasPolizaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnConsutasPolizaActionPerformed
+    DialogGeneratePolicyQuery dialog = new DialogGeneratePolicyQuery(null,true);
+		dialog.setVisible(true);
+  }//GEN-LAST:event_btnConsutasPolizaActionPerformed
 
 
   // Variables declaration - do not modify//GEN-BEGIN:variables
+  private javax.swing.JButton btnConsultasCierre;
+  private javax.swing.JButton btnConsutasPoliza;
   private javax.swing.JButton btnImport2;
   private javax.swing.JButton btnImport3;
   private javax.swing.JButton btnImport4;
-  private javax.swing.JButton btnImport5;
   private javax.swing.JButton btnShowQuery1;
   private javax.swing.JButton btnShowQuery2;
   private javax.swing.JButton btnShowQuery3;

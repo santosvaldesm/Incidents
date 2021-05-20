@@ -2603,6 +2603,11 @@ public class DialogGenerateClosureQuery extends javax.swing.JDialog {
   }// </editor-fold>//GEN-END:initComponents
 
   private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
+		if(comboQueryType.getSelectedIndex()==-1){
+			outputTxt.setText("No se ha seleccionado el tipo de query");
+		  outputTxt.setCaretPosition(0);
+			return;
+		}
 		configureDate();
 		ClosureQueryTypeEnum queryType = ClosureQueryTypeEnum.valueOf(
 						                         comboQueryType.getSelectedItem().toString());

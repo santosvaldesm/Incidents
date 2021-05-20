@@ -9,12 +9,10 @@ package com.mycompany.incidents.otherResources;
  *
  * @author santvamu
  */
-public enum ClosureQueryTypeEnum {
-	CierreFinancieroReservas,
-	CierreFinancieroPagos,
-	CierreFinancieroSalvamentos,
-	CierreFinancieroGastos,
-	CierreReaseguroGW,
-	CierreReaseguroCuentas,
-	CierreReaseguroValidaciones
+public enum PolicyQueryTypeEnum {
+	Coberturas,
+	Coaseguradores,
+	Beneficiarios,
+	Direcciones,
+	Terminos
 }
