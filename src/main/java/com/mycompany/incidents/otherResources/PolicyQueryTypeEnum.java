@@ -14,5 +14,6 @@ public enum PolicyQueryTypeEnum {
 	Coaseguradores,
 	Beneficiarios,
 	Direcciones,
-	Terminos
+	Terminos,
+	ConsultasComunes
 }
