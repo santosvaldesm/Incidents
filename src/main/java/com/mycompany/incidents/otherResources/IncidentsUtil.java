@@ -10,6 +10,7 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
 import java.text.DecimalFormat;
+import java.util.Arrays;
 import java.util.Date;
 import javax.swing.JTextArea;
 import org.apache.poi.ss.usermodel.BorderStyle;
@@ -132,8 +133,9 @@ public class IncidentsUtil {
 			String[] expectedValues = expectedHeader[i];
 			for(int j=0; j < expectedValues.length;j++){
 				if(!foundHeaderSplit[i].contains(expectedValues[j])){
-				  throw new Exception("\nEn el archivo " + fileName 
-									  + " se esperaba una columna que contenga" + expectedValues);	
+				  throw new Exception("\nEn el archivo " + fileName + " columna  " + (i+1)
+									  + " se esperaba que contenga" + Arrays.toString(expectedValues) + 
+										" pero se encontro [" + foundHeaderSplit[i] + "]");	
 				}
 		  }	
 		}
