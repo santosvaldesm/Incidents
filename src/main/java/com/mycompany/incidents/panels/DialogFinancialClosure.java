@@ -50,9 +50,9 @@ public class DialogFinancialClosure extends javax.swing.JDialog implements Runna
 	String nomArchivoGwSalvamentos = "GW_SALVAMENTOS.csv";
 	String rutaCarpeta = "";
 
-	String[][] headerSapReserva    ={{"Moneda"},{"Clase"},{"Ramo"},{"Poliza"},{"Referencia"},{"Reserva","MD"},{"Reserva","ML"},{"MD"},{"ML"},{"Rea","MD"},{"Rea","ML"}};
-	String[][] headerSapPago       ={{"Moneda"},{"Clase"},{"Ramo"},{"Poliza"},{"Referencia"},{"Texto posicion"},{"Pago","MD"},{"Pago","ML"},{"Rea","MD"},{"Rea","ML"}};	
-	String[][] headerSapSalvamento ={{"Moneda"},{"Clase"},{"Ramo"},{"Poliza"},{"Referencia"},{"Texto posicion"},{"Sal","MD"},{"Sal","ML"},{"Rea","MD"},{"Rea","ML"}};		
+	String[][] headerSapReserva    ={{"MONEDA"},{"CLASE"},{"RAMO"},{"POLIZA"},{"REFERENCIA"},{"RESERVA","MD"},{"RES","ML"},{"MD"},{"ML"},{"REA","MD"},{"REA","ML"}};
+	String[][] headerSapPago       ={{"MONEDA"},{"CLASE"},{"RAMO"},{"POLIZA"},{"REFERENCIA"},{"TEXTO"},{"PAGO","MD"},{"PAGO","ML"},{"REA","MD"},{"REA","ML"}};	
+	String[][] headerSapSalvamento ={{"MONEDA"},{"CLASE"},{"RAMO"},{"POLIZA"},{"REFERENCIA"},{"TEXTO"},{"SAL","MD"},{"SAL","ML"},{"REA","MD"},{"REA","ML"}};		
 	String[][] headerGwReserva     ={{"ID"},{"CLAIMNUMBER"},{"ESMIGRADO"},{"POLICYNUMBER"},{"ID","TRA"},{"TIPO","TRANSACCION"},{"COST","CATEGORY"},{"RAMO","CONTABLE"},{"ESTADO"},{"CREATETIME"},{"PUBLICID","TRA"},{"TRANSACCION","ORIGEN"},{"CLAIMAMOUNT"},{"CEDIDO"},{"RETENIDO"},{"SURA","RETENIDO"},{"VALOR","BRUTO"},{"MONEDA"},{"MOVIMIENTO"},{"ESTADO","CHEQUE"},{"RECALCULADO"},{"DIFERENCIA"},{"REFLECTION"}};				
 	String[][] headerGwPago        ={{"ID"},{"TIPO","COASEGURO"},{"CLAIMNUMBER"},{"POLICYNUMBER"},{"RAMO","CONTABLE"},{"COST","CATEGORY"},{"COINSURANCE","EXT"},{"FECHA","SINIESTRO"},{"RECALCULADO"},{"TIPO"},{"NUMERO","TRANSACCION"},{"TRANSACCION","ORIGEN"},{"PAGO","SOLO","SURA"},{"MASIVO"},{"CEDIDO"},{"RETENIDO"},{"SURA","RETENIDO"},{"ESTADO"},{"FECHA","TRANSACCION"},{"VALOR","NETO"},{"MONEDA"},{"VALOR","BRUTO"},{"VALOR","CON","ICM"},{"VALOR","ICM"},{"VALOR","SIN","COASEG"},{"VALOR","BRUTO","SIN","COA"},{"DIFERENCIA"},{"REFLECTION"}};
 	String[][] headerGwGasto       ={{"ID"},{"CLAIMNUMBER"},{"POLICYNUMBER"},{"FECHA","SINIESTRO"},{"FECHA","AVISO"},{"TIPO","TRANSACCION"},{"COST","CATEGORY"},{"RAMO","CONTABLE"},{"SUBTYPE"},{"ESTADO"},{"CREATETIME"},{"PUBLICID","TRA"},{"CLAIMAMOUNT"},{"FECHA","CONTABILIZACION"},{"MONEDA"},{"RESERVETYPE"},{"REFERENCEID"},{"PERCENTAJE"},{"SAP","AMOUNT"},{"LIQUIDATIONEXPENSESRESERVE"}};

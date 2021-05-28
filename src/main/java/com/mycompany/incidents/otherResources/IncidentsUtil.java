@@ -122,6 +122,7 @@ public class IncidentsUtil {
 		br.close();
 		
 		foundHeader = foundHeader.replaceAll("\"", "");
+		foundHeader = foundHeader.toUpperCase();
 		String[] foundHeaderSplit = foundHeader.split(";");
 		if(expectedHeader.length != foundHeaderSplit.length){
 			throw new Exception("\nSe esperaban " + expectedHeader.length + 
