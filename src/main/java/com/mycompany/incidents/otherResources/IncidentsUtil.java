@@ -108,6 +108,36 @@ public class IncidentsUtil {
 			throw new Exception("\nLa cabecera del archivo " + fileName + " no coresponde, revisar la ayuda");
 		}
 	}
+	
+	public static void validateFile(String rutaCarp, String fileName, String[][] expectedHeader) throws Exception {
+		File fileEco = new File(rutaCarp + "\\" + fileName);
+		if (!fileEco.exists()) {// Si el archivo no existe es creado
+			throw new Exception("\nEn la carpeta seleccionada deben existir archivo: " + fileName);
+		}
+		FileReader fr = new FileReader(fileEco);
+		BufferedReader br = new BufferedReader(fr);		
+		String foundHeader = br.readLine();//la primer linea es cabecera     
+		fr.close();
+		br.close();
+		
+		foundHeader = foundHeader.replaceAll("\"", "");
+		String[] foundHeaderSplit = foundHeader.split(";");
+		if(expectedHeader.length != foundHeaderSplit.length){
+			throw new Exception("\nSe esperaban " + expectedHeader.length + 
+							            " columnas, pero el archivo " + fileName + " tiene " + 
+							            foundHeaderSplit.length +" columnas, revisar la ayuda");
+		}
+		
+		for(int i=0; i < expectedHeader.length;i++){
+			String[] expectedValues = expectedHeader[i];
+			for(int j=0; j < expectedValues.length;j++){
+				if(!foundHeaderSplit[i].contains(expectedValues[j])){
+				  throw new Exception("\nEn el archivo " + fileName 
+									  + " se esperaba una columna que contenga" + expectedValues);	
+				}
+		  }	
+		}
+	}
 
 	public static String determineUrl(String rutaInicial, String name,String ext) {
 		int version = 1;

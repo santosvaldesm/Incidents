@@ -25,13 +25,8 @@ import java.util.List;
 import java.util.Map;
 import javax.persistence.EntityManagerFactory;
 import javax.persistence.Persistence;
-import org.apache.poi.ss.usermodel.BorderStyle;
-import org.apache.poi.ss.usermodel.FillPatternType;
-import org.apache.poi.ss.usermodel.Font;
 import org.apache.poi.ss.util.CellRangeAddress;
-import org.apache.poi.xssf.usermodel.XSSFCell;
 import org.apache.poi.xssf.usermodel.XSSFCellStyle;
-import org.apache.poi.xssf.usermodel.XSSFColor;
 import org.apache.poi.xssf.usermodel.XSSFRow;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
@@ -55,14 +50,14 @@ public class DialogFinancialClosure extends javax.swing.JDialog implements Runna
 	String nomArchivoGwSalvamentos = "GW_SALVAMENTOS.csv";
 	String rutaCarpeta = "";
 
-	String headerArchivoSapReserva = "\"Moneda\";\"Clase\";\"Ramo\";\"Poliza\";\"Referencia\";\"Reserva 100% Importe MD\";\"Reserva 100% Importe ML\";\"Gto liquidacion Importe MD\";\"Gto liquidacion Importe ML\";\"Reaseguro Importe MD\";\"Reaseguro Importe ML\"";
-	String headerArchivoSapPagos = "\"Moneda\";\"Clase\";\"Ramo\";\"Poliza\";\"Referencia\";\"Texto posicion\";\"Pagos Importe MD\";\"Pagos Importe ML\";\"Reaseguro Importe MD\";\"Reaseguro Importe ML\"";
-	String headerArchivoSapSalvamentos = "\"Moneda\";\"Clase\";\"Ramo\";\"Poliza\";\"Referencia\";\"Texto posicion\";\"Salvamento Importe MD\";\"Salvamento Importe ML\";\"Reaseguro Importe MD\";\"Reaseguro Importe ML\"";
-	String headerArchivoGwReserva = "\"ID\";\"CLAIMNUMBER\";\"ESMIGRADO\";\"POLICYNUMBER\";\"ID_TRA\";\"TIPO_TRANSACCION\";\"COST_CATEGORY\";\"RAMO_CONTABLE\";\"ESTADO\";\"CREATETIME\";\"PUBLICID_TRA\";\"TRANSACCION_ORIGEN\";\"CLAIMAMOUNT\";\"CEDIDO\";\"RETENIDO\";\"SURA_RETENIDO\";\"VALOR_BRUTO\";\"MONEDA\";\"MOVIMIENTO\";\"ESTADO_CHEQUE\";\"RECALCULADO\";\"DIFERENCIA\";\"REFLECTION\"";
-	String headerArchivoGwGastos = "\"ID\";\"CLAIMNUMBER\";\"POLICYNUMBER\";\"FECHA_SINIESTRO\";\"FECHA_AVISO\";\"TIPO_TRANSACCION\";\"COST_CATEGORY\";\"RAMO_CONTABLE\";\"SUBTYPE\";\"ESTADO\";\"CREATETIME\";\"PUBLICID_TRA\";\"CLAIMAMOUNT\";\"FECHA_CONTABILIZACION\";\"MONEDA\";\"RESERVETYPE\";\"REFERENCEID\";\"PERCENTAJE\";\"SAP_AMOUNT\";\"LIQUIDATIONEXPENSESRESERVE\"";
-	String headerArchivoGwPagos = "\"ID\";\"TIPO_COASEGURO\";\"CLAIMNUMBER\";\"POLICYNUMBER\";\"RAMO_CONTABLE\";\"COST_CATEGORY\";\"COINSURANCE_EXT\";\"FECHA_SINIESTRO\";\"RECALCULADO\";\"TIPO\";\"NUMERO_TRANSACCION\";\"TRANSACCION_ORIGEN\";\"PAGO_SOLO_SURA\";\"MASIVO\";\"CEDIDO\";\"RETENIDO\";\"SURA_RETENIDO\";\"ESTADO\";\"FECHA_TRANSACCION\";\"VALOR_NETO\";\"MONEDA\";\"VALOR_BRUTO\";\"VALOR_CON_ICM\";\"VALOR_ICM\";\"VALOR_SIN_COASEG\";\"VALOR_BRUTO_SIN_COA\";\"DIFERENCIA\";\"REFLECTION\"";
-	String headerArchivoGwSalvamentos = "\"ID\";\"CLAIMNUMBER\";\"POLICYNUMBER\";\"RAMO_CONTABLE\";\"RECALCULADO\";\"COINSURANCE_EXT\";\"COST_CATEGORY\";\"FECHA_SINIESTRO\";\"TIPO\";\"NUMERO_TRANSACCION\";\"TRANSACCION_ORIGEN\";\"ESTADO\";\"FECHA_TRANSACCION\";\"CEDIDO\";\"RETENIDO\";\"RETENCION_PURA\";\"VALOR_NETO\";\"VALOR_BRUTO\";\"MONEDA\";\"VALOR_SIN_COASEG\";\"DIFERENCIA\";\"REFLECTION\"";
-
+	String[][] headerSapReserva    ={{"Moneda"},{"Clase"},{"Ramo"},{"Poliza"},{"Referencia"},{"Reserva","MD"},{"Reserva","ML"},{"MD"},{"ML"},{"Rea","MD"},{"Rea","ML"}};
+	String[][] headerSapPago       ={{"Moneda"},{"Clase"},{"Ramo"},{"Poliza"},{"Referencia"},{"Texto posicion"},{"Pago","MD"},{"Pago","ML"},{"Rea","MD"},{"Rea","ML"}};	
+	String[][] headerSapSalvamento ={{"Moneda"},{"Clase"},{"Ramo"},{"Poliza"},{"Referencia"},{"Texto posicion"},{"Sal","MD"},{"Sal","ML"},{"Rea","MD"},{"Rea","ML"}};		
+	String[][] headerGwReserva     ={{"ID"},{"CLAIMNUMBER"},{"ESMIGRADO"},{"POLICYNUMBER"},{"ID","TRA"},{"TIPO","TRANSACCION"},{"COST","CATEGORY"},{"RAMO","CONTABLE"},{"ESTADO"},{"CREATETIME"},{"PUBLICID","TRA"},{"TRANSACCION","ORIGEN"},{"CLAIMAMOUNT"},{"CEDIDO"},{"RETENIDO"},{"SURA","RETENIDO"},{"VALOR","BRUTO"},{"MONEDA"},{"MOVIMIENTO"},{"ESTADO","CHEQUE"},{"RECALCULADO"},{"DIFERENCIA"},{"REFLECTION"}};				
+	String[][] headerGwPago        ={{"ID"},{"TIPO","COASEGURO"},{"CLAIMNUMBER"},{"POLICYNUMBER"},{"RAMO","CONTABLE"},{"COST","CATEGORY"},{"COINSURANCE","EXT"},{"FECHA","SINIESTRO"},{"RECALCULADO"},{"TIPO"},{"NUMERO","TRANSACCION"},{"TRANSACCION","ORIGEN"},{"PAGO","SOLO","SURA"},{"MASIVO"},{"CEDIDO"},{"RETENIDO"},{"SURA","RETENIDO"},{"ESTADO"},{"FECHA","TRANSACCION"},{"VALOR","NETO"},{"MONEDA"},{"VALOR","BRUTO"},{"VALOR","CON","ICM"},{"VALOR","ICM"},{"VALOR","SIN","COASEG"},{"VALOR","BRUTO","SIN","COA"},{"DIFERENCIA"},{"REFLECTION"}};
+	String[][] headerGwGasto       ={{"ID"},{"CLAIMNUMBER"},{"POLICYNUMBER"},{"FECHA","SINIESTRO"},{"FECHA","AVISO"},{"TIPO","TRANSACCION"},{"COST","CATEGORY"},{"RAMO","CONTABLE"},{"SUBTYPE"},{"ESTADO"},{"CREATETIME"},{"PUBLICID","TRA"},{"CLAIMAMOUNT"},{"FECHA","CONTABILIZACION"},{"MONEDA"},{"RESERVETYPE"},{"REFERENCEID"},{"PERCENTAJE"},{"SAP","AMOUNT"},{"LIQUIDATIONEXPENSESRESERVE"}};
+	String[][] headerGwSalvamento  ={{"ID"},{"CLAIMNUMBER"},{"POLICYNUMBER"},{"RAMO","CONTABLE"},{"RECALCULADO"},{"COINSURANCE","EXT"},{"COST","CATEGORY"},{"FECHA","SINIESTRO"},{"TIPO"},{"NUMERO","TRANSACCION"},{"TRANSACCION","ORIGEN"},{"ESTADO"},{"FECHA","TRANSACCION"},{"CEDIDO"},{"RETENIDO"},{"RETENCION","PURA"},{"VALOR","NETO"},{"VALOR","BRUTO"},{"MONEDA"},{"VALOR","SIN","COASEG"},{"DIFERENCIA"},{"REFLECTION"}};	
+	
 	String[] fileNamesGw = {nomArchivoGwReserva, nomArchivoGwGastos, nomArchivoGwPagos, nomArchivoGwSalvamentos};
 	String[] fileNamesSap = {nomArchivoSapReserva, nomArchivoSapGastos, nomArchivoSapPagos, nomArchivoSapSalvamentos};
 	HashMap<ClosureTypeEnum, String> searchCriteria = null;
@@ -123,13 +118,14 @@ public class DialogFinancialClosure extends javax.swing.JDialog implements Runna
 				inconsistencesLimit = (int)spinnerMaxErrors.getValue();
 				printInOutputText("\nINICIO: " + sdf.format(new Date()));
 				printInOutputText("\nValidando archivos...");
-				IncidentsUtil.validateFile(rutaCarpeta, nomArchivoSapReserva, headerArchivoSapReserva);
-				IncidentsUtil.validateFile(rutaCarpeta, nomArchivoGwReserva, headerArchivoGwReserva);
-				IncidentsUtil.validateFile(rutaCarpeta, nomArchivoGwGastos, headerArchivoGwGastos);
-				IncidentsUtil.validateFile(rutaCarpeta, nomArchivoSapPagos, headerArchivoSapPagos);
-				IncidentsUtil.validateFile(rutaCarpeta, nomArchivoGwPagos, headerArchivoGwPagos);
-				IncidentsUtil.validateFile(rutaCarpeta, nomArchivoSapSalvamentos, headerArchivoSapSalvamentos);
-				IncidentsUtil.validateFile(rutaCarpeta, nomArchivoGwSalvamentos, headerArchivoGwSalvamentos);
+
+				IncidentsUtil.validateFile(rutaCarpeta, nomArchivoSapReserva, headerSapReserva);
+				IncidentsUtil.validateFile(rutaCarpeta, nomArchivoGwReserva, headerGwReserva);
+				IncidentsUtil.validateFile(rutaCarpeta, nomArchivoGwGastos, headerGwGasto);
+				IncidentsUtil.validateFile(rutaCarpeta, nomArchivoSapPagos, headerSapPago);
+				IncidentsUtil.validateFile(rutaCarpeta, nomArchivoGwPagos, headerGwPago);
+				IncidentsUtil.validateFile(rutaCarpeta, nomArchivoSapSalvamentos, headerSapSalvamento);
+				IncidentsUtil.validateFile(rutaCarpeta, nomArchivoGwSalvamentos, headerGwSalvamento);
 				progressTotal(100, 5);
 				printInOutputText("\nLimpiando tablas...");
 				regenerateTableClosure();
@@ -918,70 +914,79 @@ public class DialogFinancialClosure extends javax.swing.JDialog implements Runna
     getContentPane().setLayout(layout);
     layout.setHorizontalGroup(
       layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-      .addGroup(layout.createSequentialGroup()
-        .addGap(15, 15, 15)
+      .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-          .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 862, javax.swing.GroupLayout.PREFERRED_SIZE)
           .addGroup(layout.createSequentialGroup()
-            .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+            .addContainerGap()
+            .addComponent(jScrollPane1))
+          .addGroup(layout.createSequentialGroup()
+            .addGap(5, 5, 5)
+            .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
               .addGroup(layout.createSequentialGroup()
+                .addGap(5, 5, 5)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                  .addComponent(jLabel4, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                  .addComponent(jLabel4, javax.swing.GroupLayout.DEFAULT_SIZE, 102, Short.MAX_VALUE)
                   .addComponent(jLabel3, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                  .addComponent(progressBarProceso, javax.swing.GroupLayout.DEFAULT_SIZE, 355, Short.MAX_VALUE)
-                  .addComponent(progressBar, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
-              .addComponent(labelFile, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-            .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-            .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-              .addGroup(layout.createSequentialGroup()
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                  .addComponent(jLabel2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                  .addComponent(jLabel5, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                  .addComponent(spinnerMaxErrors, javax.swing.GroupLayout.PREFERRED_SIZE, 67, javax.swing.GroupLayout.PREFERRED_SIZE)
-                  .addComponent(spinnerLimit, javax.swing.GroupLayout.PREFERRED_SIZE, 67, javax.swing.GroupLayout.PREFERRED_SIZE)))
-              .addComponent(btnSelectFile, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-            .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-            .addComponent(btnStart, javax.swing.GroupLayout.PREFERRED_SIZE, 107, javax.swing.GroupLayout.PREFERRED_SIZE)))
-        .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                  .addComponent(progressBar, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                  .addComponent(progressBarProceso, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addGap(12, 12, 12)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                  .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                    .addComponent(jLabel5, javax.swing.GroupLayout.PREFERRED_SIZE, 78, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                    .addComponent(spinnerMaxErrors, javax.swing.GroupLayout.PREFERRED_SIZE, 67, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addGap(2, 2, 2))
+                  .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                    .addComponent(jLabel2)
+                    .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                    .addComponent(spinnerLimit, javax.swing.GroupLayout.PREFERRED_SIZE, 67, javax.swing.GroupLayout.PREFERRED_SIZE))))
+              .addGroup(layout.createSequentialGroup()
+                .addComponent(labelFile, javax.swing.GroupLayout.PREFERRED_SIZE, 473, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addComponent(btnSelectFile, javax.swing.GroupLayout.PREFERRED_SIZE, 159, javax.swing.GroupLayout.PREFERRED_SIZE)))
+            .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+            .addComponent(btnStart, javax.swing.GroupLayout.PREFERRED_SIZE, 86, javax.swing.GroupLayout.PREFERRED_SIZE)))
+        .addContainerGap())
     );
     layout.setVerticalGroup(
       layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
       .addGroup(layout.createSequentialGroup()
         .addContainerGap()
-        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
           .addGroup(layout.createSequentialGroup()
+            .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+              .addComponent(jLabel2, javax.swing.GroupLayout.PREFERRED_SIZE, 25, javax.swing.GroupLayout.PREFERRED_SIZE)
+              .addComponent(spinnerLimit, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+              .addComponent(progressBar, javax.swing.GroupLayout.DEFAULT_SIZE, 25, Short.MAX_VALUE)
+              .addComponent(jLabel4, javax.swing.GroupLayout.PREFERRED_SIZE, 23, javax.swing.GroupLayout.PREFERRED_SIZE))
+            .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+              .addGroup(layout.createSequentialGroup()
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 7, Short.MAX_VALUE)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                  .addComponent(jLabel3, javax.swing.GroupLayout.PREFERRED_SIZE, 23, javax.swing.GroupLayout.PREFERRED_SIZE)
+                  .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(progressBarProceso, javax.swing.GroupLayout.PREFERRED_SIZE, 24, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jLabel5)))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED))
+              .addGroup(layout.createSequentialGroup()
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(spinnerMaxErrors, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
             .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-              .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                .addComponent(progressBar, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                  .addComponent(jLabel4, javax.swing.GroupLayout.PREFERRED_SIZE, 23, javax.swing.GroupLayout.PREFERRED_SIZE)
-                  .addComponent(jLabel2, javax.swing.GroupLayout.PREFERRED_SIZE, 25, javax.swing.GroupLayout.PREFERRED_SIZE)))
-              .addComponent(spinnerLimit, javax.swing.GroupLayout.PREFERRED_SIZE, 26, javax.swing.GroupLayout.PREFERRED_SIZE))
-            .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-            .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-              .addComponent(jLabel5, javax.swing.GroupLayout.DEFAULT_SIZE, 25, Short.MAX_VALUE)
-              .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                .addComponent(jLabel3, javax.swing.GroupLayout.PREFERRED_SIZE, 23, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addComponent(progressBarProceso, javax.swing.GroupLayout.PREFERRED_SIZE, 24, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addComponent(spinnerMaxErrors, javax.swing.GroupLayout.PREFERRED_SIZE, 26, javax.swing.GroupLayout.PREFERRED_SIZE)))
-            .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-            .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-              .addComponent(labelFile, javax.swing.GroupLayout.PREFERRED_SIZE, 23, javax.swing.GroupLayout.PREFERRED_SIZE)
-              .addComponent(btnSelectFile)))
+              .addComponent(btnSelectFile)
+              .addComponent(labelFile, javax.swing.GroupLayout.PREFERRED_SIZE, 23, javax.swing.GroupLayout.PREFERRED_SIZE)))
           .addComponent(btnStart, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-        .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 389, javax.swing.GroupLayout.PREFERRED_SIZE)
+        .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 434, Short.MAX_VALUE)
         .addContainerGap())
     );
 
     btnStart.getAccessibleContext().setAccessibleName("btnStart");
     btnStart.getAccessibleContext().setAccessibleDescription("");
 
-    setSize(new java.awt.Dimension(914, 593));
+    setSize(new java.awt.Dimension(765, 593));
     setLocationRelativeTo(null);
   }// </editor-fold>//GEN-END:initComponents
 
