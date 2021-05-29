@@ -1,0 +1,11 @@
++++START primero
+texto prrmero de prueba
++++END primero
+
++++START segundo
+texto segundo de prueba
++++END segundo
+
++++START tercero
+texto tercero de prueba
++++END tercero

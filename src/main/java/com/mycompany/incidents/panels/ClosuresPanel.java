@@ -5,6 +5,7 @@
  */
 package com.mycompany.incidents.panels;
 
+import com.mycompany.incidents.otherResources.IncidentsUtil;
 import com.mycompany.incidents.panels.modelGW.DialogHelp;
 
 /**
@@ -38,6 +39,7 @@ public class ClosuresPanel extends javax.swing.JPanel {
     btnShowQuery4 = new javax.swing.JButton();
     btnConsultasCierre = new javax.swing.JButton();
     btnConsutasPoliza = new javax.swing.JButton();
+    jButton1 = new javax.swing.JButton();
 
     btnImport2.setText("CIERRE FINANCIERO");
     btnImport2.addActionListener(new java.awt.event.ActionListener() {
@@ -103,6 +105,13 @@ public class ClosuresPanel extends javax.swing.JPanel {
       }
     });
 
+    jButton1.setText("Texto");
+    jButton1.addActionListener(new java.awt.event.ActionListener() {
+      public void actionPerformed(java.awt.event.ActionEvent evt) {
+        jButton1ActionPerformed(evt);
+      }
+    });
+
     javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
     this.setLayout(layout);
     layout.setHorizontalGroup(
@@ -123,7 +132,8 @@ public class ClosuresPanel extends javax.swing.JPanel {
             .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
               .addComponent(btnShowQuery2)
               .addComponent(btnShowQuery3, javax.swing.GroupLayout.PREFERRED_SIZE, 53, javax.swing.GroupLayout.PREFERRED_SIZE)
-              .addComponent(btnShowQuery1))))
+              .addComponent(btnShowQuery1)))
+          .addComponent(jButton1))
         .addContainerGap(54, Short.MAX_VALUE))
     );
     layout.setVerticalGroup(
@@ -147,7 +157,9 @@ public class ClosuresPanel extends javax.swing.JPanel {
         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
           .addComponent(btnImport4, javax.swing.GroupLayout.PREFERRED_SIZE, 29, javax.swing.GroupLayout.PREFERRED_SIZE)
           .addComponent(btnShowQuery3))
-        .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+        .addComponent(jButton1)
+        .addContainerGap(35, Short.MAX_VALUE))
     );
   }// </editor-fold>//GEN-END:initComponents
 
@@ -292,6 +304,10 @@ public class ClosuresPanel extends javax.swing.JPanel {
 		dialog.setVisible(true);
   }//GEN-LAST:event_btnConsutasPolizaActionPerformed
 
+  private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
+    System.out.println(IncidentsUtil.getText("primero"));
+  }//GEN-LAST:event_jButton1ActionPerformed
+
 
   // Variables declaration - do not modify//GEN-BEGIN:variables
   private javax.swing.JButton btnConsultasCierre;
@@ -303,5 +319,6 @@ public class ClosuresPanel extends javax.swing.JPanel {
   private javax.swing.JButton btnShowQuery2;
   private javax.swing.JButton btnShowQuery3;
   private javax.swing.JButton btnShowQuery4;
+  private javax.swing.JButton jButton1;
   // End of variables declaration//GEN-END:variables
 }

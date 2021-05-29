@@ -6,12 +6,25 @@
 package com.mycompany.incidents.otherResources;
 
 import com.mycompany.incidents.entities.Closure;
+import com.mycompany.incidents.panels.ClosuresPanel;
+import com.mycompany.incidents.panels.IncidentsPanel;
+import com.mycompany.incidents.panels.NotesPanel;
+import com.mycompany.incidents.panels.ReinsurancePanel;
+import com.mycompany.incidents.panels.TemplatePanel;
+import com.mycompany.incidents.panels.modelGW.PanelMain;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.text.DecimalFormat;
 import java.util.Arrays;
 import java.util.Date;
+import java.util.HashMap;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import javax.swing.JOptionPane;
 import javax.swing.JTextArea;
 import org.apache.poi.ss.usermodel.BorderStyle;
 import org.apache.poi.ss.usermodel.FillPatternType;
@@ -29,9 +42,42 @@ import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 public class IncidentsUtil {
 
 	static DecimalFormat df = new DecimalFormat("#.#");
-
+	static HashMap<String,String> textsHasMap = new HashMap<>();
+	
+	
+	private static void createTexts(){
+		try {
+			ClassLoader classLoader = ClassLoader.getSystemClassLoader();			
+      InputStream in = classLoader.getResourceAsStream("./textos.txt");			
+      BufferedReader bf = new BufferedReader(new InputStreamReader(in));                  
+			String keyText = "";
+			String contentText = "";
+      String lineaStr = "";
+			while((lineaStr = bf.readLine())!=null){
+				if(lineaStr.startsWith("+++START")){
+					keyText = lineaStr.substring(9,lineaStr.length());
+					contentText = "";
+				} else if(lineaStr.startsWith("+++END")){
+					if(keyText.length()!=0 && contentText.length()!=0){
+						textsHasMap.put(keyText, contentText);
+					}
+				} else {
+					contentText = contentText + "\n" + lineaStr;
+				}
+			}
+		}
+    catch (IOException ex) {      
+    }
+	}	
+		
 	static {
-		df.setMaximumFractionDigits(3);
+		df.setMaximumFractionDigits(3);		
+		createTexts();
+	}
+	
+	public static String getText(String nameText){
+		String strReturn = textsHasMap.get(nameText);
+		return strReturn == null ? "Texto no encontrado" : strReturn;
 	}
 	
 	public static XSSFCellStyle createHeaderStyle(XSSFWorkbook anExcelWorbook) {
@@ -573,6 +619,10 @@ public class IncidentsUtil {
 						+ "WHERE   \n"
 						+ "       P.CDRAMO    = C.CDRAMO AND\n"
 						+ "       P.CDSUBRAMO = C.CDSUBRAMO";
+	}
+	
+	public static String getClosureComparationScript() {
+		return "public static String getHomologationsHelpString() {";
 	}
 
 }
