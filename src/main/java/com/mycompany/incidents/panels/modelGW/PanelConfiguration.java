@@ -782,8 +782,8 @@ public class PanelConfiguration extends javax.swing.JPanel {
   }//GEN-LAST:event_btnRefreshActionPerformed
 
   private void btnShowScriptActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnShowScriptActionPerformed
-      DialogHelp dialog = new DialogHelp(null, true);
-      dialog.setTextContent(IncidentsUtil.getModelHelpString());
+      DialogHelp dialog = new DialogHelp(null, true);      
+			dialog.setTextContent(IncidentsUtil.getText("ProductModelHelp"));
       dialog.setVisible(true);
   }//GEN-LAST:event_btnShowScriptActionPerformed
 

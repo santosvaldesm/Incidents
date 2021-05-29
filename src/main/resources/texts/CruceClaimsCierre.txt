@@ -1,0 +1,101 @@
+package sura.cc.enhancement
+
+uses sura.cc.messaging.common.accounting.SAPConstants
+uses sura.cc.reinsurance.distribution.util.RIDistributionUtil
+
+uses java.math.BigDecimal
+
+enhancement Coinsurance_ExtEnhancement : entity.Coinsurance_Ext {
+
+  /**
+   * Description: Gets coinsurance type name
+   */
+  property get CoinsuranceTypeName() : String {
+
+    if (this.GivenOrAcepted == null) {
+      return displaykey.Sura.Policy.Coinsurance.DirectCoinsuranceType
+    }
+
+    if (this.GivenOrAcepted) {
+      return displaykey.Sura.Policy.Coinsurance.AcceptedCoinsuranceType
+    }
+
+    return displaykey.Sura.Policy.Coinsurance.CededCoinsuranceType
+  }
+
+  property get LeaderCoinsurance() : InsuranceCoinsurance_Ext {
+    return this.Insurances.firstWhere( \ elt -> elt.Leader)
+  }
+
+  property get CoinsuranceCompanies() : InsuranceCoinsurance_Ext[] {
+    return this.Insurances.where( \ elt -> !elt.Leader)
+  }
+
+  /**
+   * Description: Returns the type of coinsurance, used mainly in SAP
+   */
+  public function getCoInsuranceTypeCodeSAP(payCoinsuranceOnlySura : boolean)
+      : String {
+
+    var typeCode = SAPConstants.COINSURANCE_TYPE_GIVEN
+
+    if (this.GivenOrAcepted == null) {
+      typeCode = SAPConstants.COINSURANCE_TYPE_DIRECT
+    } else if (payCoinsuranceOnlySura) {
+      typeCode = SAPConstants.COINSURANCE_TYPE_DIRECT
+    } else if (this.GivenOrAcepted) {
+      typeCode = SAPConstants.COINSURANCE_TYPE_ACCEPTED
+    }
+
+    return typeCode
+  }
+
+  /**
+   * Description: Returns the participation of an amount based on the SURA coinsurance
+   */
+  public function getParticipationCoinsuranceGivenSuraSAP(amount : BigDecimal,
+                                                          payCoinsuranceOnlySura : boolean,
+                                                          currency: Currency) : BigDecimal {
+
+    if (this#getCoInsuranceTypeCodeSAP(String).invoke(payCoinsuranceOnlySura) == SAPConstants.COINSURANCE_TYPE_GIVEN) {
+      var codeSura = this#getCodeSuramericanaCoinsurance().invoke()
+      this.Insurances.each(\ insurance -> {
+        if (insurance.Name.Code == codeSura) {
+          amount = (amount * insurance.CoinsuranceParticipation.divide(100bd))
+        }
+      })
+    }
+
+    return RIDistributionUtil.roundCurrencyAmount(amount,currency)
+  }
+
+  protected function getCodeSuramericanaCoinsurance():String{
+    return ScriptParameters.CodeSuramericanaCoinsurance
+  }
+
+  public function getParticipationCoinsuranceAcceptedSuraSAP(amount : BigDecimal, payCoinsuranceOnlySura : boolean) : BigDecimal {
+    return this.getCoInsuranceTypeCodeSAP(payCoinsuranceOnlySura) == SAPConstants.COINSURANCE_TYPE_ACCEPTED?amount:0bd
+  }
+
+
+
+  /**
+   * Description: Gets Sura participation percentage
+   */
+  property get SuraParticipationPercentage() : BigDecimal {
+
+    var suraParticipationPercentage
+        = this#CoinsuranceTypeName.get() == displaykey.Sura.Policy.Coinsurance.CededCoinsuranceType ?
+        this#LeaderCoinsurance.get().CoinsuranceParticipation : null
+
+    return suraParticipationPercentage == null ? 100bd : suraParticipationPercentage
+  }
+
+  /**
+   *   Description: Gets true if the policy has coinsurance
+   */
+  property get HaveCoInsurances() : boolean {
+    return this.Insurances.length > 0
+  }
+
+}

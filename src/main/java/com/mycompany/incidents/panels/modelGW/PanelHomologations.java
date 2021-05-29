@@ -623,8 +623,8 @@ public class PanelHomologations extends javax.swing.JPanel {
   }//GEN-LAST:event_txtSearchEcosystemCoverageKeyPressed
 
   private void btnShowQueryActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnShowQueryActionPerformed
-      DialogHelp dialog = new DialogHelp(null, true);
-      dialog.setTextContent(IncidentsUtil.getHomologationsHelpString());
+      DialogHelp dialog = new DialogHelp(null, true);      
+			dialog.setTextContent(IncidentsUtil.getText("HomologationsHelp"));
       dialog.setVisible(true);
   }//GEN-LAST:event_btnShowQueryActionPerformed
 

@@ -39,7 +39,6 @@ public class ClosuresPanel extends javax.swing.JPanel {
     btnShowQuery4 = new javax.swing.JButton();
     btnConsultasCierre = new javax.swing.JButton();
     btnConsutasPoliza = new javax.swing.JButton();
-    jButton1 = new javax.swing.JButton();
 
     btnImport2.setText("CIERRE FINANCIERO");
     btnImport2.addActionListener(new java.awt.event.ActionListener() {
@@ -105,13 +104,6 @@ public class ClosuresPanel extends javax.swing.JPanel {
       }
     });
 
-    jButton1.setText("Texto");
-    jButton1.addActionListener(new java.awt.event.ActionListener() {
-      public void actionPerformed(java.awt.event.ActionEvent evt) {
-        jButton1ActionPerformed(evt);
-      }
-    });
-
     javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
     this.setLayout(layout);
     layout.setHorizontalGroup(
@@ -132,8 +124,7 @@ public class ClosuresPanel extends javax.swing.JPanel {
             .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
               .addComponent(btnShowQuery2)
               .addComponent(btnShowQuery3, javax.swing.GroupLayout.PREFERRED_SIZE, 53, javax.swing.GroupLayout.PREFERRED_SIZE)
-              .addComponent(btnShowQuery1)))
-          .addComponent(jButton1))
+              .addComponent(btnShowQuery1))))
         .addContainerGap(54, Short.MAX_VALUE))
     );
     layout.setVerticalGroup(
@@ -157,9 +148,7 @@ public class ClosuresPanel extends javax.swing.JPanel {
         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
           .addComponent(btnImport4, javax.swing.GroupLayout.PREFERRED_SIZE, 29, javax.swing.GroupLayout.PREFERRED_SIZE)
           .addComponent(btnShowQuery3))
-        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-        .addComponent(jButton1)
-        .addContainerGap(35, Short.MAX_VALUE))
+        .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
     );
   }// </editor-fold>//GEN-END:initComponents
 
@@ -170,33 +159,7 @@ public class ClosuresPanel extends javax.swing.JPanel {
 
   private void btnShowQuery1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnShowQuery1ActionPerformed
     DialogHelp dialog = new DialogHelp(null,true);
-    String aText =  "IMPORTANTE:\n" +
-                    "* Se debe seleccionar una carpeta que contenga 7 archivos csv\n" +
-                    "* Los archivos de GW se dejan como los guarda la consulta SQL\n" +
-                    "* Los archivos de SAP se debe dejar una sola fila para cabecera\n" +
-                    "* Los valores numericos de SAP deben marcarse como 'General' (repetir aun si ya lo son)\n" +
-                    "\n" +
-                    "NOMBRE:   SAP_RESERVAS.csv\n" +
-                    "CABECERA: \"Moneda\";\"Clase\";\"Ramo\";\"Poliza\";\"Referencia\";\"Reserva 100% Importe MD\";\"Reserva 100% Importe ML\";\"Gto liquidacion Importe MD\";\"Gto liquidacion Importe ML\";\"Reaseguro Importe MD\";\"Reaseguro Importe ML\"\n" +
-                    "\n" +
-                    "NOMBE:    GW_RESERVAS.csv\";      \n" +
-                    "CABECERA: \"ID\";\"CLAIMNUMBER\";\"ESMIGRADO\";\"POLICYNUMBER\";\"ID_TRA\";\"TIPO_TRANSACCION\";\"COST_CATEGORY\";\"RAMO_CONTABLE\";\"ESTADO\";\"CREATETIME\";\"PUBLICID_TRA\";\"TRANSACCION_ORIGEN\";\"CLAIMAMOUNT\";\"CEDIDO\";\"RETENIDO\";\"SURA_RETENIDO\";\"VALOR_BRUTO\";\"MONEDA\";\"MOVIMIENTO\";\"ESTADO_CHEQUE\";\"RECALCULADO\";\"DIFERENCIA\";\"REFLECTION\"\n" +
-                    "\n" +
-                    "NOMBE:    GW_GASTOS.csv\";\n" +
-                    "CABECERA: \"ID\";\"CLAIMNUMBER\";\"POLICYNUMBER\";\"FECHA_SINIESTRO\";\"FECHA_AVISO\";\"TIPO_TRANSACCION\";\"COST_CATEGORY\";\"RAMO_CONTABLE\";\"SUBTYPE\";\"ESTADO\";\"CREATETIME\";\"PUBLICID_TRA\";\"CLAIMAMOUNT\";\"FECHA_CONTABILIZACION\";\"MONEDA\";\"RESERVETYPE\";\"REFERENCEID\";\"PERCENTAJE\";\"SAP_AMOUNT\";\"LIQUIDATIONEXPENSESRESERVE\"\n" +
-                    "\n" +
-                    "NOMBE:    SAP_PAGOS.csv\";\n" +
-                    "CABECERA: \"Moneda\";\"Clase\";\"Ramo\";\"Poliza\";\"Referencia\";\"Texto posicion\";\"Pagos Importe MD\";\"Pagos Importe ML\";\"Reaseguro Importe MD\";\"Reaseguro Importe ML\"\n" +
-                    "\n" +
-                    "NOMBE:    GW_PAGOS.csv\";    \n" +
-                    "CABECERA: \"ID\";\"TIPO_COASEGURO\";\"CLAIMNUMBER\";\"POLICYNUMBER\";\"RAMO_CONTABLE\";\"COST_CATEGORY\";\"COINSURANCE_EXT\";\"FECHA_SINIESTRO\";\"RECALCULADO\";\"TIPO\";\"NUMERO_TRANSACCION\";\"TRANSACCION_ORIGEN\";\"PAGO_SOLO_SURA\";\"MASIVO\";\"CEDIDO\";\"RETENIDO\";\"SURA_RETENIDO\";\"ESTADO\";\"FECHA_TRANSACCION\";\"VALOR_NETO\";\"MONEDA\";\"VALOR_BRUTO\";\"VALOR_CON_ICM\";\"VALOR_ICM\";\"VALOR_SIN_COASEG\";\"VALOR_BRUTO_SIN_COA\";\"DIFERENCIA\";\"REFLECTION\"\n" +
-                    "\n" +
-                    "NOMBE:    SAP_SALVAMENTOS.csv\";\n" +
-                    "CABECERA: \"Moneda\";\"Clase\";\"Ramo\";\"Poliza\";\"Referencia\";\"Texto posicion\";\"Salvamento Importe MD\";\"Salvamento Importe ML\";\"Reaseguro Importe MD\";\"Reaseguro Importe ML\"\n" +
-                    "\n" +
-                    "NOMBE:    GW_SALVAMENTOS.csv\";    \n" +
-                    "CABECERA: \"ID\";\"CLAIMNUMBER\";\"POLICYNUMBER\";\"RAMO_CONTABLE\";\"RECALCULADO\";\"COINSURANCE_EXT\";\"COST_CATEGORY\";\"FECHA_SINIESTRO\";\"TIPO\";\"NUMERO_TRANSACCION\";\"TRANSACCION_ORIGEN\";\"ESTADO\";\"FECHA_TRANSACCION\";\"CEDIDO\";\"RETENIDO\";\"RETENCION_PURA\";\"VALOR_NETO\";\"VALOR_BRUTO\";\"MONEDA\";\"VALOR_SIN_COASEG\";\"DIFERENCIA\";\"REFLECTION\"";
-    dialog.setTextContent(aText);
+		dialog.setTextContent(IncidentsUtil.getText("CierreFinancieroAyuda"));
     dialog.setVisible(true);
   }//GEN-LAST:event_btnShowQuery1ActionPerformed
 
@@ -207,12 +170,7 @@ public class ClosuresPanel extends javax.swing.JPanel {
 
   private void btnShowQuery2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnShowQuery2ActionPerformed
     DialogHelp dialog = new DialogHelp(null,true);
-    //Comprobar cambio
-    String aText =  "IMPORTANTE "+
-                    "\nPara el procesamiento se debe seleccionar una carpeta que contenga dos archivos:\n\n" +
-                    "1. REASEGURO_ECO.csv (164. Cierre reaseguro - CtasReaseguroEcosistema_CuadreMensual.sql)\n" +
-                    "2. REASEGURO_GW.csv (166. Cierre reaseguro - CtasReaseguroGW_CuadreMensual_WithRF.sql)";
-    dialog.setTextContent(aText);
+    dialog.setTextContent(IncidentsUtil.getText("CierreReaseguroAyuda"));    
     dialog.setVisible(true);
   }//GEN-LAST:event_btnShowQuery2ActionPerformed
 
@@ -224,73 +182,14 @@ public class ClosuresPanel extends javax.swing.JPanel {
   private void btnShowQuery3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnShowQuery3ActionPerformed
     
     DialogHelp dialog = new DialogHelp(null,true);
-    String aText =  "IMPORTANTE:\n" +
-                    "* Se debe seleccionar una carpeta que contenga 2 archivos csv\n" +
-                    "* Los archivos de ECO se dejan como los guarda la consulta SQL\n" +                    
-                    "* Los valores numericos deben marcarse como 'Numeric' (repetir aun si ya lo son)\n" +
-                    "* Los informes de sap se solictan a Alberto Osorio Rivera\n\n"    
-                  + "1. COASEGURO_ECO.csv (usar SQL '040. CIERRE COASEGURO - DATOS DE ECOSISTEMA')\n"            
-                  + "   CABECERA:   \"ID\";\"RECORD_CODE\";\"RAMO_A\";\"POLIZA\";\"RAMO_SINIESTRO\";\"NRO_SINIESTRO\";\"RAMO_FECHA\";\"FECHA_PROCESO\";\"RAMO_B\";\"DOCUMENTO\";\"RAMO_FECHA_PAGO\";\"FECHA_PAGO\";\"OFICINA_REGISTRO\";\"USUARIO_REG\";\"FECHA_REGISTRO\";\"HORA_REGISTRO\";\"SECUENCIA\";\"UNIDAD_ESTRATEGICA\";\"CIIU\";\"REGION\";\"SECTOR\";\"SUBSECTOR\";\"CODP\";\"VLR_IVA_RETENIDO\";\"PORC_RETENC_IVA\";\"VLR_DESC_RETENC_IVA\";\"PORC_ICA\";\"VLR_RETENC_ICA\";\"VLR_DESC_RETENC_ICA\";\"CONCEPTO_PAGO_RETENC\";\"ID_GRAN_CONTRIBUYENTE\";\"ID_IVA_REGIMEN_COS\";\"VLR_BASE_IVA\";\"FILLER\";\"AMPARO\";\"PLAN_A\";\"OPERACION_REGISTRO\";\"CLASE_PAGO\";\"IDENTIFICADOR\";\"CIA_COASEGURADORA\";\"PORC_PARTICIPACION\";\"RAMO_AGENTE\";\"COD_AGENTE\";\"PORC_PARTIC_AGENTE\";\"DCTO_LIDER\";\"FECHA_RECLAMACION\";\"FECHA_FIN_INCAPAC\";\"UNIDADES\";\"VLR_UNIDAD\";\"VLR_FACT_SALUD\";\"VLR_ASEG_MIN_DEDUD\";\"VLR_IND_PARC_DED_INF\";\"VLR_IND_TOT_RECIBO\";\"MONEDA\";\"CED_BENEFICIARIO_A\";\"NOMB_BENEFICIARIO_A\";\"OFICINA\";\"OPERACION_PAGO\";\"REMISION\";\"VLR_PAGADO\";\"VLR_PAGADO_TOT_SINI\";\"IDENT_PAGO\";\"USUARIO_PAGO\";\"VECTOR_BANDERA\";\"OFICINA_RADICACION\";\"FECHA_OCURRENCIA\";\"FECHA_AVISO\";\"NOMB_ASEGURADO\";\"CED_ASEGURADO\";\"VLR_POOL\";\"VLR_AUTOMATICO\";\"FACULTAT_INTERIOR\";\"FACULTAT_EXTERIOR\";\"RIESGO\";\"ARTICULO\";\"SUBAMPARO\";\"TOMADOR\";\"PORC_RETEFTE\";\"VLR_RETEFTE\";\"CLASE_SERV_CONTRAP\";\"NOMB_BENEFICIARIO_B\";\"CED_BENEFICIARIO_B\";\"RETENEDOR\";\"RESPONSABLE_IVA\";\"BASE_IVA\";\"PORC_IVA\";\"VLR_IVA\";\"PORC_IVA_SURA\";\"TOTAL_IVA_SURA\";\"NRO_CHEQUE\";\"COD_BANCO\";\"CUENTA_BANCO\";\"VLR_CHEQUE\";\"NRO_PAGARE\";\"CUOTAS_PAGARE\";\"FEC_VENC_PAG\";\"VLR_PAGARE\";\"CAUSA\";\"PLAN_B\";\"RESUL\";\"CDCIA_MATRIZ\";\"CDPAIS\";\"SNCORE\";\"PTTASA_CAMBIO\";\"POPARTLIDER\";\"PARTICIPATION\"\n\n" 
-                  + "2. COASEGURO_SAP.csv  (Unir las hoja 'Stros CORE' y 'Salvamentos Core' y guardarlos en un csv)\n"
-                  + "   CABECERA:   St;Clave ref.2;Lib.mayor;Asignaci¢n;Clase;Texto;N§ doc.;NIT;Cta.mayor;Cta.alt.;Clave ref.1;Referencia;Importe en MD;Mon.;Importe en ML;Fe.contab.;Fecha doc.\n\n";
-    dialog.setTextContent(aText);
+    dialog.setTextContent(IncidentsUtil.getText("CierreCoaseguroAyuda"));
     dialog.setVisible(true);    
     
   }//GEN-LAST:event_btnShowQuery3ActionPerformed
 
   private void btnShowQuery4ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnShowQuery4ActionPerformed
-    DialogHelp dialog = new DialogHelp(null,true);
-    String aText =  "Exportar hoja de excel\n" +
-                    "\n" +
-                    "Para varios de los cierres la información llega en archivos excel\n" +
-                    "y el programa solo trabaja con archivos CSV por lo cual para seguir el mismo formato\n" +
-                    "con el cual se exportan los archivos de las base de datos oracle se debe seguir el\n" +
-                    "siguiente proceso:\n" +
-                    "\n" +
-                    "Pasos\n" +
-                    "1. Ubicarse en la hoja que se exportaran los datos\n" +
-                    "2. Presionar ALT + F11 para abrir la pantalla de programacion\n" +
-                    "3. pegar el siguiente codigo:\n" +
-                    "	\n" +
-                    "	'---------------------------------------------	\n" +
-                    "	Sub CSVFile()\n" +
-                    "		'updateby Extendoffice\n" +
-                    "		Dim xRg As Range\n" +
-                    "		Dim xRow As Range\n" +
-                    "		Dim xCell As Range\n" +
-                    "		Dim xStr As String\n" +
-                    "		Dim xSep As String\n" +
-                    "		Dim xTxt As String\n" +
-                    "		Dim xName As Variant\n" +
-                    "		On Error Resume Next\n" +
-                    "		If ActiveWindow.RangeSelection.Count > 1 Then\n" +
-                    "		  xTxt = ActiveWindow.RangeSelection.AddressLocal\n" +
-                    "		Else\n" +
-                    "		  xTxt = ActiveSheet.UsedRange.AddressLocal\n" +
-                    "		End If\n" +
-                    "		Set xRg = Application.InputBox(\"Please select the data range:\", \"Kutools for Excel\", xTxt, , , , , 8)\n" +
-                    "		If xRg Is Nothing Then Exit Sub\n" +
-                    "		xName = Application.GetSaveAsFilename(\"\", \"CSV File (*.csv), *.csv\")\n" +
-                    "		xSep = Application.International(xlListSeparator)\n" +
-                    "		Open xName For Output As #1\n" +
-                    "		For Each xRow In xRg.Rows\n" +
-                    "			xStr = \"\"\n" +
-                    "			For Each xCell In xRow.Cells\n" +
-                    "				xStr = xStr & \"\"\"\" & xCell.Value & \"\"\"\" & xSep\n" +
-                    "			Next\n" +
-                    "			While Right(xStr, 1) = xSep\n" +
-                    "				xStr = Left(xStr, Len(xStr) - 1)\n" +
-                    "			Wend\n" +
-                    "			Print #1, xStr\n" +
-                    "		Next\n" +
-                    "		Close #1\n" +
-                    "		If Err = 0 Then MsgBox \"The file has saved to: \" & xName, vbInformation, \"Kutools for Excel\"\n" +
-                    "	End Sub\n" +
-                    "	'---------------------------------------------\n" +
-                    "\n" +
-                    "4. presionar F5 para ejecutar la macro\n" +
-                    "5. dar nombre al archivo en la ventana que se abre y guardar";
-    dialog.setTextContent(aText);
+    DialogHelp dialog = new DialogHelp(null,true);    
+    dialog.setTextContent(IncidentsUtil.getText("ExcelExportHelp"));
     dialog.setVisible(true);    
   }//GEN-LAST:event_btnShowQuery4ActionPerformed
 
@@ -304,10 +203,6 @@ public class ClosuresPanel extends javax.swing.JPanel {
 		dialog.setVisible(true);
   }//GEN-LAST:event_btnConsutasPolizaActionPerformed
 
-  private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
-    System.out.println(IncidentsUtil.getText("Initial"));
-  }//GEN-LAST:event_jButton1ActionPerformed
-
 
   // Variables declaration - do not modify//GEN-BEGIN:variables
   private javax.swing.JButton btnConsultasCierre;
@@ -319,6 +214,5 @@ public class ClosuresPanel extends javax.swing.JPanel {
   private javax.swing.JButton btnShowQuery2;
   private javax.swing.JButton btnShowQuery3;
   private javax.swing.JButton btnShowQuery4;
-  private javax.swing.JButton jButton1;
   // End of variables declaration//GEN-END:variables
 }
