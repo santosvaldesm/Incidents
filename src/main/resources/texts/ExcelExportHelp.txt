@@ -1,0 +1,50 @@
+Exportar hoja de excel
+
+Para varios de los cierres la información llega en archivos excel
+y el programa solo trabaja con archivos CSV por lo cual para seguir el mismo formato
+con el cual se exportan los archivos de las base de datos oracle se debe seguir el
+siguiente proceso:
+
+Pasos
+1. Ubicarse en la hoja que se exportaran los datos
+2. Presionar ALT + F11 para abrir la pantalla de programacion
+3. pegar el siguiente codigo:
+	
+	'---------------------------------------------	
+	Sub CSVFile()
+		'updateby Extendoffice
+		Dim xRg As Range
+		Dim xRow As Range
+		Dim xCell As Range
+		Dim xStr As String
+		Dim xSep As String
+		Dim xTxt As String
+		Dim xName As Variant
+		On Error Resume Next
+		If ActiveWindow.RangeSelection.Count > 1 Then
+		  xTxt = ActiveWindow.RangeSelection.AddressLocal
+		Else
+		  xTxt = ActiveSheet.UsedRange.AddressLocal
+		End If
+		Set xRg = Application.InputBox("Please select the data range:", "Kutools for Excel", xTxt, , , , , 8)
+		If xRg Is Nothing Then Exit Sub
+		xName = Application.GetSaveAsFilename("", "CSV File (*.csv), *.csv")
+		xSep = Application.International(xlListSeparator)
+		Open xName For Output As #1
+		For Each xRow In xRg.Rows
+			xStr = ""
+			For Each xCell In xRow.Cells
+				xStr = xStr & """" & xCell.Value & """" & xSep
+			Next
+			While Right(xStr, 1) = xSep
+				xStr = Left(xStr, Len(xStr) - 1)
+			Wend
+			Print #1, xStr
+		Next
+		Close #1
+		If Err = 0 Then MsgBox "The file has saved to: " & xName, vbInformation, "Kutools for Excel"
+	End Sub
+	'---------------------------------------------
+
+4. presionar F5 para ejecutar la macro
+5. dar nombre al archivo en la ventana que se abre y guardar

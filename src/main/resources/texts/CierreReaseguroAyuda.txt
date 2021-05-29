@@ -1,0 +1,5 @@
+IMPORTANTE 
+Para el procesamiento se debe seleccionar una carpeta que contenga dos archivos:
+
+1. REASEGURO_ECO.csv (164. Cierre reaseguro - CtasReaseguroEcosistema_CuadreMensual.sql)
+2. REASEGURO_GW.csv (166. Cierre reaseguro - CtasReaseguroGW_CuadreMensual_WithRF.sql)

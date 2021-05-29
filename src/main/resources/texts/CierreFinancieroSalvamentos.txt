@@ -1,0 +1,412 @@
+-----------------
+-- SALVAMENTOS --
+-----------------
+
+WITH SINIESTROS
+AS (
+  SELECT ID
+    ,PUBLICID PUBLICID_CLAIM
+    ,POLICYID
+    ,CLAIMNUMBER
+    ,LOSSDATE FECHA_SINIESTRO
+    ,REPORTEDDATE FECHA_AVISO
+    ,ISMIGRATED_EXT ESMIGRADO
+    ,ISREINSURANCERECALCULATED_EXT RECALCULADO
+  FROM ADM_GWCC.CC_CLAIM
+  WHERE RETIRED = 0
+  AND CLAIMNUMBER NOT LIKE '8%'
+  ),
+  
+
+SALVAMENTOS
+AS (
+  SELECT CLAIMNUMBER
+    ,DECODE(MASTERPOLICYNUMBER, NULL, POLICYNUMBER, MASTERPOLICYNUMBER) POLICYNUMBER
+    ,TO_CHAR(FECHA_SINIESTRO, 'YYYY/MM/DD') FECHA_SINIESTRO
+    ,TO_CHAR(FECHA_AVISO, 'YYYY/MM/DD') FECHA_AVISO
+    ,ESMIGRADO
+    ,RECALCULADO
+    ,t.id ID_TRA
+    ,T.PUBLICID
+    ,t.Checkid
+    ,T.SUBTYPE
+    ,T.ISMIGRATED_EXT
+    ,T.RECOVERYCATEGORY
+    ,t.STATUS
+    ,TLCOS.L_ES_CO COST_CATEGORY
+    ,T.CREATETIME AS FECHA_TRANSACCION
+    ,P.Coinsurance_Ext
+    ,TL.CLAIMAMOUNT
+    ,CASE 
+      WHEN TT.TYPECODE = 'V71'
+        OR TT.TYPECODE = 'V72'
+        OR TT.TYPECODE = 'V73'
+        THEN (
+            ROUND((
+                TL.TRANSACTIONAMOUNT - (
+                  (TL.TRANSACTIONAMOUNT * (((13.3) + (LTRIM(SUBSTR((SUBSTR(TT.L_ES_CO, INSTR(TT.L_ES_CO, 'e', 1, 1) + 1, 10)), (INSTR((SUBSTR(TT.L_ES_CO, INSTR(TT.L_ES_CO, 'e', 1, 1) + 1, 10)), '%', 1, 1) - 2), 2)))) / 100)) / (1 + (((13.3) + (LTRIM(SUBSTR((SUBSTR(TT.L_ES_CO, INSTR(TT.L_ES_CO, 'e', 1, 1) + 1, 10)), (INSTR((SUBSTR(TT.L_ES_CO, INSTR(TT.L_ES_CO, 'e', 1, 1) + 1, 10)), '%', 1, 1) - 2), 2)))) / 100)
+                    )
+                  )
+                ), 0)
+            )
+      ELSE (
+          (TL.TRANSACTIONAMOUNT) - (
+            ROUND((
+                (
+                  (TL.TRANSACTIONAMOUNT) * (((LTRIM(SUBSTR((SUBSTR(TT.L_ES_CO, 1, (INSTR(TT.L_ES_CO, 'e', 1, 1) - 1))), (INSTR((SUBSTR(TT.L_ES_CO, 1, (INSTR(TT.L_ES_CO, 'e', 1, 1) - 1))), '%', 1, 1) - 2), 2))) + (LTRIM(SUBSTR((SUBSTR(TT.L_ES_CO, INSTR(TT.L_ES_CO, 'e', 1, 1) + 1, 10)), (INSTR((SUBSTR(TT.L_ES_CO, INSTR(TT.L_ES_CO, 'e', 1, 1) + 1, 10)), '%', 1, 1) - 2), 2)))) / 100
+                    )
+                  ) / (
+                  1 + (((LTRIM(SUBSTR((SUBSTR(TT.L_ES_CO, 1, (INSTR(TT.L_ES_CO, 'e', 1, 1) - 1))), (INSTR((SUBSTR(TT.L_ES_CO, 1, (INSTR(TT.L_ES_CO, 'e', 1, 1) - 1))), '%', 1, 1) - 2), 2))) + (LTRIM(SUBSTR((SUBSTR(TT.L_ES_CO, INSTR(TT.L_ES_CO, 'e', 1, 1) + 1, 10)), (INSTR((SUBSTR(TT.L_ES_CO, INSTR(TT.L_ES_CO, 'e', 1, 1) + 1, 10)), '%', 1, 1) - 2), 2)))) / 100
+                    )
+                  )
+                ), 0)
+            )
+          )
+      END AS VALOR_BRUTO
+    ,T.PUBLICID NUMERO_TRANSACCION
+    ,RC.L_ES_CO AS TIPO  
+    ,TST.L_ES_CO ESTADO
+    ,CASE WHEN P.POLICYTYPE = 10001 THEN '040' ELSE
+      CASE WHEN TCM.EXTERNALCODE IS NULL THEN P.LINE_EXT ELSE TCM.EXTERNALCODE END     
+     END RAMO_CONTABLE
+    ,crr.typecode as MONEDA
+  FROM SINIESTROS S
+  INNER JOIN ADM_GWCC.CC_POLICY P ON S.POLICYID = P.ID
+  INNER JOIN ADM_GWCC.CC_TRANSACTION T ON S.ID = T.CLAIMID
+  INNER JOIN ADM_GWCC.CC_TRANSACTIONLINEITEM TL ON T.ID = TL.TRANSACTIONID
+  LEFT JOIN ADM_GWCC.CCTL_TAXESTYPE_EXT TT ON TL.TAXESTYPE_EXT = TT.ID
+  INNER JOIN ADM_GWCC.CCTL_COSTCATEGORY TLCOS ON T.COSTCATEGORY = TLCOS.ID
+  INNER JOIN ADM_GWCC.CCTL_RECOVERYCATEGORY RC ON RC.ID = T.RECOVERYCATEGORY
+  INNER JOIN ADM_GWCC.CCTL_TRANSACTIONSTATUS TST ON TST.ID = T.STATUS
+  LEFT JOIN ADM_GWCC.CCX_SAPDETAIL_EXT SDE ON T.SAPDETAIL_EXT = SDE.ID
+  LEFT JOIN ADM_GWCC.CC_EXPOSURE EX ON EX.ID=T.Exposureid
+  LEFT JOIN ADM_GWCC.CC_COVERAGE COV ON COV.ID=EX.COVERAGEID
+  LEFT JOIN ADM_GWCC.Cctl_Coveragetype CTL ON ctl.ID=cov.type
+  LEFT JOIN ADM_GWCC.Cctl_offeringtype_ext oft ON oft.ID=cov.offeringtype_ext
+  LEFT JOIN ADM_GWCC.ccx_typecodemapper_ext tcm ON
+       tcm.listname = 'Line_Ext'
+       AND tcm.namespace = 'AccountingLineFromCoverageOffering'
+       AND tcm.internalcode = CTL.TYPECODE||'-'||oft.TYPECODE
+  LEFT JOIN ADM_GWCC.Cctl_currency crr ON crr.id=t.currency   
+  WHERE T.RETIRED = 0
+    AND T.STATUS NOT IN (5)
+    AND TST.L_ES_CO NOT IN ('Denegada') --REVISAR
+    AND T.SUBTYPE = 3
+    AND RC.ID = '10001'
+    AND T.PUBLICID NOT LIKE 'ctm%'
+    AND (CASE WHEN T.sapdetail_ext IS NULL OR SDE.sapaccountingdate_ext IS NULL THEN T.createtime ELSE SDE.sapaccountingdate_ext END) --Fecha de contabilizacion
+    --AND T.CREATETIME -- Fecha de creacion
+        BETWEEN TO_DATE(INITIAL_DATE || '000000', 'YYYYMMDDHH24MISS') AND TO_DATE(END_DATE || '235959', 'YYYYMMDDHH24MISS')
+  ),
+
+
+REASEGURO_CEDIDO
+AS (
+  SELECT agrg.transactionid 
+    ,SUM(rri.participationamount) AS CEDIDO
+  FROM ADM_GWCC.ccx_AgreementGroupRI_Ext agrg
+  INNER JOIN ADM_GWCC.Ccx_Agreementri_Ext agri ON agrg.ID = agri.Agreementgroupid
+  INNER JOIN ADM_GWCC.Ccx_Reinsurerri_Ext rri ON rri.agreementid = agri.ID
+  INNER JOIN ADM_GWCC.cc_ClaimContact cco ON rri.reinsurerid = cco.ID
+  INNER JOIN ADM_GWCC.cc_Contact ctc ON ctc.ID = cco.Contactid
+  WHERE ctc.SURACODE_EXT <> '00000'
+    AND agrg.retired = 0
+    AND (
+      agrg.distributiontype = 'RECOVERY'
+      OR agrg.distributiontype IS NULL
+      )
+    AND NVL(rri.participationamount, 0) <> 0  
+    AND nvl(agrg.reflection, 0) = 0
+    AND EXISTS (
+        SELECT * FROM SALVAMENTOS T WHERE T.ID_TRA = agrg.Transactionid 
+    )
+  GROUP BY agrg.transactionid 
+  ),
+
+  
+REASEGURO_RETENIDO
+AS (
+  SELECT agrg.transactionid
+    ,sum(rri.participationamount) AS RETENIDO
+  FROM ADM_GWCC.ccx_AgreementGroupRI_Ext agrg
+  INNER JOIN ADM_GWCC.Ccx_Agreementri_Ext agri ON agrg.ID = agri.Agreementgroupid
+  INNER JOIN ADM_GWCC.Ccx_Reinsurerri_Ext rri ON rri.agreementid = agri.ID
+  INNER JOIN ADM_GWCC.cc_ClaimContact cco ON rri.reinsurerid = cco.ID
+  INNER JOIN ADM_GWCC.cc_Contact ctc ON ctc.ID = cco.Contactid
+  WHERE ctc.SURACODE_EXT = '00000'
+    AND agrg.retired = 0
+    AND (agrg.distributiontype = 'RECOVERY'
+      OR agrg.distributiontype IS NULL
+      )
+    AND NVL(rri.participationamount, 0) <> 0  
+    AND nvl(agrg.reflection, 0) = 0
+    AND EXISTS (
+        SELECT * FROM SALVAMENTOS T WHERE T.ID_TRA = agrg.Transactionid 
+    )
+  GROUP BY agrg.transactionid
+  ),
+  
+  
+REASEGURO_RETENCION_SURA
+AS (
+  SELECT agrg.transactionid
+    ,sum(agrg.retentionamount) AS SURA_RETENIDO
+  FROM ADM_GWCC.ccx_AgreementGroupRI_Ext agrg
+  WHERE agrg.retired = 0
+      AND (agrg.distributiontype = 'RECOVERY'
+          OR agrg.distributiontype IS NULL
+      )
+      AND NVL(agrg.retentionamount, 0) <> 0
+      AND nvl(agrg.reflection, 0) = 0
+      AND EXISTS (
+          SELECT * FROM SALVAMENTOS T WHERE T.ID_TRA = agrg.Transactionid 
+      )
+  GROUP BY agrg.transactionid
+  ),
+  
+  
+COASEGURO_CEDIDO
+AS (
+  SELECT ISC.COINSURANCEPARTICIPATION
+    ,ISC.COINSURANCE
+    ,I.L_ES_CO
+  FROM ADM_GWCC.CCX_INSURANCECOINSURANCE_EXT ISC
+  LEFT JOIN ADM_GWCC.CCX_COINSURANCE_EXT CO ON CO.ID = ISC.COINSURANCE
+  LEFT JOIN ADM_GWCC.CCTL_INSURER_EXT I ON I.ID = ISC.NAME
+  WHERE I.L_ES_CO = 'Seguros Generales Suramericana S.A.'
+    AND ISC.retired = 0
+  AND CO.GIVENORACEPTED = 0             
+  ),
+
+
+SALVAMENTOS_DEF
+AS (
+  SELECT T.CLAIMNUMBER
+    ,T.POLICYNUMBER
+    ,T.RAMO_CONTABLE
+    ,T.COINSURANCE_EXT
+    ,T.COST_CATEGORY
+    ,T.FECHA_SINIESTRO
+    ,T.TIPO
+    ,T.ID_TRA
+    ,T.NUMERO_TRANSACCION
+    ,T.ESTADO
+    ,T.FECHA_TRANSACCION
+    ,SUM(T.CLAIMAMOUNT) AS VALOR_NETO
+    ,SUM(T.VALOR_BRUTO) AS VALOR_BRUTO
+    ,T.RECALCULADO
+    ,T.MONEDA
+  FROM SALVAMENTOS T
+  GROUP BY T.CLAIMNUMBER
+    ,T.POLICYNUMBER
+    ,T.RAMO_CONTABLE
+    ,T.FECHA_SINIESTRO
+    ,T.COINSURANCE_EXT
+    ,T.COST_CATEGORY
+    ,T.TIPO
+    ,T.ID_TRA
+    ,T.NUMERO_TRANSACCION
+    ,T.ESTADO
+    ,T.FECHA_TRANSACCION
+    ,T.RECALCULADO
+   ,T.MONEDA
+  ),
+
+  
+SALVAMENTOS_REA
+AS (
+  SELECT T.CLAIMNUMBER
+    ,T.POLICYNUMBER
+    ,T.RAMO_CONTABLE
+    ,T.RECALCULADO
+    ,T.COINSURANCE_EXT
+    ,T.COST_CATEGORY
+    ,T.FECHA_SINIESTRO
+    ,T.TIPO
+    ,T.NUMERO_TRANSACCION
+    ,'' AS TRANSACCION_ORIGEN
+    ,T.ESTADO
+    ,T.FECHA_TRANSACCION
+    ,(NVL(RC.CEDIDO, 0) * -1) CEDIDO
+    ,(NVL(RET.RETENIDO, 0) * -1) RETENIDO
+    ,(NVL(SRET.SURA_RETENIDO, 0) * -1) RETENCION_PURA
+    ,T.VALOR_NETO
+    ,T.VALOR_BRUTO
+    ,T.MONEDA   
+  FROM SALVAMENTOS_DEF T
+  LEFT JOIN REASEGURO_CEDIDO RC ON RC.transactionid = T.ID_TRA
+  LEFT JOIN REASEGURO_RETENIDO RET ON RET.transactionid = T.ID_TRA
+  LEFT JOIN REASEGURO_RETENCION_SURA SRET ON SRET.transactionid = T.ID_TRA
+),
+
+
+SALVAMENTOS_F 
+AS (  
+  SELECT T.*
+    ,CASE 
+      WHEN CC.L_ES_CO = 'Seguros Generales Suramericana S.A.' and T.COST_CATEGORY  != 'Solo SURA' and T.COST_CATEGORY  != 'Gastos proceso jur&#237;dico Solo SURA'
+        THEN (CC.COINSURANCEPARTICIPATION / 100) * T.VALOR_BRUTO
+      ELSE T.VALOR_BRUTO
+      END AS VALOR_SIN_COASEG
+    ,(CASE 
+      WHEN CC.L_ES_CO = 'Seguros Generales Suramericana S.A.' and T.COST_CATEGORY  != 'Solo SURA' and T.COST_CATEGORY  != 'Gastos proceso jur&#237;dico Solo SURA'
+        THEN (CC.COINSURANCEPARTICIPATION / 100) * T.VALOR_BRUTO
+      ELSE T.VALOR_BRUTO
+      END) - (CEDIDO + RETENIDO + RETENCION_PURA) AS DIFERENCIA
+    ,0 AS REFLECTION
+  FROM SALVAMENTOS_REA T
+  LEFT JOIN COASEGURO_CEDIDO CC ON CC.COINSURANCE = T.COINSURANCE_EXT
+),
+
+--SELECT * FROM SALVAMENTOS_F
+
+/* ********************************************************************************************** */
+/* ********************************** REFLEJOS DE SALVAMENTOS *********************************** */
+/* ********************************************************************************************** */
+
+REFLECTION_SALV 
+AS (
+ SELECT C.claimnumber
+  ,DECODE(P.masterpolicynumber, NULL, P.policynumber, P.masterpolicynumber) policynumber 
+  ,CASE WHEN P.policytype = 10001 THEN '040' ELSE
+      CASE WHEN TCM.externalcode IS NULL THEN P.line_Ext ELSE TCM.externalcode END     
+     END ramo_contable
+  ,CRR.typecode as moneda
+  ,TLCOS.l_es_co cost_category
+  ,R.publicid as reflection_id
+  ,CASE WHEN NVL(R.ID, 0) = 0 THEN AGRG.CREATETIME ELSE CASE WHEN R.SAPACCOUNTINGDATE IS NULL THEN R.CREATETIME ELSE R.SAPACCOUNTINGDATE END END createtime
+  ,AGRG.id agreementgroupri
+  ,R.statusworkqueue
+  ,R.sapreplydate
+  ,CASE WHEN NVL(R.id, 0) = 0 THEN 'SIN ENVIO A SAP' ELSE CASE WHEN R.sapstatus = 0 THEN 'SIN RESPUESTA DE SAP' ELSE 'RECIBIDO SAP' END END sapstatus
+  ,T.publicid transaction_id
+  ,CASE WHEN TRST.l_en_us = 'Recovery' THEN RCAT.l_es_co ELSE TRST.l_en_us END transactiontype
+  ,C.LOSSDATE FECHA_SINIESTRO
+ FROM adm_gwcc.ccx_agreementgroupri_ext AGRG
+  LEFT JOIN adm_gwcc.ccx_messagingreflection_ext R ON R.agreementgroupri = AGRG.id 
+  INNER JOIN adm_gwcc.cc_claim C ON AGRG.claimid = C.id
+  INNER JOIN adm_gwcc.cc_policy P ON C.POLICYID = P.ID 
+  LEFT JOIN adm_gwcc.cc_transaction T ON T.id = AGRG.transactionid
+  LEFT JOIN adm_gwcc.cc_exposure EX ON EX.id = T.exposureid
+  LEFT JOIN adm_gwcc.cc_coverage COV ON COV.id = EX.coverageid
+  LEFT JOIN adm_gwcc.cctl_coveragetype CTL ON CTL.id = COV.type
+  LEFT JOIN adm_gwcc.cctl_offeringtype_ext OFT ON OFT.id = COV.offeringtype_ext
+  LEFT JOIN adm_gwcc.ccx_typecodemapper_ext TCM ON TCM.listname = 'Line_Ext'
+       AND TCM.namespace = 'AccountingLineFromCoverageOffering'
+       AND TCM.internalcode = CTL.typecode||'-'||OFT.typecode
+  LEFT JOIN adm_gwcc.cctl_currency CRR ON CRR.id = T.currency 
+  LEFT JOIN adm_gwcc.cctl_costcategory TLCOS ON T.costcategory = TLCOS.id
+  LEFT JOIN adm_gwcc.cctl_transaction TRST ON T.subtype = TRST.id
+  LEFT JOIN adm_gwcc.cctl_recoverycategory RCAT ON T.recoverycategory = RCAT.id
+ WHERE 
+  AGRG.Retired = 0 AND NVL(R.Retired, 0) = 0 -- reflejos y distribuciones no retiradas
+  AND NVL(AGRG.reflection, 0) = 1 -- distribuciones tipo reflejos
+  AND T.subtype = 3 -- transacciones tipo recupero
+  AND T.status NOT IN (5,7) -- transacciones no denegadas o detenidas
+  AND AGRG.distributiontype = 'RECOVERY' -- distribucion de reaseguro tipo recupero
+  AND RCAT.typecode = 'salvage' -- solo salvamentos
+  AND (CASE WHEN P.policytype = 10001 AND T.PUBLICID LIKE 'ctm%' THEN 0 ELSE 1 END) = 1 -- excluir transacciones migradas de Autos
+  AND NVL(T.ISRSA_EXT, 0) = 0 -- excluir transacciones de RSA
+  -- Filtro de fecha, si tiene tabla de reflejos por fecha de contabilizacion si la tiene, sino fecha de creacion, si no tiene tabla de reflejos fecha de creacion de la distribucion
+  AND (CASE WHEN NVL(R.ID, 0) = 0 THEN AGRG.CREATETIME ELSE CASE WHEN R.SAPACCOUNTINGDATE IS NULL THEN R.CREATETIME ELSE R.SAPACCOUNTINGDATE END END)
+      BETWEEN TO_DATE(INITIAL_DATE || '000000', 'YYYYMMDDHH24MISS') AND TO_DATE(END_DATE || '235959', 'YYYYMMDDHH24MISS')
+),
+
+REASEGURO_CEDIDO_REF
+AS (
+  SELECT agrg.id
+    ,sum(rri.participationamount) AS CEDIDO
+    ,count(rri.id) AS NUMREA_CEDIDO
+  FROM ADM_GWCC.ccx_AgreementGroupRI_Ext agrg
+  INNER JOIN ADM_GWCC.Ccx_Agreementri_Ext agri ON agrg.ID = agri.Agreementgroupid
+  INNER JOIN ADM_GWCC.Ccx_Reinsurerri_Ext rri ON rri.agreementid = agri.ID
+  INNER JOIN ADM_GWCC.cc_ClaimContact cco ON rri.reinsurerid = cco.ID
+  INNER JOIN ADM_GWCC.cc_Contact ctc ON ctc.ID = cco.Contactid
+  WHERE ctc.SURACODE_EXT <> '00000'
+    AND agrg.retired = 0
+    AND NVL(rri.participationamount, 0) <> 0  
+    AND nvl(agrg.reflection, 0) = 1
+    AND agrg.distributiontype = 'RECOVERY'
+    AND EXISTS (
+        SELECT * FROM REFLECTION_SALV R WHERE R.agreementgroupri = agrg.id 
+    )
+  GROUP BY agrg.id
+),
+
+REASEGURO_RETENIDO_REF
+AS (
+  SELECT agrg.id
+    ,sum(rri.participationamount) AS RETENIDO
+    ,count(rri.id) AS NUMREA_RETENIDO
+  FROM ADM_GWCC.ccx_AgreementGroupRI_Ext agrg
+  INNER JOIN ADM_GWCC.Ccx_Agreementri_Ext agri ON agrg.ID = agri.Agreementgroupid
+  INNER JOIN ADM_GWCC.Ccx_Reinsurerri_Ext rri ON rri.agreementid = agri.ID
+  INNER JOIN ADM_GWCC.cc_ClaimContact cco ON rri.reinsurerid = cco.ID
+  INNER JOIN ADM_GWCC.cc_Contact ctc ON ctc.ID = cco.Contactid
+  WHERE ctc.SURACODE_EXT = '00000'
+    AND agrg.retired = 0
+    AND NVL(rri.participationamount, 0) <> 0  
+    AND nvl(agrg.reflection, 0) = 1
+    AND agrg.distributiontype = 'RECOVERY'
+    AND EXISTS (
+        SELECT * FROM REFLECTION_SALV R WHERE R.agreementgroupri = agrg.id 
+    )
+  GROUP BY agrg.id
+),
+
+RETENCION_SURA_REF
+AS (
+  SELECT agrg.id
+    ,sum(agrg.retentionamount) AS SURA_RETENIDO
+    ,count(agrg.id) AS NUMREA_SURA_RETENIDO
+  FROM ADM_GWCC.ccx_AgreementGroupRI_Ext agrg
+  WHERE agrg.retired = 0
+      AND NVL(agrg.retentionamount, 0) <> 0
+      AND nvl(agrg.reflection, 0) = 1
+      AND agrg.distributiontype = 'RECOVERY'
+      AND EXISTS (
+        SELECT * FROM REFLECTION_SALV R WHERE R.agreementgroupri = agrg.id  
+      )    
+  GROUP BY agrg.id
+),
+
+REFLECTION_SALV_F
+AS (
+  SELECT R.CLAIMNUMBER
+   ,R.POLICYNUMBER
+   ,R.RAMO_CONTABLE
+   ,NULL AS RECALCULADO
+   ,NULL AS COINSURANCE_EXT
+   ,NULL AS COST_CATEGORY
+   ,TO_CHAR(R.FECHA_SINIESTRO, 'YYYY/MM/DD') FECHA_SINIESTRO
+   ,R.TRANSACTIONTYPE AS TIPO
+   ,R.REFLECTION_ID AS NUMERO_TRANSACCION
+   ,R.TRANSACTION_ID AS TRANSACCION_ORIGEN
+   ,R.SAPSTATUS AS ESTADO
+   ,R.CREATETIME AS FECHA_TRANSACCION
+   ,(NVL(CED.CEDIDO, 0) * -1) CEDIDO
+   ,(NVL(RET.RETENIDO, 0) * -1) RETENIDO
+   ,(NVL(RSURA.SURA_RETENIDO, 0) * -1) RETENCION_PURA
+   ,0 AS VALOR_NETO
+   ,0 AS VALOR_BRUTO
+   ,R.MONEDA 
+   ,0 AS VALOR_SIN_COASEG
+   ,0 AS DIFERENCIA
+   ,1 AS REFLECTION
+   --,NVL(CED.NUMREA_CEDIDO, 0) NUMREA_CEDIDO
+   --,NVL(RET.NUMREA_RETENIDO, 0) NUMREA_RETENIDO
+   --,NVL(RSURA.NUMREA_SURA_RETENIDO, 0) NUMREA_SURA_RETENIDO
+  FROM REFLECTION_SALV R
+   LEFT JOIN REASEGURO_CEDIDO_REF CED ON R.agreementgroupri = CED.id
+   LEFT JOIN REASEGURO_RETENIDO_REF RET ON R.agreementgroupri = RET.id
+   LEFT JOIN RETENCION_SURA_REF RSURA ON R.agreementgroupri = RSURA.id
+  WHERE NVL(CED.NUMREA_CEDIDO, 0) > 0 -- Solo tener en cuenta las distribucione/reflejos que tienen movimientos cedidos, ya que movimientos solo retenidos no se van a sap 
+  ORDER BY R.CREATETIME
+)
+
+
+SELECT * FROM (
+ SELECT * FROM SALVAMENTOS_F
+ UNION ALL
+ SELECT * FROM REFLECTION_SALV_F
+) F

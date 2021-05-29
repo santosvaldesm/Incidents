@@ -6,12 +6,6 @@
 package com.mycompany.incidents.otherResources;
 
 import com.mycompany.incidents.entities.Closure;
-import com.mycompany.incidents.panels.ClosuresPanel;
-import com.mycompany.incidents.panels.IncidentsPanel;
-import com.mycompany.incidents.panels.NotesPanel;
-import com.mycompany.incidents.panels.ReinsurancePanel;
-import com.mycompany.incidents.panels.TemplatePanel;
-import com.mycompany.incidents.panels.modelGW.PanelMain;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
@@ -22,9 +16,6 @@ import java.text.DecimalFormat;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.HashMap;
-import java.util.logging.Level;
-import java.util.logging.Logger;
-import javax.swing.JOptionPane;
 import javax.swing.JTextArea;
 import org.apache.poi.ss.usermodel.BorderStyle;
 import org.apache.poi.ss.usermodel.FillPatternType;
@@ -46,25 +37,40 @@ public class IncidentsUtil {
 	
 	
 	private static void createTexts(){
+		readText("CierreCoaseguroAyuda.txt");
+		readText("CierreFinancieroAyuda.txt");
+		readText("CierreFinancieroGastos.txt");
+		readText("CierreFinancieroPagos.txt");
+		readText("CierreFinancieroReservas.sql");
+		readText("CierreFinancieroSalvamentos.txt");
+		readText("CierreReaseguroAyuda.txt");
+		readText("CierreReaseguroCuentas.txt");
+		readText("CierreReaseguroGW.txt");
+		readText("CierreReaseguroValidaciones.txt");
+		readText("ConsultaPolizaBeneficiarios.sql");
+		readText("ConsultaPolizaCoaseguradores.sql");
+		readText("ConsultaPolizaCobertura.sql");
+		readText("ConsultaPolizaConsultasComunes.sql");
+		readText("ConsultaPolizaDirecciones.sql");
+		readText("ConsultaPolizaTerminos.sql");
+		readText("ExcelExportHelp.txt");
+		readText("HomologationsHelp.sql");
+		readText("Initial.txt");		
+		readText("ProductModelHelp.gs");		
+	}
+	
+	private static void readText(String txtFileName){
 		try {
 			ClassLoader classLoader = ClassLoader.getSystemClassLoader();			
-      InputStream in = classLoader.getResourceAsStream("./textos.txt");			
-      BufferedReader bf = new BufferedReader(new InputStreamReader(in));                  
-			String keyText = "";
+			String keyName = txtFileName.substring(0,txtFileName.indexOf("."));
+      InputStream in = classLoader.getResourceAsStream("./texts/"+txtFileName);			
+      BufferedReader bf = new BufferedReader(new InputStreamReader(in));                  			
 			String contentText = "";
       String lineaStr = "";
-			while((lineaStr = bf.readLine())!=null){
-				if(lineaStr.startsWith("+++START")){
-					keyText = lineaStr.substring(9,lineaStr.length());
-					contentText = "";
-				} else if(lineaStr.startsWith("+++END")){
-					if(keyText.length()!=0 && contentText.length()!=0){
-						textsHasMap.put(keyText, contentText);
-					}
-				} else {
-					contentText = contentText + "\n" + lineaStr;
-				}
+			while((lineaStr = bf.readLine())!=null){				
+				contentText = contentText + "\n" + lineaStr;				
 			}
+			textsHasMap.put(keyName, contentText);
 		}
     catch (IOException ex) {      
     }

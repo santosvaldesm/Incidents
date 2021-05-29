@@ -1,0 +1,231 @@
+/*
+NOTAS
+	- Se ejecuta en la instancia de PDN
+	- Se deben ejecutar todos los scripts 
+	- Si alguno falla se detien la extraccion de siniestros  sino tambien producción, vida...
+	- Si se realiza una corerccion volver a ejecutar todos los scripts', un cambio puede afectar los anteriores
+*/
+
+
+/* 
+--------------------------------------------------------
+Query 1 ------------------------------------------------
+---------------------------------------------------------
+*/
+SELECT A.ROWID, A.*
+FROM OPS$INFREA.TREA_ENLACE_CRW_MVTO A
+WHERE (CDCONTRATO = '00000' OR CDREASEGURADOR = '00000')
+AND A.CDTIPO_MOVIMIENTO NOT IN (1, 4, 18, 21)
+AND A.CDAPLICACION = '9012'
+AND A.NMSINIESTRO<>'*'
+--AND A.CDRAMO <> '040' -- SE OMITE RAMO AUTOS
+AND A.FECIERRE  BETWEEN  TO_DATE('INITIAL_DATE' || '000000', 'YYYYMMDDHH24MISS') AND TO_DATE('END_DATE' || '235900', 'YYYYMMDDHH24MISS');
+
+/* 
+--------------------------------------------------------
+Query 2 ------------------------------------------------
+---------------------------------------------------------
+*/
+SELECT A.ROWID, A.*
+FROM TREA_ENLACE_CORREDOR_MVTO A
+WHERE (CDCONTRATO = '00000' OR CDREASEGURADOR = '00000')
+AND A.CDTIPO_MOVIMIENTO NOT IN (1, 4, 18, 21)
+AND A.CDAPLICACION = '9012'
+AND A.NMSINIESTRO<>'*'
+--AND A.CDRAMO <> '040' -- SE OMITE RAMO AUTOS
+AND A.FECIERRE  BETWEEN  TO_DATE('INITIAL_DATE' || '000000', 'YYYYMMDDHH24MISS') AND TO_DATE('END_DATE' || '235900', 'YYYYMMDDHH24MISS');
+
+
+
+
+/* 
+--------------------------------------------------------
+Query 3 ------------------------------------------------
+---------------------------------------------------------
+*/
+SELECT A.ROWID,A.*
+FROM TREA_ENLACE_CRW_MVTO A
+WHERE LENGTH(CDCONTRATO) >= 6
+AND A.CDAPLICACION = '9012'
+AND A.NMSINIESTRO<>'*'  
+--AND A.CDRAMO <> '040' -- SE OMITE RAMO AUTOS
+AND (CDCONTRATO, CDTIPO_CONTRATO) NOT IN (SELECT DISTINCT R.CDCONTRATO, R.TIPO FROM REA_CONTRATOS R)
+AND A.FECIERRE  BETWEEN  TO_DATE('INITIAL_DATE' || '000000', 'YYYYMMDDHH24MISS') AND TO_DATE('END_DATE' || '235900', 'YYYYMMDDHH24MISS');
+
+
+
+/* 
+--------------------------------------------------------
+Query 4 ------------------------------------------------
+---------------------------------------------------------
+*/
+SELECT A.ROWID,A.*
+FROM TREA_ENLACE_CORREDOR_MVTO A
+WHERE LENGTH(CDCONTRATO) >= 6
+AND A.CDAPLICACION = '9012' 
+AND A.NMSINIESTRO<>'*'  
+--AND A.CDRAMO <> '040' -- SE OMITE RAMO AUTOS
+AND CDCONTRATO NOT IN (SELECT R.CDCONTRATO FROM REA_CONTRATOS R)
+AND A.FECIERRE  BETWEEN  TO_DATE('INITIAL_DATE' || '000000', 'YYYYMMDDHH24MISS') AND TO_DATE('END_DATE' || '235900', 'YYYYMMDDHH24MISS');
+
+
+
+
+/* 
+--------------------------------------------------------
+Query 5 ------------------------------------------------
+---------------------------------------------------------
+*/
+SELECT A.ROWID,A.*
+FROM TREA_ENLACE_CRW_MVTO A
+WHERE LENGTH(CDCONTRATO) >= 6
+AND A.CDAPLICACION = '9012'
+AND A.NMSINIESTRO<>'*'
+AND A.SNFACULTATIVO = 'S'
+--AND A.CDRAMO <> '040' -- SE OMITE RAMO AUTOS
+AND A.FECIERRE  BETWEEN  TO_DATE('INITIAL_DATE' || '000000', 'YYYYMMDDHH24MISS') AND TO_DATE('END_DATE' || '235900', 'YYYYMMDDHH24MISS');
+
+
+
+
+/* 
+--------------------------------------------------------
+Query 6 ------------------------------------------------
+---------------------------------------------------------
+*/
+SELECT A.ROWID,A.*
+FROM TREA_ENLACE_CRW_MVTO A
+WHERE LENGTH(CDCONTRATO) <= 6
+AND A.CDAPLICACION = '9012' 
+AND A.NMSINIESTRO<>'*'
+AND A.SNFACULTATIVO = 'N'
+--AND A.CDRAMO <> '040' -- SE OMITE RAMO AUTOS
+AND A.FECIERRE  BETWEEN  TO_DATE('INITIAL_DATE' || '000000', 'YYYYMMDDHH24MISS') AND TO_DATE('END_DATE' || '235900', 'YYYYMMDDHH24MISS');
+
+
+
+
+/* 
+--------------------------------------------------------
+Query 7 ------------------------------------------------
+---------------------------------------------------------
+*/
+SELECT CDTRANSACCION, FECIERRE, CDRAMO, CDPLAN, CDMONEDA, CDGARANTIA, CDTIPO_POLIZA, CDCONTRATO, CDREASEGURADOR, POCOMISION, 
+PODEPOSITO, POINTERES, POAJUSTE_COMISION, NMPOLIZA, OPTIPO_REASEGURO, CDTIPO_MOVIMIENTO, NMSINIESTRO, NMRECIBO, 
+CDAPLICACION, A.PTVALOR_MOVIMIENTO, 100 POPARTICIPACION
+FROM TREA_ENLACE_CRW_MVTO A
+WHERE  A.FECIERRE  BETWEEN  TO_DATE('INITIAL_DATE' || '000000', 'YYYYMMDDHH24MISS') AND TO_DATE('END_DATE' || '235900', 'YYYYMMDDHH24MISS')
+AND A.SNCORREDOR = 'S'
+AND A.NMSINIESTRO<>'*'
+--AND A.CDRAMO <> '040' -- SE OMITE RAMO AUTOS
+AND A.CDAPLICACION = '9012'
+MINUS
+SELECT CDTRANSACCION, FECIERRE, CDRAMO, CDPLAN, CDMONEDA, CDGARANTIA, CDTIPO_POLIZA, CDCONTRATO, CDCORREDOR, POCOMISION, 
+PODEPOSITO, POINTERES, POAJUSTE_COMISION, NMPOLIZA, OPTIPO_REASEGURO, CDTIPO_MOVIMIENTO, NMSINIESTRO, NMRECIBO, CDAPLICACION, 
+SUM(PTVALOR_MOVIMIENTO) PTVALOR_MOVIMIENTO, SUM(C.POPARTICIPACION) POPARTICIPACION
+FROM TREA_ENLACE_CORREDOR_MVTO C
+WHERE C.FECIERRE  BETWEEN  TO_DATE('INITIAL_DATE' || '000000', 'YYYYMMDDHH24MISS') AND TO_DATE('END_DATE' || '235900', 'YYYYMMDDHH24MISS')
+AND C.CDAPLICACION = '9012'
+AND C.NMSINIESTRO<>'*'
+--AND A.CDRAMO <> '040' -- SE OMITE RAMO AUTOS
+GROUP BY CDTRANSACCION, FECIERRE, CDRAMO, CDPLAN, CDMONEDA, CDGARANTIA, CDTIPO_POLIZA, CDCONTRATO, CDCORREDOR,
+ POCOMISION, PODEPOSITO, POINTERES, POAJUSTE_COMISION, NMPOLIZA, OPTIPO_REASEGURO, CDTIPO_MOVIMIENTO, NMSINIESTRO, NMRECIBO, CDAPLICACION ;
+
+
+
+
+/* 
+--------------------------------------------------------
+Query 8 ------------------------------------------------
+--------------------------------------------------------
+*/
+SELECT A.ROWID,A.*
+FROM TREA_ENLACE_CRW_MVTO A 
+WHERE LENGTH(CDCONTRATO) <= 6
+AND A.SNFACULTATIVO = 'S'
+AND A.CDAPLICACION = '9012'
+AND A.NMSINIESTRO<>'*'
+AND CDTIPO_CONTRATO <>'99'
+--AND A.CDRAMO <> '040' -- SE OMITE RAMO AUTOS
+AND A.FECIERRE  BETWEEN  TO_DATE('INITIAL_DATE' || '000000', 'YYYYMMDDHH24MISS') AND TO_DATE('END_DATE' || '235900', 'YYYYMMDDHH24MISS');
+
+/*
+  Update TREA_ENLACE_CRW_MVTO A SET A.CDTIPO_CONTRATO = '99' WHERE A.ROWID = 'AAOl6UAJhAACM+oAAc'; //Realizar correcciones
+
+  se actualizan los que:
+	- No sean de movilidad (Ramo 40)
+	- 88 se cambian por 99
+	- RE se cambia por 99 si CDCONTRATO = 00000 (correponden a FACULTATIVO SURA, asi que si deben tener 99)
+*/
+ 
+/* 
+--------------------------------------------------------
+Query 9 ------------------------------------------------
+---------------------------------------------------------
+*/
+WITH
+  T_CON AS (SELECT DISTINCT R.CDCONTRATO, R.TIPO FROM REA_CONTRATOS R)
+SELECT A.*,ROWID
+FROM TREA_ENLACE_CRW_MVTO A
+WHERE LENGTH(CDCONTRATO) > 6
+      AND TO_CHAR(FECIERRE,'YYYYMM') = 'INITIAL_DATE_YM'
+      AND A.CDAPLICACION = '9012'
+      AND A.NMSINIESTRO<>'*'
+	     --AND A.CDRAMO <> '040' -- SE OMITE RAMO AUTOS
+      AND (A.CDCONTRATO, A.CDTIPO_CONTRATO) NOT IN (SELECT * FROM T_CON);
+
+/*
+----------------------------------------------------------------------------------------
+----------------------------------------------------------------------------------------
+	Los query 10 y 11 Se obtuvieron de "169. Validaciones CORE - Henry Piñeros.sql" ----
+	revisar ese archivo para mas detalles                                           ----
+----------------------------------------------------------------------------------------
+----------------------------------------------------------------------------------------
+*/
+
+
+/* 
+-------------------------------------------------------
+Validacion 10:  Reaseguradores que no existen en C/S --
+--------------------------------------------------------
+*/
+-- Parte 1
+SELECT A.*,ROWID
+  FROM TREA_ENLACE_CRW_MVTO   A 
+ WHERE TO_CHAR(FECIERRE,'YYYYMM') = 'INITIAL_DATE_YM' --cambiar fecha
+      AND A.SNFACULTATIVO = 'S'
+      AND A.CDCIA_SURA = '01'
+      AND A.CDAPLICACION = '9012' 
+      AND A.CDCONTRATO NOT IN (SELECT C.CDCIA FROM COMPANIAS C)
+      ; 
+      
+--Parte 2
+SELECT  CDREASEGURADOR
+  FROM TREA_ENLACE_CRW_MVTO@dllpdn_pdn_cnegoalt.world  A 
+ WHERE TO_CHAR(FECIERRE,'YYYYMM') = 'INITIAL_DATE_YM' --cambiar fecha
+      AND A.CDAPLICACION = '9012' 
+      AND A.CDCIA_SURA = '01'
+MINUS
+SELECT C.CDCIA FROM COMPANIAS@dllpdn_pdn_cnegoalt.world   C;
+
+
+
+/* 
+----------------------------------------------------------------------------------
+Validacion 11:  Mvto de comision para facultativo pero en POCOMISION tiene cero --
+----------------------------------------------------------------------------------
+*/
+    
+
+-- Parte 1
+
+SELECT A.*,ROWID
+  FROM TREA_ENLACE_CRW_MVTO   A 
+ WHERE TO_CHAR(FECIERRE,'YYYYMM') = 'INITIAL_DATE_YM' --cambiar fecha
+      AND A.SNFACULTATIVO = 'S'
+      AND A.CDAPLICACION = '9012' 
+      AND A.CDCIA_SURA = '01'
+      AND A.CDTIPO_MOVIMIENTO = '15' /*15: COMISION*/
+      AND A.PTVALOR_MOVIMIENTO <> 0
+      AND A.POCOMISION = 0
+      ; 
