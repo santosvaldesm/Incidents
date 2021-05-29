@@ -26,6 +26,7 @@ import java.util.Map;
 import javax.persistence.EntityManagerFactory;
 import javax.persistence.Persistence;
 import org.apache.poi.ss.util.CellRangeAddress;
+import org.apache.poi.xssf.usermodel.XSSFCell;
 import org.apache.poi.xssf.usermodel.XSSFCellStyle;
 import org.apache.poi.xssf.usermodel.XSSFRow;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
@@ -376,6 +377,7 @@ public class DialogFinancialClosure extends javax.swing.JDialog implements Runna
 		XSSFSheet sheetReserva = anExcelWorbook.createSheet("RESERVA");
 		XSSFSheet sheetSalvamento = anExcelWorbook.createSheet("SALVAMENTO");		
 		XSSFSheet sheetInconsistences = anExcelWorbook.createSheet("DIFERENCIAS");		
+		XSSFSheet sheetScript = anExcelWorbook.createSheet("SCRIPT");		
 		String[] headerPagSalv       = new String[]{"Ramo","Moneda","Valor GW","Reaseguro GW","Valor SAP","Reaseguro SAP","Dif. Valor GW-SAP","Dif. Reaseguro GW-SAP"};
 		String[] headerReserva    = new String[]{"Ramo","Moneda","Valor GW","Gastos GW","Reaseguro GW","Valor SAP","Gastos SAP","Reaseguro SAP","Dif. Valor GW-SAP","Dif. Gastos GW-SAP","Dif. Reaseguro GW-SAP"};		
 		String[] headerInconsistences   = new String[]{"TIPO ERROR","REFERENCIA","RAMO","CLAIM NUMBER","POLCY NUMBER","MONEDA","ESTADO","VALOR 100 GW","REAS GW","VALOR 100 SAP","REAS SAP","DIF 100","DIF REAS","DETALLE"};		
@@ -384,6 +386,7 @@ public class DialogFinancialClosure extends javax.swing.JDialog implements Runna
 		insertDataInExcel(sheetReserva,headerReserva,"RESERVA");
 		insertDataInExcel(sheetSalvamento,headerPagSalv,"SALVAMENTO");
 		insertInconsistencesInExcel(sheetInconsistences,headerInconsistences);
+		insertScriptInExcel(sheetScript);
 		FileOutputStream file = new FileOutputStream(rutaResult);
 		anExcelWorbook.write(file);
 		file.close();
@@ -402,6 +405,32 @@ public class DialogFinancialClosure extends javax.swing.JDialog implements Runna
 		insertHeader(aSheet,headerTmp,rowPosition++,headers.length);
 		insertHeader(aSheet,headers,rowPosition++,1);
 		rowPosition = insertDataByCurrency(aSheet,rowPosition,tipo,"USD");		
+	}
+	
+	private void insertScriptInExcel(XSSFSheet aSheet) {		
+		String aScript=IncidentsUtil.getText("CruceCierreVsMensajes");
+		String references = "";
+		for(String[] anInconsistence : inconsistencesList){		  
+			String aReference = "";
+			if(anInconsistence[1]!=null &&
+				 anInconsistence[1].length()!=0 &&
+				 !anInconsistence[1].equals("null")){
+				aReference = anInconsistence[1].substring(0,anInconsistence[1].indexOf("-"));
+			}
+			String aType = anInconsistence[0].substring(0,anInconsistence[0].indexOf(" "));
+			references = references + "  arrayResult.add({\"" + aType + "\",\"" + 
+							     aReference + "\",\"" + anInconsistence[3] + "\"})\n";
+		}
+		aScript = aScript.replace("  arrayResult.add({\"X\",\"Y\",\"Z\"})", references);
+		int rowCount=0;
+		String[] aScriptSplit = aScript.split("\n");	
+		
+		for(String aRow : aScriptSplit){		
+			XSSFRow newRow = aSheet.createRow(rowCount++);			
+			XSSFCell aCell = newRow.createCell(0);			
+			aCell.setCellValue(aRow); 
+		}
+		
 	}
 	
 	private void insertInconsistencesInExcel(XSSFSheet aSheet,String[] headers) {		
@@ -771,7 +800,7 @@ public class DialogFinancialClosure extends javax.swing.JDialog implements Runna
 		}
 		return aResult.getEstado().contains("En espera");//En espera de envío no se analiza 
 	}
-
+	
 	private void insertInconsistencyInFile(String origen, String tipo, ClosureTypeEnum criterio) {
 		progressProcess(100, 0);
 		progressTotal(100, ++currentBarProgress);

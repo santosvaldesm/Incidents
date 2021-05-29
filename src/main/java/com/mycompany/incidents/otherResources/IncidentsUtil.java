@@ -53,6 +53,7 @@ public class IncidentsUtil {
 		readText("ConsultaPolizaConsultasComunes.sql");
 		readText("ConsultaPolizaDirecciones.sql");
 		readText("ConsultaPolizaTerminos.sql");
+		readText("CruceCierreVsMensajes.txt");
 		readText("ExcelExportHelp.txt");
 		readText("HomologationsHelp.sql");
 		readText("ProductModelHelp.gs");		

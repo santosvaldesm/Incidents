@@ -1,0 +1,172 @@
+/**
+    Este script usa los "mensajes encolados" y "direfencias del cierre" para intentar determinar la causa
+    de la inconsistencia del cierre financiero
+    Nota: este script lo usa programa de notas (completara funcion fillReferencesInClosure)
+*/
+
+uses gw.api.database.Query
+uses sura.suite.gw.messaging.common.xsd.envelope.Envelope
+uses gw.api.database.Relop
+uses gw.api.database.IQueryBeanResult
+uses java.util.ArrayList
+
+var _destinations = {0,1,3,7,8,12,28,29}.toTypedArray()
+var _printMsjMovilidad = true //imprimir tambien casos de movilidad
+var _messages = getMessages(4)//STATUS= 1=pendiente de procesa, 2=esta procesando, 3=fallo, 4=Errror, 10=ok, 9=es un ok pero manual
+evaluateMessages(_messages,4)
+var _messagesPending = getMessages(1)
+evaluateMessages(_messagesPending,1)
+var _errorsMessages = new ArrayList<String[]>()
+var _referencesInClosure = fillReferencesInClosure()
+
+processInformation();
+
+/**/
+function getMessages(status : int) : IQueryBeanResult<entity.Message> {
+  return Query.make(entity.Message)
+    .compareIn(entity.Message#DestinationID,_destinations)
+    .compare(entity.Message#Status, Relop.Equals,status)
+    .select()
+}
+
+//print("Destino\tTipoReclamo\tReferencia\tClase\tReclamo\tError\tObservacion\tStatusMessage")
+
+/**/
+function evaluateMessages(messages : IQueryBeanResult<entity.Message>,statusMessage : int) {
+  for(aMessage in messages) {
+    if(not _printMsjMovilidad) {
+      if (aMessage.Claim.LossType == typekey.LossType.TC_AUTO or aMessage.Claim.Policy.hasTravelOffering()) {
+        continue
+      }
+    }
+    switch(aMessage.DestinationID){
+      case 0 :
+        var aPayload = getPayload(aMessage)
+        var paymentDtoModel = sura.cc.messaging.payment.gx.paymentdtomodel.PaymentDTO.parse(aPayload)
+        _errorsMessages.add({destinationName(aMessage.DestinationID),
+              aMessage.Claim.LossType.DisplayName,
+              paymentDtoModel.PayNumber,
+              paymentDtoModel.AccountingDetail.DocumentClassCode,
+              aMessage.Claim.ClaimNumber,
+              getErrorDescriptor(aMessage.ErrorDescription),
+              aMessage.PublicID,
+              (statusMessage == 1 ? "Error" : "Sin enviar")
+        })
+        break
+      case 1 :
+        var aPayload = getPayload(aMessage)
+        var reserveDtoModel = sura.cc.messaging.reserve.gx.reservedtomodel.ReserveDTO.parse(aPayload)
+          _errorsMessages.add({destinationName(aMessage.DestinationID),
+              aMessage.Claim.LossType.DisplayName,
+              reserveDtoModel.IdReferencia,
+              reserveDtoModel.DocumentClassCode,
+              aMessage.Claim.ClaimNumber,
+              getErrorDescriptor(aMessage.ErrorDescription),
+              aMessage.PublicID,
+              (statusMessage == 1 ? "Error" : "Sin enviar")})
+        break
+      case 3 :
+        var aPayload = getPayload(aMessage)
+        var recoveryDtoModel = sura.cc.messaging.recovery.gx.recoverydtomodel.RecoveryDTO.parse(aPayload)
+          _errorsMessages.add({destinationName(aMessage.DestinationID),
+              aMessage.Claim.LossType.DisplayName,
+              recoveryDtoModel.ReferenceId,
+              recoveryDtoModel.AccountingDetail.DocumentClassCode,
+              aMessage.Claim.ClaimNumber,
+              getErrorDescriptor(aMessage.ErrorDescription),
+              aMessage.PublicID,
+              (statusMessage == 1 ? "Error" : "Sin enviar")})
+        break    
+    }
+  }
+}
+/**/
+function getPayload(aMessage : entity.Message) : String {
+  var envelopDTO = Envelope.parse(aMessage.Payload)
+  var messageDataAsXmlElement = envelopDTO.Body.MessageData.$Children.first()
+  return messageDataAsXmlElement.asUTFString()
+}
+
+/**/
+function getErrorDescriptor(aText : String) : String {
+  return aText.indexOf("\n")>0 ? aText.substring(0, aText.indexOf("\n")) : aText
+}
+
+/**/
+function destinationName(destinationId : int) : String {
+  switch(destinationId){
+    case 0  : return "Pagos 0"
+    case 1  : return "Reservas 1"
+    case 3  : return "Recuperos 3"
+    case 7  : return "Coaseguro 7"
+    case 8  : return "Reaseguro 8"
+    case 12 : return "Reflejos 12"
+    case 28 : return "CCM 28"
+    case 29 : return "Vias_y_Traficos 29"
+    default : return "MENSAJERIA DECONOCIDA"
+  }
+}
+
+/**/
+function fillReferencesInClosure() : ArrayList<String[]> {
+  var arrayResult = new ArrayList<String[]>()
+  arrayResult.add({"X","Y","Z"})
+  return arrayResult
+}
+
+var _strResult = ""
+/**/
+function inconsistencyExistsInMessageError(inconsistency : String[]) {
+  for (errorMessage in _errorsMessages) {
+    if (errorMessage[2].compareTo(inconsistency[1]) == 0) { //inconsistency[1] debe tener referencia
+      _strResult = _strResult + "Mensaje encolado, "
+    }
+  }
+}
+
+/**/
+function claimValidations(inconsistency : String[]) {
+  var aClaim = Claim.finder.findClaimByClaimNumber(inconsistency[2])//inconsistency[2] debe tener ClaimNumber
+  if (not aClaim.Policy.Verified) {
+    _strResult = _strResult + "Poliza no verificada, "
+  }
+  coinsuranceValidations(aClaim.Policy.Coinsurance_Ext)
+}
+
+/**/
+function coinsuranceValidations(coinsurance : entity.Coinsurance_Ext) {
+
+  if (coinsurance.CoinsuranceCompanies.length != 0) {
+    var coinsurancePrticipation = 0
+    //Coaseguro aceptado
+    if (coinsurance.CoinsuranceTypeName == displaykey.Sura.Policy.Coinsurance.AcceptedCoinsuranceType) {
+      _strResult = _strResult + "Coaseguro aceptado, "
+    }
+    //No tiene lider coaseguro
+    if (coinsurance.CoinsuranceCompanies.length != 0 and
+        coinsurance.LeaderCoinsurance == null) {
+      _strResult = _strResult + "No tiene lider Coaseguro"
+    }
+    //No tiene codigo coasegurador
+    for (insurance in coinsurance.Insurances) {
+      if (insurance.Name == null) {
+        _strResult = _strResult + "Falta nombre de Coasegurador"
+      }
+      coinsurancePrticipation = coinsurancePrticipation + insurance.Participation
+    }
+    //Coaseguro al 99
+    if(coinsurancePrticipation<100) {
+      _strResult = _strResult + "Coaseguro al 99%"
+    }
+  }
+}
+
+/**/
+function processInformation() {
+  for (inconsistency in _referencesInClosure) {
+    _strResult = ""
+    inconsistencyExistsInMessageError(inconsistency)
+    claimValidations(inconsistency)
+    print(_strResult)
+  }
+}
