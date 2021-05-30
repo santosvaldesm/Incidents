@@ -37,33 +37,33 @@ public class IncidentsUtil {
 	
 	
 	private static void createTexts(){
-		readText("CierreCoaseguroAyuda.txt");
-		readText("CierreFinancieroAyuda.txt");
-		readText("CierreFinancieroGastos.txt");
-		readText("CierreFinancieroPagos.txt");
-		readText("CierreFinancieroReservas.sql");
-		readText("CierreFinancieroSalvamentos.txt");
-		readText("CierreReaseguroAyuda.txt");
-		readText("CierreReaseguroCuentas.txt");
-		readText("CierreReaseguroGW.txt");
-		readText("CierreReaseguroValidaciones.txt");
-		readText("ConsultaPolizaBeneficiarios.sql");
-		readText("ConsultaPolizaCoaseguradores.sql");
-		readText("ConsultaPolizaCobertura.sql");
-		readText("ConsultaPolizaConsultasComunes.sql");
-		readText("ConsultaPolizaDirecciones.sql");
-		readText("ConsultaPolizaTerminos.sql");
-		readText("CruceCierreVsMensajes.txt");
-		readText("ExcelExportHelp.txt");
-		readText("HomologationsHelp.sql");
-		readText("ProductModelHelp.gs");		
+		readText("textoCierreCoaseguroAyuda.txt");
+		readText("textoCierreFinancieroAyuda.txt");
+		readText("textoCierreFinancieroGastos.txt");
+		readText("textoCierreFinancieroPagos.txt");
+		readText("textoCierreFinancieroReservas.sql");
+		readText("textoCierreFinancieroSalvamentos.txt");
+		readText("textoCierreReaseguroAyuda.txt");
+		readText("textoCierreReaseguroCuentas.txt");
+		readText("textoCierreReaseguroGW.txt");
+		readText("textoCierreReaseguroValidaciones.txt");
+		readText("textoConsultaPolizaBeneficiarios.sql");
+		readText("textoConsultaPolizaCoaseguradores.sql");
+		readText("textoConsultaPolizaCobertura.sql");
+		readText("textoConsultaPolizaConsultasComunes.sql");
+		readText("textoConsultaPolizaDirecciones.sql");
+		readText("textoConsultaPolizaTerminos.sql");
+		readText("textoCruceCierreVsMensajes.txt");
+		readText("textoExcelExportHelp.txt");
+		readText("textoHomologationsHelp.sql");
+		readText("textoProductModelHelp.gs");		
 	}
 	
 	private static void readText(String txtFileName){
 		try {
 			ClassLoader classLoader = ClassLoader.getSystemClassLoader();			
-			String keyName = txtFileName.substring(0,txtFileName.indexOf("."));
-      InputStream in = classLoader.getResourceAsStream("./texts/"+txtFileName);			
+			String keyName = txtFileName.substring(5,txtFileName.indexOf("."));
+      InputStream in = classLoader.getResourceAsStream(txtFileName);			
       BufferedReader bf = new BufferedReader(new InputStreamReader(in));                  			
 			String contentText = "";
       String lineaStr = "";
