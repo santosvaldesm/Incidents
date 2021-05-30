@@ -1,3 +1,4 @@
+
 /**
     Este script usa los "mensajes encolados" y "direfencias del cierre" para intentar determinar la causa
     de la inconsistencia del cierre financiero
@@ -12,14 +13,13 @@ uses java.util.ArrayList
 
 var _destinations = {0,1,3,7,8,12,28,29}.toTypedArray()
 var _printMsjMovilidad = true //imprimir tambien casos de movilidad
+var _errorsMessages = new ArrayList<String[]>()
 var _messages = getMessages(4)//STATUS= 1=pendiente de procesa, 2=esta procesando, 3=fallo, 4=Errror, 10=ok, 9=es un ok pero manual
 evaluateMessages(_messages,4)
 var _messagesPending = getMessages(1)
 evaluateMessages(_messagesPending,1)
-var _errorsMessages = new ArrayList<String[]>()
 var _referencesInClosure = fillReferencesInClosure()
-
-processInformation();
+processInformation()
 
 /**/
 function getMessages(status : int) : IQueryBeanResult<entity.Message> {
@@ -50,7 +50,7 @@ function evaluateMessages(messages : IQueryBeanResult<entity.Message>,statusMess
               aMessage.Claim.ClaimNumber,
               getErrorDescriptor(aMessage.ErrorDescription),
               aMessage.PublicID,
-              (statusMessage == 1 ? "Error" : "Sin enviar")
+              (statusMessage == 1 ? "Con Error" : "Sin enviar")
         })
         break
       case 1 :
@@ -63,7 +63,7 @@ function evaluateMessages(messages : IQueryBeanResult<entity.Message>,statusMess
               aMessage.Claim.ClaimNumber,
               getErrorDescriptor(aMessage.ErrorDescription),
               aMessage.PublicID,
-              (statusMessage == 1 ? "Error" : "Sin enviar")})
+              (statusMessage == 1 ? "Con Error" : "Sin enviar")})
         break
       case 3 :
         var aPayload = getPayload(aMessage)
@@ -75,8 +75,8 @@ function evaluateMessages(messages : IQueryBeanResult<entity.Message>,statusMess
               aMessage.Claim.ClaimNumber,
               getErrorDescriptor(aMessage.ErrorDescription),
               aMessage.PublicID,
-              (statusMessage == 1 ? "Error" : "Sin enviar")})
-        break    
+              (statusMessage == 1 ? "Con Error" : "Sin enviar")})
+        break
     }
   }
 }
@@ -89,7 +89,13 @@ function getPayload(aMessage : entity.Message) : String {
 
 /**/
 function getErrorDescriptor(aText : String) : String {
-  return aText.indexOf("\n")>0 ? aText.substring(0, aText.indexOf("\n")) : aText
+  if (aText == null) {
+    return ""
+  } else if (aText.indexOf("\n")>0) {
+    return aText.substring(0, aText.indexOf("\n"))
+  } else {
+    return aText
+  }
 }
 
 /**/
@@ -116,47 +122,55 @@ function fillReferencesInClosure() : ArrayList<String[]> {
 
 var _strResult = ""
 /**/
-function inconsistencyExistsInMessageError(inconsistency : String[]) {
+function inconsistencyExistsInMessaging(inconsistency : String[]) {
   for (errorMessage in _errorsMessages) {
     if (errorMessage[2].compareTo(inconsistency[1]) == 0) { //inconsistency[1] debe tener referencia
-      _strResult = _strResult + "Mensaje encolado, "
+      _strResult = _strResult + "Mensaje encolado " + errorMessage[7] + ","
     }
   }
 }
 
 /**/
-function claimValidations(inconsistency : String[]) {
-  var aClaim = Claim.finder.findClaimByClaimNumber(inconsistency[2])//inconsistency[2] debe tener ClaimNumber
-  if (not aClaim.Policy.Verified) {
+function claimValidations(aClaim : entity.Claim) {
+
+}
+
+/**/
+function policyValidations(aPolicy : entity.Policy) {
+  if (not aPolicy.Verified) {
     _strResult = _strResult + "Poliza no verificada, "
   }
-  coinsuranceValidations(aClaim.Policy.Coinsurance_Ext)
 }
 
 /**/
 function coinsuranceValidations(coinsurance : entity.Coinsurance_Ext) {
-
   if (coinsurance.CoinsuranceCompanies.length != 0) {
-    var coinsurancePrticipation = 0
-    //Coaseguro aceptado
-    if (coinsurance.CoinsuranceTypeName == displaykey.Sura.Policy.Coinsurance.AcceptedCoinsuranceType) {
+    var coinsuranceParticipation = 0
+    if (coinsurance.CoinsuranceTypeName == displaykey.Sura.Policy.Coinsurance.AcceptedCoinsuranceType) {//Coaseguro aceptado
       _strResult = _strResult + "Coaseguro aceptado, "
     }
-    //No tiene lider coaseguro
-    if (coinsurance.CoinsuranceCompanies.length != 0 and
-        coinsurance.LeaderCoinsurance == null) {
-      _strResult = _strResult + "No tiene lider Coaseguro"
+    if (coinsurance.CoinsuranceCompanies.length != 0 and coinsurance.LeaderCoinsurance == null) {//No tiene lider coaseguro
+      _strResult = _strResult + "No tiene lider Coaseguro, "
     }
-    //No tiene codigo coasegurador
-    for (insurance in coinsurance.Insurances) {
+    for (insurance in coinsurance.Insurances) {//No tiene codigo coasegurador
       if (insurance.Name == null) {
-        _strResult = _strResult + "Falta nombre de Coasegurador"
+        _strResult = _strResult + "Falta nombre de Coasegurador, "
       }
-      coinsurancePrticipation = coinsurancePrticipation + insurance.Participation
+      coinsuranceParticipation = coinsuranceParticipation + (insurance.Participation == null ? 0 : insurance.Participation)
     }
-    //Coaseguro al 99
-    if(coinsurancePrticipation<100) {
-      _strResult = _strResult + "Coaseguro al 99%"
+    if (coinsuranceParticipation < 100) {//Coaseguro al 99
+      _strResult = _strResult + "Coaseguro al " + coinsuranceParticipation + "%"
+    }
+  }
+}
+
+/**/
+function claimHasWaitingPayment(aClaim : entity.Claim) {
+  var _checks = aClaim.ChecksQuery.toList()
+  for (aCheck in _checks) {
+    if (aCheck.MarkPaymentByEft_Ext and aCheck.CheckNumber == null) {
+      _strResult = _strResult + "Siniestro tiene un pago en espera de procesamiento"
+      break
     }
   }
 }
@@ -165,8 +179,24 @@ function coinsuranceValidations(coinsurance : entity.Coinsurance_Ext) {
 function processInformation() {
   for (inconsistency in _referencesInClosure) {
     _strResult = ""
-    inconsistencyExistsInMessageError(inconsistency)
-    claimValidations(inconsistency)
-    print(_strResult)
+    if (inconsistency[1].contains("#")) {
+      print("Error de informe de SAP, suele no ser inconsistencia")
+      continue
+    }
+    if (inconsistency[1].length() > 2) {
+      inconsistencyExistsInMessaging(inconsistency)
+    }
+
+    if (not (inconsistency[2] == "null")) { //Numero siniestro
+      var aClaim = Claim.finder.findClaimByClaimNumber(inconsistency[2])
+      if (inconsistency[1].length() == 0) {
+        claimHasWaitingPayment(aClaim)
+      }
+      claimValidations(aClaim)
+      policyValidations(aClaim.Policy)
+      coinsuranceValidations(aClaim.Policy.Coinsurance_Ext)
+    }
+    print(_strResult.length() == 0 ? "#N/A" : _strResult)
+
   }
 }
