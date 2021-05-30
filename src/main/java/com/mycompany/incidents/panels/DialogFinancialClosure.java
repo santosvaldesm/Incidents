@@ -418,8 +418,21 @@ public class DialogFinancialClosure extends javax.swing.JDialog implements Runna
 				aReference = anInconsistence[1].substring(0,anInconsistence[1].indexOf("-"));
 			}
 			String aType = anInconsistence[0].substring(0,anInconsistence[0].indexOf(" "));
-			references = references + "  arrayResult.add({\"" + aType + "\",\"" + 
-							     aReference + "\",\"" + anInconsistence[3] + "\"})\n";
+			references = references + "  arrayResult.add({"
+							+ "\"" + aType + "\","
+							+ "\"" + aReference + "\","
+							+ "\"" + anInconsistence[2] + "\","
+							+ "\"" + anInconsistence[3] + "\","
+							+ "\"" + anInconsistence[4] + "\","
+							+ "\"" + anInconsistence[5] + "\","
+							+ "\"" + anInconsistence[6] + "\","
+							+ "\"" + anInconsistence[7] + "\","
+							+ "\"" + anInconsistence[8] + "\","
+							+ "\"" + anInconsistence[9] + "\","
+							+ "\"" + anInconsistence[10] + "\","
+							+ "\"" + anInconsistence[11] + "\","
+							+ "\"" + anInconsistence[12] + "\""
+							+ "})\n";
 		}
 		aScript = aScript.replace("  arrayResult.add({\"X\",\"Y\",\"Z\"})", references);
 		int rowCount=0;

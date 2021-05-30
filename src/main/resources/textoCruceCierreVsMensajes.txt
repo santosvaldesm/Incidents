@@ -156,7 +156,7 @@ function coinsuranceValidations(coinsurance : entity.Coinsurance_Ext) {
       if (insurance.Name == null) {
         _strResult = _strResult + "Falta nombre de Coasegurador, "
       }
-      coinsuranceParticipation = coinsuranceParticipation + (insurance.Participation == null ? 0 : insurance.Participation)
+      coinsuranceParticipation = coinsuranceParticipation + (insurance.CoinsuranceParticipation == null ? 0 : insurance.CoinsuranceParticipation)
     }
     if (coinsuranceParticipation < 100) {//Coaseguro al 99
       _strResult = _strResult + "Coaseguro al " + coinsuranceParticipation + "%"
@@ -179,17 +179,19 @@ function claimHasWaitingPayment(aClaim : entity.Claim) {
 function processInformation() {
   for (inconsistency in _referencesInClosure) {
     _strResult = ""
-    if (inconsistency[1].contains("#")) {
+    var reference = inconsistency[1]
+    var claimNumber = inconsistency[3]
+    if (reference.contains("#")) {
       print("Error de informe de SAP, suele no ser inconsistencia")
       continue
     }
-    if (inconsistency[1].length() > 2) {
+    if (reference.length() > 2) {
       inconsistencyExistsInMessaging(inconsistency)
     }
 
-    if (not (inconsistency[2] == "null")) { //Numero siniestro
-      var aClaim = Claim.finder.findClaimByClaimNumber(inconsistency[2])
-      if (inconsistency[1].length() == 0) {
+    if (not (claimNumber == "null")) { //Numero siniestro
+      var aClaim = Claim.finder.findClaimByClaimNumber(claimNumber)
+      if (reference.length() == 0) {
         claimHasWaitingPayment(aClaim)
       }
       claimValidations(aClaim)
