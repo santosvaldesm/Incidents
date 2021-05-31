@@ -25,12 +25,14 @@ import java.util.List;
 import java.util.Map;
 import javax.persistence.EntityManagerFactory;
 import javax.persistence.Persistence;
+import org.apache.commons.lang3.ArrayUtils;
 import org.apache.poi.ss.util.CellRangeAddress;
 import org.apache.poi.xssf.usermodel.XSSFCell;
 import org.apache.poi.xssf.usermodel.XSSFCellStyle;
 import org.apache.poi.xssf.usermodel.XSSFRow;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
+
 
 public class DialogFinancialClosure extends javax.swing.JDialog implements Runnable {
 
@@ -380,7 +382,7 @@ public class DialogFinancialClosure extends javax.swing.JDialog implements Runna
 		XSSFSheet sheetScript = anExcelWorbook.createSheet("SCRIPT");		
 		String[] headerPagSalv       = new String[]{"Ramo","Moneda","Valor GW","Reaseguro GW","Valor SAP","Reaseguro SAP","Dif. Valor GW-SAP","Dif. Reaseguro GW-SAP"};
 		String[] headerReserva    = new String[]{"Ramo","Moneda","Valor GW","Gastos GW","Reaseguro GW","Valor SAP","Gastos SAP","Reaseguro SAP","Dif. Valor GW-SAP","Dif. Gastos GW-SAP","Dif. Reaseguro GW-SAP"};		
-		String[] headerInconsistences   = new String[]{"TIPO ERROR","REFERENCIA","RAMO","CLAIM NUMBER","POLCY NUMBER","MONEDA","ESTADO","VALOR 100 GW","REAS GW","VALOR 100 SAP","REAS SAP","DIF 100","DIF REAS","DETALLE"};		
+		String[] headerInconsistences   = new String[]{"ID","TIPO ERROR","REFERENCIA","RAMO","CLAIM NUMBER","POLCY NUMBER","MONEDA","ESTADO","VALOR 100 GW","REAS GW","VALOR 100 SAP","REAS SAP","DIF 100","DIF REAS","DETALLE"};		
 		
 		insertDataInExcel(sheetPago,headerPagSalv,"PAGO");
 		insertDataInExcel(sheetReserva,headerReserva,"RESERVA");
@@ -451,10 +453,12 @@ public class DialogFinancialClosure extends javax.swing.JDialog implements Runna
 		insertHeader(aSheet,headers,rowPosition++,1);
 		for(String[] anInconsistence : inconsistencesList){		  
 			XSSFRow newRow = aSheet.createRow(rowPosition++);			
-			int colPosition = 0;	
+			int colPosition = 0;
+			String[] ar1={String.valueOf(rowPosition-1)};
+			anInconsistence = (String[])ArrayUtils.addAll(ar1, anInconsistence);
 			for(String aValue : anInconsistence){
 				XSSFCellStyle aStyle;
-				if(colPosition==0 || colPosition==11 || colPosition==12){
+				if(colPosition==0 || colPosition==1 || colPosition==12 || colPosition==13){
 					aStyle = cellStyleGray;
 				}else{
 					aStyle = cellStyle;
