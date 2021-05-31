@@ -371,8 +371,22 @@ function validateDetailedReinsurance(agreementGroup : entity.AgreementGroupRI_Ex
   return ""
 }
 
+/**/
+function convertToString(aValue : String) : String {
+  if(aValue == null or aValue.trim().length() == 0 or aValue == "null") {
+    return null
+  }
+  return aValue
+}
 
-
+/**/
+function reclamacionPorReferencia(reference : String) {
+  var aTransaction = gw.api.database.Query.make(entity.Transaction).compare(Transaction#PublicID,Equals,reference)
+      .select().FirstResult
+  if (aTransaction != null) {
+    _strResult = _strResult + "Revisar siniesto " + aTransaction.Claim.ClaimNumber + ", "
+  }
+}
 
 /**/
 function processInformation() {
@@ -380,7 +394,7 @@ function processInformation() {
     _strResult = ""
     var typeError   = inconsistency[0]
     var reference   = inconsistency[1]
-    var claimNumber = inconsistency[3]
+    var claimNumber = convertToString(inconsistency[3])
     var currency    = inconsistency[5]
     var status      = inconsistency[6]
     var value100GW  = convertToNumber(inconsistency[7])
@@ -388,7 +402,7 @@ function processInformation() {
     var value100SAP = convertToNumber(inconsistency[9])
     var reinsSAP    = convertToNumber(inconsistency[10])
     var dif100      = convertToNumber(inconsistency[11])
-    var difReins     = convertToNumber(inconsistency[12])
+    var difReins    = convertToNumber(inconsistency[12])
 
     errorInformeSAP(reference)
     reaseguroDetalladoDuplicado(reinsGW,reinsSAP)
@@ -397,7 +411,7 @@ function processInformation() {
     inconsistenciaPorMensajeEncolado(reference)
     cambioDeEstadoTransaccion(reference,status)
     signoContrarioReaseguro(reinsGW,reinsSAP)
-    if (not (claimNumber == "null")) {
+    if (claimNumber != null) {
       var aClaim = Claim.finder.findClaimByClaimNumber(claimNumber)
       claimHasWaitingPayment(aClaim, reference, status, value100GW)
       pagoSolicitandoCambioEstado(aClaim,typeError,status,reference)
@@ -405,7 +419,10 @@ function processInformation() {
       policyValidations(aClaim.Policy)
       coinsuranceValidations(aClaim.Policy.Coinsurance_Ext)
       validarReaseguroDetallado(aClaim,difReins)
+    } else {
+      reclamacionPorReferencia(reference)
     }
+
     print(_strResult.length() == 0 ? "#N/A" : _strResult)
 
   }
