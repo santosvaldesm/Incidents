@@ -3,7 +3,7 @@
     Este script usa los "mensajes encolados" y "direfencias del cierre" para intentar determinar la causa
     de la inconsistencia del cierre financiero
     El resultado de este script se pega en la columna 'Detalle' de la hoja 'DIFERENCIAS' del consolidado
-*/
+ */
 
 uses gw.api.database.Query
 uses sura.suite.gw.messaging.common.xsd.envelope.Envelope
@@ -30,25 +30,25 @@ processInformation()
 
 
 /**
- El arreglo arrayResult sera ingresado por el programa de notas
-*/
+    El arreglo arrayResult sera ingresado por el programa de notas
+ */
 function fillReferencesInClosure() : ArrayList<String[]> {
   var arrayResult = new ArrayList<String[]>()
   arrayResult.add({"X","Y","Z"})
   return arrayResult
 }
 
-/**/
+ /**/
 function getMessages(status : int) : IQueryBeanResult<entity.Message> {
   return Query.make(entity.Message)
-    .compareIn(entity.Message#DestinationID,_destinations)
-    .compare(entity.Message#Status, Relop.Equals,status)
-    .select()
+      .compareIn(entity.Message#DestinationID,_destinations)
+      .compare(entity.Message#Status, Relop.Equals,status)
+      .select()
 }
 
 //print("Destino\tTipoReclamo\tReferencia\tClase\tReclamo\tError\tObservacion\tStatusMessage")
 
-/**/
+ /**/
 function evaluateMessages(messages : IQueryBeanResult<entity.Message>,statusMessage : int) {
   for(aMessage in messages) {
     if(not _printMsjMovilidad) {
@@ -58,9 +58,9 @@ function evaluateMessages(messages : IQueryBeanResult<entity.Message>,statusMess
     }
     switch(aMessage.DestinationID){
       case 0 :
-        var aPayload = getPayload(aMessage)
-        var paymentDtoModel = sura.cc.messaging.payment.gx.paymentdtomodel.PaymentDTO.parse(aPayload)
-        _errorsMessages.add({destinationName(aMessage.DestinationID),
+          var aPayload = getPayload(aMessage)
+          var paymentDtoModel = sura.cc.messaging.payment.gx.paymentdtomodel.PaymentDTO.parse(aPayload)
+          _errorsMessages.add({destinationName(aMessage.DestinationID),
               aMessage.Claim.LossType.DisplayName,
               paymentDtoModel.PayNumber,
               paymentDtoModel.AccountingDetail.DocumentClassCode,
@@ -68,11 +68,11 @@ function evaluateMessages(messages : IQueryBeanResult<entity.Message>,statusMess
               getErrorDescriptor(aMessage.ErrorDescription),
               aMessage.PublicID,
               (statusMessage == 1 ? "Con Error" : "Sin enviar")
-        })
-        break
+          })
+          break
       case 1 :
-        var aPayload = getPayload(aMessage)
-        var reserveDtoModel = sura.cc.messaging.reserve.gx.reservedtomodel.ReserveDTO.parse(aPayload)
+          var aPayload = getPayload(aMessage)
+          var reserveDtoModel = sura.cc.messaging.reserve.gx.reservedtomodel.ReserveDTO.parse(aPayload)
           _errorsMessages.add({destinationName(aMessage.DestinationID),
               aMessage.Claim.LossType.DisplayName,
               reserveDtoModel.IdReferencia,
@@ -81,10 +81,10 @@ function evaluateMessages(messages : IQueryBeanResult<entity.Message>,statusMess
               getErrorDescriptor(aMessage.ErrorDescription),
               aMessage.PublicID,
               (statusMessage == 1 ? "Con Error" : "Sin enviar")})
-        break
+          break
       case 3 :
-        var aPayload = getPayload(aMessage)
-        var recoveryDtoModel = sura.cc.messaging.recovery.gx.recoverydtomodel.RecoveryDTO.parse(aPayload)
+          var aPayload = getPayload(aMessage)
+          var recoveryDtoModel = sura.cc.messaging.recovery.gx.recoverydtomodel.RecoveryDTO.parse(aPayload)
           _errorsMessages.add({destinationName(aMessage.DestinationID),
               aMessage.Claim.LossType.DisplayName,
               recoveryDtoModel.ReferenceId,
@@ -93,18 +93,18 @@ function evaluateMessages(messages : IQueryBeanResult<entity.Message>,statusMess
               getErrorDescriptor(aMessage.ErrorDescription),
               aMessage.PublicID,
               (statusMessage == 1 ? "Con Error" : "Sin enviar")})
-        break
+          break
     }
   }
 }
-/**/
+ /**/
 function getPayload(aMessage : entity.Message) : String {
   var envelopDTO = Envelope.parse(aMessage.Payload)
   var messageDataAsXmlElement = envelopDTO.Body.MessageData.$Children.first()
   return messageDataAsXmlElement.asUTFString()
 }
 
-/**/
+ /**/
 function getErrorDescriptor(aText : String) : String {
   if (aText == null) {
     return ""
@@ -115,7 +115,7 @@ function getErrorDescriptor(aText : String) : String {
   }
 }
 
-/**/
+ /**/
 function destinationName(destinationId : int) : String {
   switch(destinationId){
     case 0  : return "Pagos 0"
@@ -126,36 +126,36 @@ function destinationName(destinationId : int) : String {
     case 12 : return "Reflejos 12"
     case 28 : return "CCM 28"
     case 29 : return "Vias_y_Traficos 29"
-    default : return "MENSAJERIA DECONOCIDA"
+      default : return "MENSAJERIA DECONOCIDA"
   }
 }
 
 /**
-se analiza si la inconsistencia se encuentra en uno se los mensajes encolados con 'error' o 'sin enviar'
-*/
+    se analiza si la inconsistencia se encuentra en uno se los mensajes encolados con 'error' o 'sin enviar'
+ */
 function inconsistenciaPorMensajeEncolado(reference : String) {
   if (reference != null and reference.length() > 2) {
     for (errorMessage in _errorsMessages) {
       if (errorMessage[2].compareTo(reference) == 0) {
-        _strResult = _strResult + "Mensaje encolado " + errorMessage[7] + ","
+        _strResult = _strResult + "Mensaje encolado " + errorMessage[7] + ", (" + errorMessage[5] +"),"
       }
     }
   }
 }
 
-/**/
+ /**/
 function claimValidations(aClaim : entity.Claim) {
 
 }
 
-/**/
+ /**/
 function policyValidations(aPolicy : entity.Policy) {
   if (not aPolicy.Verified) {
     _strResult = _strResult + "Poliza no verificada, "
   }
 }
 
-/**/
+ /**/
 function coinsuranceValidations(coinsurance : entity.Coinsurance_Ext) {
   if (coinsurance.CoinsuranceCompanies.length != 0) {
     var coinsuranceParticipation = 0bd
@@ -170,7 +170,7 @@ function coinsuranceValidations(coinsurance : entity.Coinsurance_Ext) {
         _strResult = _strResult + "Falta nombre de Coasegurador, "
       }
       coinsuranceParticipation = coinsuranceParticipation +
-                                (insurance.CoinsuranceParticipation == null ? 0 : insurance.CoinsuranceParticipation)
+          (insurance.CoinsuranceParticipation == null ? 0 : insurance.CoinsuranceParticipation)
     }
     if (coinsuranceParticipation < 100) {//Coaseguro al 99
       _strResult = _strResult + "Coaseguro al " + coinsuranceParticipation + "%, "
@@ -178,7 +178,7 @@ function coinsuranceValidations(coinsurance : entity.Coinsurance_Ext) {
   }
 }
 
-/**/
+ /**/
 function claimHasWaitingPayment(aClaim : entity.Claim, reference : String, status : String,value100GW : Double) {
   if (reference != null and reference.length() == 0) {
     var _checks = aClaim.ChecksQuery.toList()
@@ -196,7 +196,7 @@ function claimHasWaitingPayment(aClaim : entity.Claim, reference : String, statu
 }
 
 
-/**/
+ /**/
 function convertToNumber(aValue : String) : Double {
   if (aValue.contains("A")) { //puede ser: '#N/A' o 'NO APLICA'
     return null
@@ -204,45 +204,45 @@ function convertToNumber(aValue : String) : Double {
   return(Double.parseDouble(aValue.replaceAll(",",".")))
 }
 
-/**/
+ /**/
 function valorBajoEn100(value100GW : Double, reinsGW : Double, currency : String) {
   if (value100GW != null) {
     var tmpReinsGW = reinsGW != null ? reinsGW : 0
     if (currency == "COP") {
       if (Math.abs(value100GW) < _limitInCop and Math.abs(tmpReinsGW) < _limitInCop) {
-        _strResult = _strResult + "Valor bajo en 100 (no se analiza), "
+        _strResult = _strResult + "Valor bajo en 100, "
       }
     }else {
       if (Math.abs(value100GW) < _limitInUsd and Math.abs(tmpReinsGW) < _limitInUsd) {
-        _strResult = _strResult + "Valor bajo en 100 (no se analiza), "
+        _strResult = _strResult + "Valor bajo en 100, "
       }
     }
   }
 }
 
-/**/
+ /**/
 function valorBajoEnDiferencia(dif100 : Double, difReins : Double, currency : String) {
   if (dif100 != null and difReins != null) {//valor bajo en diferencia
     if (currency == "COP") {
       if (Math.abs(dif100) < _limitInCop and Math.abs(difReins) < _limitInCop) {
-        _strResult = _strResult + "Valor bajo en diferencia (no se analiza), "
+        _strResult = _strResult + "Valor bajo en diferencia, "
       }
     }else {
       if (Math.abs(dif100) < _limitInUsd and Math.abs(difReins) < _limitInUsd) {
-        _strResult = _strResult + "Valor bajo en diferencia (no se analiza), "
+        _strResult = _strResult + "Valor bajo en diferencia, "
       }
     }
   }
 }
 
-/**/
+ /**/
 function errorInformeSAP(reference : String) {
   if (reference != null and reference.contains("#")) {//errorSAP
-    _strResult = _strResult + "Error de informe de SAP, no se analiza,"
+    _strResult = _strResult + "Error de informe de SAP, no es inconsistencia"
   }
 }
 
-/**/
+ /**/
 function reaseguroDetalladoDuplicado(reinsGW : Double, reinsSAP : Double) {
   if (reinsGW != null and reinsSAP != null and reinsGW != 0) {//Reaseguro Detallado Duplicado
     if (reinsSAP == (reinsGW / 2)) {
@@ -251,7 +251,7 @@ function reaseguroDetalladoDuplicado(reinsGW : Double, reinsSAP : Double) {
   }
 }
 
-/**/
+ /**/
 function pagoSolicitandoCambioEstado(aClaim : entity.Claim, typeError : String, status : String, reference : String) {
   if (reference != null          and
       reference.length() > 2     and
@@ -266,11 +266,11 @@ function pagoSolicitandoCambioEstado(aClaim : entity.Claim, typeError : String, 
   }
 }
 
-/**/
+ /**/
 function transaccionEnSolicitando(transactionStatus : typekey.TransactionStatus) : boolean {
   return transactionStatus == typekey.TransactionStatus.TC_REQUESTING or
-         transactionStatus == typekey.TransactionStatus.TC_NOTIFYING or
-         transactionStatus == typekey.TransactionStatus.TC_SUBMITTING
+      transactionStatus == typekey.TransactionStatus.TC_NOTIFYING or
+      transactionStatus == typekey.TransactionStatus.TC_SUBMITTING
 }
 
 /**
@@ -278,14 +278,14 @@ function transaccionEnSolicitando(transactionStatus : typekey.TransactionStatus)
  *   - Pago en espera de procesamiento que ya pasaron 2 dias y se envió
  *   - Se resolvio mensaje encolado enviando el movimiento
  *   - Se resolvio mensaje encolado denegando pago automatico(queda Detenido) o manual(queda Denegada)
-*/
+ */
 function cambioDeEstadoTransaccion(reference : String,status : String) {
   if(reference != null and
-     reference.length()>2 and
-     reference.toLowerCase().startsWith("cc:") and
-     status == "Solicitando") {
+      reference.length()>2 and
+      reference.toLowerCase().startsWith("cc:") and
+      status == "Solicitando") {
     var aTransaction = gw.api.database.Query.make(entity.Transaction).compare(Transaction#PublicID,Equals,reference)
-                                            .select().FirstResult
+        .select().FirstResult
     if (aTransaction != null) {
       if (not transaccionEnSolicitando(aTransaction.Status)) {
         _strResult = _strResult + "Transaccion tiene nuevo estado " + aTransaction.Status.DisplayName + "(" + aTransaction.Status.Code + ")" + ", "
@@ -294,7 +294,7 @@ function cambioDeEstadoTransaccion(reference : String,status : String) {
   }
 }
 
-/**/
+ /**/
 function signoContrarioReaseguro(reinsGW : Double, reinsSAP : Double, typeError : String) {
   if (typeError == "RESERVA" and reinsGW != null and reinsSAP != null) {
     if (reinsGW == (reinsSAP * - 1)) {
@@ -303,7 +303,7 @@ function signoContrarioReaseguro(reinsGW : Double, reinsSAP : Double, typeError 
   }
 }
 
-/**/
+ /**/
 function validarReaseguroDetallado(aClaim : entity.Claim,difReins : Double) {
   if (difReins == null) {
     return
@@ -353,7 +353,7 @@ function validarReaseguroDetallado(aClaim : entity.Claim,difReins : Double) {
   }
 }
 
-/**/
+ /**/
 function validateDetailedReinsurance(agreementGroup : entity.AgreementGroupRI_Ext, positive : boolean) : String {
   for (agreementGroupDos in agreementGroup.Transaction.getAgreementGroups(agreementGroup.DistributionType)) {
     if (agreementGroupDos.Reflection) {  //No se analizan reflejos
@@ -377,7 +377,7 @@ function validateDetailedReinsurance(agreementGroup : entity.AgreementGroupRI_Ex
   return ""
 }
 
-/**/
+ /**/
 function convertToString(aValue : String) : String {
   if(aValue == null or aValue.trim().length() == 0 or aValue == "null") {
     return null
@@ -385,7 +385,7 @@ function convertToString(aValue : String) : String {
   return aValue
 }
 
-/**/
+ /**/
 function reclamacionPorReferencia(reference : String) {
   if (reference == null) {
     return
@@ -397,7 +397,7 @@ function reclamacionPorReferencia(reference : String) {
   }
 }
 
-/**/
+ /**/
 function processInformation() {
   for (inconsistency in _referencesInClosure) {
     _strResult = ""
