@@ -652,6 +652,7 @@ public class DialogFinancialClosure extends javax.swing.JDialog implements Runna
 	private void updateRowInDB(String rowInfo, ArrayList<Object> columnIdentifiers) throws Exception {
 		lastRowInfo = rowInfo;
 		//Todos los registros que llegan a esta funcion seran de SAP
+		
 		String[] rowInfoSplit = rowInfo.split(";");
 		FinalReportDTO aDTO = new FinalReportDTO();
 		aDTO.setOrigen(columnIdentifiers.get(0).toString());
@@ -662,6 +663,9 @@ public class DialogFinancialClosure extends javax.swing.JDialog implements Runna
 		aDTO.setValorReas(IncidentsUtil.determineDoubleValue(columnIdentifiers.get(7), rowInfoSplit));//sacado del excel        
 		aDTO.setMoneda(IncidentsUtil.determineStringValue(columnIdentifiers.get(8), rowInfoSplit).toUpperCase());
 		
+		if(aDTO.getTipo().equals("SA")) {//ajustes manuales de SAP que se deben omitir
+			return;
+		}
 		insertInReportDTOList(aDTO);
 
 		currentClosure = closureController.findClosureByReferenciaOrigenTipo("GW", aDTO.getTipo(), referencia);
