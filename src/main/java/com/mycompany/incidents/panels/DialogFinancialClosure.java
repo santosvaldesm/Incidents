@@ -663,7 +663,7 @@ public class DialogFinancialClosure extends javax.swing.JDialog implements Runna
 		aDTO.setValorReas(IncidentsUtil.determineDoubleValue(columnIdentifiers.get(7), rowInfoSplit));//sacado del excel        
 		aDTO.setMoneda(IncidentsUtil.determineStringValue(columnIdentifiers.get(8), rowInfoSplit).toUpperCase());
 		
-		if(aDTO.getTipo().equals("SA")) {//ajustes manuales de SAP que se deben omitir
+		if(referencia.startsWith("#-")) {//ajustes manuales de SAP que se deben omitir (Movimientos SA)
 			return;
 		}
 		insertInReportDTOList(aDTO);
