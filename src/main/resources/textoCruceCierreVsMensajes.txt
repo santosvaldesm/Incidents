@@ -134,7 +134,7 @@ function destinationName(destinationId : int) : String {
 se analiza si la inconsistencia se encuentra en uno se los mensajes encolados con 'error' o 'sin enviar'
 */
 function inconsistenciaPorMensajeEncolado(reference : String) {
-  if (reference.length() > 2) {
+  if (reference != null and reference.length() > 2) {
     for (errorMessage in _errorsMessages) {
       if (errorMessage[2].compareTo(reference) == 0) {
         _strResult = _strResult + "Mensaje encolado " + errorMessage[7] + ","
@@ -180,7 +180,7 @@ function coinsuranceValidations(coinsurance : entity.Coinsurance_Ext) {
 
 /**/
 function claimHasWaitingPayment(aClaim : entity.Claim, reference : String, status : String,value100GW : Double) {
-  if (reference.length() == 0) {
+  if (reference != null and reference.length() == 0) {
     var _checks = aClaim.ChecksQuery.toList()
     for (aCheck in _checks) {
       if (aCheck.MarkPaymentByEft_Ext and aCheck.CheckNumber == null) {
@@ -237,7 +237,7 @@ function valorBajoEnDiferencia(dif100 : Double, difReins : Double, currency : St
 
 /**/
 function errorInformeSAP(reference : String) {
-  if (reference.contains("#")) {//errorSAP
+  if (reference != null and reference.contains("#")) {//errorSAP
     _strResult = _strResult + "Error de informe de SAP, no se analiza,"
   }
 }
@@ -253,7 +253,10 @@ function reaseguroDetalladoDuplicado(reinsGW : Double, reinsSAP : Double) {
 
 /**/
 function pagoSolicitandoCambioEstado(aClaim : entity.Claim, typeError : String, status : String, reference : String) {
-  if (status == "Solicitando" and typeError.contains("PAGO") and reference.length() > 2) {
+  if (reference != null          and
+      reference.length() > 2     and
+      status == "Solicitando"    and
+      typeError.contains("PAGO") ) {
     var _checks = aClaim.ChecksQuery.toList()
     for (aCheck in _checks) {
       if (aCheck.CheckNumber == reference and not transaccionEnSolicitando(aCheck.Status)) {
@@ -277,7 +280,10 @@ function transaccionEnSolicitando(transactionStatus : typekey.TransactionStatus)
  *   - Se resolvio mensaje encolado denegando pago automatico(queda Detenido) o manual(queda Denegada)
 */
 function cambioDeEstadoTransaccion(reference : String,status : String) {
-  if(reference.length()>2 and reference.toLowerCase().startsWith("cc:") and status == "Solicitando") {
+  if(reference != null and
+     reference.length()>2 and
+     reference.toLowerCase().startsWith("cc:") and
+     status == "Solicitando") {
     var aTransaction = gw.api.database.Query.make(entity.Transaction).compare(Transaction#PublicID,Equals,reference)
                                             .select().FirstResult
     if (aTransaction != null) {
@@ -381,6 +387,9 @@ function convertToString(aValue : String) : String {
 
 /**/
 function reclamacionPorReferencia(reference : String) {
+  if (reference == null) {
+    return
+  }
   var aTransaction = gw.api.database.Query.make(entity.Transaction).compare(Transaction#PublicID,Equals,reference)
       .select().FirstResult
   if (aTransaction != null) {
@@ -393,7 +402,7 @@ function processInformation() {
   for (inconsistency in _referencesInClosure) {
     _strResult = ""
     var typeError   = inconsistency[0]
-    var reference   = inconsistency[1]
+    var reference   = convertToString(inconsistency[1])
     var claimNumber = convertToString(inconsistency[3])
     var currency    = inconsistency[5]
     var status      = inconsistency[6]
