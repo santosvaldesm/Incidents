@@ -295,8 +295,8 @@ function cambioDeEstadoTransaccion(reference : String,status : String) {
 }
 
 /**/
-function signoContrarioReaseguro(reinsGW : Double, reinsSAP : Double) {
-  if (reinsGW != null and reinsSAP != null) {
+function signoContrarioReaseguro(reinsGW : Double, reinsSAP : Double, typeError : String) {
+  if (typeError == "RESERVA" and reinsGW != null and reinsSAP != null) {
     if (reinsGW == (reinsSAP * - 1)) {
       _strResult = _strResult + "Reasguro detallado con signo contrario. "
     }
@@ -419,7 +419,7 @@ function processInformation() {
     valorBajoEn100(value100GW,reinsGW,currency)
     inconsistenciaPorMensajeEncolado(reference)
     cambioDeEstadoTransaccion(reference,status)
-    signoContrarioReaseguro(reinsGW,reinsSAP)
+    signoContrarioReaseguro(reinsGW,reinsSAP,typeError)
     if (claimNumber != null) {
       var aClaim = Claim.finder.findClaimByClaimNumber(claimNumber)
       claimHasWaitingPayment(aClaim, reference, status, value100GW)
