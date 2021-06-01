@@ -15,6 +15,8 @@ uses java.lang.Double
 uses gw.api.util.Math
 uses java.math.BigDecimal
 
+var _sdf = new java.text.SimpleDateFormat("dd/MM/yyyy HH:mm")
+var _sdf2 = new java.text.SimpleDateFormat("dd/MM/yyyy")
 var _strResult = ""
 var _limitInCop = 5000d
 var _limitInUsd = 3d
@@ -38,7 +40,7 @@ function fillReferencesInClosure() : ArrayList<String[]> {
   return arrayResult
 }
 
- /**/
+/**/
 function getMessages(status : int) : IQueryBeanResult<entity.Message> {
   return Query.make(entity.Message)
       .compareIn(entity.Message#DestinationID,_destinations)
@@ -48,7 +50,7 @@ function getMessages(status : int) : IQueryBeanResult<entity.Message> {
 
 //print("Destino\tTipoReclamo\tReferencia\tClase\tReclamo\tError\tObservacion\tStatusMessage")
 
- /**/
+/**/
 function evaluateMessages(messages : IQueryBeanResult<entity.Message>,statusMessage : int) {
   for(aMessage in messages) {
     if(not _printMsjMovilidad) {
@@ -97,14 +99,14 @@ function evaluateMessages(messages : IQueryBeanResult<entity.Message>,statusMess
     }
   }
 }
- /**/
+/**/
 function getPayload(aMessage : entity.Message) : String {
   var envelopDTO = Envelope.parse(aMessage.Payload)
   var messageDataAsXmlElement = envelopDTO.Body.MessageData.$Children.first()
   return messageDataAsXmlElement.asUTFString()
 }
 
- /**/
+/**/
 function getErrorDescriptor(aText : String) : String {
   if (aText == null) {
     return ""
@@ -115,7 +117,7 @@ function getErrorDescriptor(aText : String) : String {
   }
 }
 
- /**/
+/**/
 function destinationName(destinationId : int) : String {
   switch(destinationId){
     case 0  : return "Pagos 0"
@@ -137,25 +139,46 @@ function inconsistenciaPorMensajeEncolado(reference : String) {
   if (reference != null and reference.length() > 2) {
     for (errorMessage in _errorsMessages) {
       if (errorMessage[2].compareTo(reference) == 0) {
-        _strResult = _strResult + "Mensaje encolado " + errorMessage[7] + ", (" + errorMessage[5] +"),"
+        _strResult = _strResult + "Mensaje encolado " + errorMessage[7] + ", (" + errorMessage[5] + "),"
       }
     }
   }
 }
 
- /**/
+/**/
 function claimValidations(aClaim : entity.Claim) {
 
 }
 
- /**/
-function policyValidations(aPolicy : entity.Policy) {
+/**/
+function policyVerifiedValidation(aPolicy : entity.Policy) {
   if (not aPolicy.Verified) {
-    _strResult = _strResult + "Poliza no verificada, "
+    var aClaim = aPolicy.Claim
+    if (gw.api.snapshot.ClaimSnapshotUtil.hasSnapshot(aClaim)) {
+      var aSnapshot = gw.api.snapshot.ClaimSnapshotUtil.getSnapshot(aClaim) as snapshot.v800.Claim
+
+      var aNewLossDate = aClaim.LossDate
+      var anOldLossDate = _sdf.parse(util.Snapshot.renderValue(util.Snapshot.getPropertyValue(aSnapshot, "LossDate")))
+      var anEffectiveDate = aPolicy.EffectiveDate
+      var anExpirationDate = aPolicy.ExpirationDate
+      _strResult = _strResult + "Poliza no verificada - Fechas: " +
+                    "Antes("  + _sdf2.format(anOldLossDate) + ") " +
+                    "Ahora("    + _sdf2.format(aNewLossDate) + ") " +
+                    "Vigencia(" + _sdf2.format(anEffectiveDate) +
+                    " a "       + _sdf2.format(anExpirationDate) + ") - "
+      if (aNewLossDate.afterOrEqual(anEffectiveDate) and aNewLossDate.beforeOrEqual(anExpirationDate)) {
+        _strResult = _strResult + " Verificar momentaneamente, "
+      } else {
+        _strResult = _strResult + " Cambio NO valido, "
+      }
+    }
+    else {
+      _strResult = _strResult + "Poliza no verificada, "
+    }
   }
 }
 
- /**/
+/**/
 function coinsuranceValidations(coinsurance : entity.Coinsurance_Ext) {
   if (coinsurance.CoinsuranceCompanies.length != 0) {
     var coinsuranceParticipation = 0bd
@@ -178,7 +201,7 @@ function coinsuranceValidations(coinsurance : entity.Coinsurance_Ext) {
   }
 }
 
- /**/
+/**/
 function claimHasWaitingPayment(aClaim : entity.Claim, reference : String, status : String,value100GW : Double) {
   if (reference == null or reference.length() == 0) {
     var _checks = aClaim.ChecksQuery.toList()
@@ -196,7 +219,7 @@ function claimHasWaitingPayment(aClaim : entity.Claim, reference : String, statu
 }
 
 
- /**/
+/**/
 function convertToNumber(aValue : String) : Double {
   if (aValue.contains("A")) { //puede ser: '#N/A' o 'NO APLICA'
     return null
@@ -204,7 +227,7 @@ function convertToNumber(aValue : String) : Double {
   return(Double.parseDouble(aValue.replaceAll(",",".")))
 }
 
- /**/
+/**/
 function valorBajoEn100(value100GW : Double, reinsGW : Double, currency : String) {
   if (value100GW != null) {
     var tmpReinsGW = reinsGW != null ? reinsGW : 0
@@ -220,7 +243,7 @@ function valorBajoEn100(value100GW : Double, reinsGW : Double, currency : String
   }
 }
 
- /**/
+/**/
 function valorBajoEnDiferencia(dif100 : Double, difReins : Double, currency : String) {
   if (dif100 != null and difReins != null) {//valor bajo en diferencia
     if (currency == "COP") {
@@ -235,14 +258,14 @@ function valorBajoEnDiferencia(dif100 : Double, difReins : Double, currency : St
   }
 }
 
- /**/
+/**/
 function errorInformeSAP(reference : String) {
   if (reference != null and reference.contains("#")) {//errorSAP
     _strResult = _strResult + "Error de informe de SAP, no es inconsistencia"
   }
 }
 
- /**/
+/**/
 function reaseguroDetalladoDuplicado(reinsGW : Double, reinsSAP : Double) {
   if (reinsGW != null and reinsSAP != null and reinsGW != 0) {//Reaseguro Detallado Duplicado
     if (reinsSAP == (reinsGW / 2)) {
@@ -251,7 +274,7 @@ function reaseguroDetalladoDuplicado(reinsGW : Double, reinsSAP : Double) {
   }
 }
 
- /**/
+/**/
 function pagoSolicitandoCambioEstado(aClaim : entity.Claim, typeError : String, status : String, reference : String) {
   if (reference != null          and
       reference.length() > 2     and
@@ -266,7 +289,7 @@ function pagoSolicitandoCambioEstado(aClaim : entity.Claim, typeError : String, 
   }
 }
 
- /**/
+/**/
 function transaccionEnSolicitando(transactionStatus : typekey.TransactionStatus) : boolean {
   return transactionStatus == typekey.TransactionStatus.TC_REQUESTING or
       transactionStatus == typekey.TransactionStatus.TC_NOTIFYING or
@@ -294,7 +317,7 @@ function cambioDeEstadoTransaccion(reference : String,status : String) {
   }
 }
 
- /**/
+/**/
 function signoContrarioReaseguro(reinsGW : Double, reinsSAP : Double, typeError : String) {
   if (typeError == "RESERVA" and reinsGW != null and reinsSAP != null) {
     if (reinsGW == (reinsSAP * - 1)) {
@@ -303,7 +326,7 @@ function signoContrarioReaseguro(reinsGW : Double, reinsSAP : Double, typeError 
   }
 }
 
- /**/
+/**/
 function validarReaseguroDetallado(aClaim : entity.Claim,difReins : Double) {
   if (difReins == null) {
     return
@@ -353,7 +376,7 @@ function validarReaseguroDetallado(aClaim : entity.Claim,difReins : Double) {
   }
 }
 
- /**/
+/**/
 function validateDetailedReinsurance(agreementGroup : entity.AgreementGroupRI_Ext, positive : boolean) : String {
   for (agreementGroupDos in agreementGroup.Transaction.getAgreementGroups(agreementGroup.DistributionType)) {
     if (agreementGroupDos.Reflection) {  //No se analizan reflejos
@@ -377,7 +400,7 @@ function validateDetailedReinsurance(agreementGroup : entity.AgreementGroupRI_Ex
   return ""
 }
 
- /**/
+/**/
 function convertToString(aValue : String) : String {
   if(aValue == null or aValue.trim().length() == 0 or aValue == "null") {
     return null
@@ -385,7 +408,7 @@ function convertToString(aValue : String) : String {
   return aValue
 }
 
- /**/
+/**/
 function reclamacionPorReferencia(reference : String) {
   if (reference == null) {
     return
@@ -397,7 +420,7 @@ function reclamacionPorReferencia(reference : String) {
   }
 }
 
- /**/
+/**/
 function processInformation() {
   for (inconsistency in _referencesInClosure) {
     _strResult = ""
@@ -425,7 +448,7 @@ function processInformation() {
       claimHasWaitingPayment(aClaim, reference, status, value100GW)
       pagoSolicitandoCambioEstado(aClaim,typeError,status,reference)
       claimValidations(aClaim)
-      policyValidations(aClaim.Policy)
+      policyVerifiedValidation(aClaim.Policy)
       coinsuranceValidations(aClaim.Policy.Coinsurance_Ext)
       validarReaseguroDetallado(aClaim,difReins)
     } else {
