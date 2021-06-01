@@ -185,7 +185,7 @@ public class IncidentsUtil {
 		for(int i=0; i < expectedHeader.length;i++){
 			String[] expectedValues = expectedHeader[i];
 			for(int j=0; j < expectedValues.length;j++){
-				if(!foundHeaderSplit[i].contains(expectedValues[j])){
+				if(!foundHeaderSplit[i].contains(expectedValues[j].toUpperCase())){
 				  throw new Exception("\nEn el archivo " + fileName + " columna  " + (i+1)
 									  + " se esperaba que contenga" + Arrays.toString(expectedValues) + 
 										" pero se encontro [" + foundHeaderSplit[i] + "]");	
@@ -220,6 +220,10 @@ public class IncidentsUtil {
 	public static String determineStringValue(Object columnIdentifier, String[] rowInfoSplit) {
 		return columnIdentifier == null ? null : rowInfoSplit[((Number) columnIdentifier).intValue()].replaceAll("\"", "");
 	}
+	
+	public static  Double determineDoubleValue(String aValue) {
+    return aValue.length() == 0 ? null: Double.parseDouble(aValue.replaceAll(",", "."));
+  }
 
 	public static Double determineDoubleValue(Object columnIdentifier, String[] rowInfoSplit) {
 		return columnIdentifier == null ? null : Double.parseDouble(rowInfoSplit[((Number) columnIdentifier).intValue()].replaceAll("\"", "").replaceAll(",", "."));

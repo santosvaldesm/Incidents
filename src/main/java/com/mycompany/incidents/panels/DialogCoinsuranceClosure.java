@@ -28,9 +28,9 @@ public class DialogCoinsuranceClosure extends javax.swing.JDialog implements Run
   Closure currentClosure = null;
   String rutaCarpeta = "";  
   String coasegEcoFileName = "COASEGURO_ECO.csv";
-  String coasegSapFileName = "COASEGURO_SAP.csv";
-  String coasegEcoHeader = "\"ID\";\"RECORD_CODE\";\"RAMO_A\";\"POLIZA\";\"RAMO_SINIESTRO\";\"NRO_SINIESTRO\";\"RAMO_FECHA\";\"FECHA_PROCESO\";\"RAMO_B\";\"DOCUMENTO\";\"RAMO_FECHA_PAGO\";\"FECHA_PAGO\";\"OFICINA_REGISTRO\";\"USUARIO_REG\";\"FECHA_REGISTRO\";\"HORA_REGISTRO\";\"SECUENCIA\";\"UNIDAD_ESTRATEGICA\";\"CIIU\";\"REGION\";\"SECTOR\";\"SUBSECTOR\";\"CODP\";\"VLR_IVA_RETENIDO\";\"PORC_RETENC_IVA\";\"VLR_DESC_RETENC_IVA\";\"PORC_ICA\";\"VLR_RETENC_ICA\";\"VLR_DESC_RETENC_ICA\";\"CONCEPTO_PAGO_RETENC\";\"ID_GRAN_CONTRIBUYENTE\";\"ID_IVA_REGIMEN_COS\";\"VLR_BASE_IVA\";\"FILLER\";\"AMPARO\";\"PLAN_A\";\"OPERACION_REGISTRO\";\"CLASE_PAGO\";\"IDENTIFICADOR\";\"CIA_COASEGURADORA\";\"PORC_PARTICIPACION\";\"RAMO_AGENTE\";\"COD_AGENTE\";\"PORC_PARTIC_AGENTE\";\"DCTO_LIDER\";\"FECHA_RECLAMACION\";\"FECHA_FIN_INCAPAC\";\"UNIDADES\";\"VLR_UNIDAD\";\"VLR_FACT_SALUD\";\"VLR_ASEG_MIN_DEDUD\";\"VLR_IND_PARC_DED_INF\";\"VLR_IND_TOT_RECIBO\";\"MONEDA\";\"CED_BENEFICIARIO_A\";\"NOMB_BENEFICIARIO_A\";\"OFICINA\";\"OPERACION_PAGO\";\"REMISION\";\"VLR_PAGADO\";\"VLR_PAGADO_TOT_SINI\";\"IDENT_PAGO\";\"USUARIO_PAGO\";\"VECTOR_BANDERA\";\"OFICINA_RADICACION\";\"FECHA_OCURRENCIA\";\"FECHA_AVISO\";\"NOMB_ASEGURADO\";\"CED_ASEGURADO\";\"VLR_POOL\";\"VLR_AUTOMATICO\";\"FACULTAT_INTERIOR\";\"FACULTAT_EXTERIOR\";\"RIESGO\";\"ARTICULO\";\"SUBAMPARO\";\"TOMADOR\";\"PORC_RETEFTE\";\"VLR_RETEFTE\";\"CLASE_SERV_CONTRAP\";\"NOMB_BENEFICIARIO_B\";\"CED_BENEFICIARIO_B\";\"RETENEDOR\";\"RESPONSABLE_IVA\";\"BASE_IVA\";\"PORC_IVA\";\"VLR_IVA\";\"PORC_IVA_SURA\";\"TOTAL_IVA_SURA\";\"NRO_CHEQUE\";\"COD_BANCO\";\"CUENTA_BANCO\";\"VLR_CHEQUE\";\"NRO_PAGARE\";\"CUOTAS_PAGARE\";\"FEC_VENC_PAG\";\"VLR_PAGARE\";\"CAUSA\";\"PLAN_B\";\"RESUL\";\"CDCIA_MATRIZ\";\"CDPAIS\";\"SNCORE\";\"PTTASA_CAMBIO\";\"POPARTLIDER\";\"PARTICIPATION\"";
-  String coasegSapHeader = "St;Clave ref.2;Lib.mayor;Asignaci¢n;Clase;Texto;N§ doc.;NIT;Cta.mayor;Cta.alt.;Clave ref.1;Referencia;Importe en MD;Mon.;Importe en ML;Fe.contab.;Fecha doc.";
+  String coasegSapFileName = "COASEGURO_SAP.csv";  
+	String[][] coasegEcoHeader = {{"ID"},{"RECORD_CODE"},{"RAMO_A"},{"POLIZA"},{"RAMO_SINIESTRO"},{"NRO_SINIESTRO"},{"RAMO_FECHA"},{"FECHA_PROCESO"},{"RAMO_B"},{"DOCUMENTO"},{"RAMO_FECHA_PAGO"},{"FECHA_PAGO"},{"OFICINA_REGISTRO"},{"USUARIO_REG"},{"FECHA_REGISTRO"},{"HORA_REGISTRO"},{"SECUENCIA"},{"UNIDAD_ESTRATEGICA"},{"CIIU"},{"REGION"},{"SECTOR"},{"SUBSECTOR"},{"CODP"},{"VLR_IVA_RETENIDO"},{"PORC_RETENC_IVA"},{"VLR_DESC_RETENC_IVA"},{"PORC_ICA"},{"VLR_RETENC_ICA"},{"VLR_DESC_RETENC_ICA"},{"CONCEPTO_PAGO_RETENC"},{"ID_GRAN_CONTRIBUYENTE"},{"ID_IVA_REGIMEN_COS"},{"VLR_BASE_IVA"},{"FILLER"},{"AMPARO"},{"PLAN_A"},{"OPERACION_REGISTRO"},{"CLASE_PAGO"},{"IDENTIFICADOR"},{"CIA_COASEGURADORA"},{"PORC_PARTICIPACION"},{"RAMO_AGENTE"},{"COD_AGENTE"},{"PORC_PARTIC_AGENTE"},{"DCTO_LIDER"},{"FECHA_RECLAMACION"},{"FECHA_FIN_INCAPAC"},{"UNIDADES"},{"VLR_UNIDAD"},{"VLR_FACT_SALUD"},{"VLR_ASEG_MIN_DEDUD"},{"VLR_IND_PARC_DED_INF"},{"VLR_IND_TOT_RECIBO"},{"MONEDA"},{"CED_BENEFICIARIO_A"},{"NOMB_BENEFICIARIO_A"},{"OFICINA"},{"OPERACION_PAGO"},{"REMISION"},{"VLR_PAGADO"},{"VLR_PAGADO_TOT_SINI"},{"IDENT_PAGO"},{"USUARIO_PAGO"},{"VECTOR_BANDERA"},{"OFICINA_RADICACION"},{"FECHA_OCURRENCIA"},{"FECHA_AVISO"},{"NOMB_ASEGURADO"},{"CED_ASEGURADO"},{"VLR_POOL"},{"VLR_AUTOMATICO"},{"FACULTAT_INTERIOR"},{"FACULTAT_EXTERIOR"},{"RIESGO"},{"ARTICULO"},{"SUBAMPARO"},{"TOMADOR"},{"PORC_RETEFTE"},{"VLR_RETEFTE"},{"CLASE_SERV_CONTRAP"},{"NOMB_BENEFICIARIO_B"},{"CED_BENEFICIARIO_B"},{"RETENEDOR"},{"RESPONSABLE_IVA"},{"BASE_IVA"},{"PORC_IVA"},{"VLR_IVA"},{"PORC_IVA_SURA"},{"TOTAL_IVA_SURA"},{"NRO_CHEQUE"},{"COD_BANCO"},{"CUENTA_BANCO"},{"VLR_CHEQUE"},{"NRO_PAGARE"},{"CUOTAS_PAGARE"},{"FEC_VENC_PAG"},{"VLR_PAGARE"},{"CAUSA"},{"PLAN_B"},{"RESUL"},{"CDCIA_MATRIZ"},{"CDPAIS"},{"SNCORE"},{"PTTASA_CAMBIO"},{"POPARTLIDER"},{"PARTICIPATION"}};
+	String[][] coasegSapHeader = {{"St"},{"Clave"},{"Lib"},{"Asigna"},{"Clase"},{"Texto"},{"doc"},{"NIT"},{"Cta","mayor"},{"Cta","alt"},{"Clave","ref"},{"Referencia"},{"Imp","MD"},{"Mon"},{"Imp","ML"},{"contab"},{"Fecha"}};	
   boolean runProcess = false;
   private Thread h1;  
   SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss");
@@ -93,12 +93,16 @@ public class DialogCoinsuranceClosure extends javax.swing.JDialog implements Run
       } 
     } catch (FileNotFoundException e1) {      
       printInOutputText("\nFileNotFoundException: " + e1.toString() + "\n"+lastRowInfo);
+			IncidentsUtil.printStackTrace(e1,outputTxt);			
     } catch (IOException e2) {
       printInOutputText("\nIOException: " + e2.toString() + "\n"+lastRowInfo);
+			IncidentsUtil.printStackTrace(e2,outputTxt);
     } catch (SQLException ex) { 
       printInOutputText("\nSQLException: " + ex.toString() + "\n"+lastRowInfo);
+			IncidentsUtil.printStackTrace(ex,outputTxt);
     } catch (Exception e3) {
       printInOutputText("\nException: " + e3.toString() + "\n"+lastRowInfo);
+			IncidentsUtil.printStackTrace(e3,outputTxt);
     }
     
     progressTotal(100,100);
@@ -160,15 +164,15 @@ public class DialogCoinsuranceClosure extends javax.swing.JDialog implements Run
       newClosure.setClaimnumber(siniestro);
       newClosure.setPolicynumber(poliza);
       newClosure.setRamo(ramo);
-      newClosure.setValorCienGw(determineDoubleValue(participacion));        //Sacar Suma de PARTICIPATION 
-      newClosure.setValorReasGw(determineDoubleValue(pttasacambio));         //Sacar Promedio de PTTASA_CAMBIO 
+      newClosure.setValorCienGw(IncidentsUtil.determineDoubleValue(participacion));        //Sacar Suma de PARTICIPATION 
+      newClosure.setValorReasGw(IncidentsUtil.determineDoubleValue(pttasacambio));         //Sacar Promedio de PTTASA_CAMBIO 
       newClosure.setRowTxt("1");//en RowTxt se almacenara el divisor para sacar promedio a PTTASA_CAMBIO      
       
       closureController.create(newClosure);            
     }else{//se modifica registro existente
       Closure aClosure = aClosureList.get(0);//se toma el primer encontrado      
-      aClosure.setValorCienGw(IncidentsUtil.sumarDoubles(aClosure.getValorCienGw(),determineDoubleValue(participacion)));        //Sacar Suma de PARTICIPATION 
-      aClosure.setValorReasGw(IncidentsUtil.sumarDoubles(aClosure.getValorReasGw(),determineDoubleValue(pttasacambio)));         //Sacar Promedio de PTTASA_CAMBIO 
+      aClosure.setValorCienGw(IncidentsUtil.sumarDoubles(aClosure.getValorCienGw(),IncidentsUtil.determineDoubleValue(participacion)));        //Sacar Suma de PARTICIPATION 
+      aClosure.setValorReasGw(IncidentsUtil.sumarDoubles(aClosure.getValorReasGw(),IncidentsUtil.determineDoubleValue(pttasacambio)));         //Sacar Promedio de PTTASA_CAMBIO 
       aClosure.setRowTxt(incrementIntStr(aClosure.getRowTxt()));//en RowTxt se almacenara el divisor para sacar promedio a PTTASA_CAMBIO            
       closureController.edit(aClosure);
     }    
@@ -199,14 +203,14 @@ public class DialogCoinsuranceClosure extends javax.swing.JDialog implements Run
       newClosure.setClaimnumber(reclamacion);
       newClosure.setPolicynumber(poliza);
       newClosure.setReferencia(referencia);       
-      newClosure.setValorCienSap(determineDoubleValue(ABS));      //sacar suma     de ABS
-      newClosure.setValorReasSap(determineDoubleValue(TRM));      //Sacar promedio de TRM
+      newClosure.setValorCienSap(IncidentsUtil.determineDoubleValue(ABS));      //sacar suma     de ABS
+      newClosure.setValorReasSap(IncidentsUtil.determineDoubleValue(TRM));      //Sacar promedio de TRM
       newClosure.setEstado("1");//en Estado se almacena divisor para sacar promedio a TRM            
       closureController.create(newClosure);            
     }else{//se modifica registro de gw existente
       Closure aClosure = aClosureList.get(0);//se toma el primer encontrado      
-      aClosure.setValorCienSap(IncidentsUtil.sumarDoubles(aClosure.getValorCienSap(),determineDoubleValue(ABS)));      //sacar suma     de ABS
-      aClosure.setValorReasSap(IncidentsUtil.sumarDoubles(aClosure.getValorReasSap(),determineDoubleValue(TRM)));      //Sacar promedio de TRM
+      aClosure.setValorCienSap(IncidentsUtil.sumarDoubles(aClosure.getValorCienSap(),IncidentsUtil.determineDoubleValue(ABS)));      //sacar suma     de ABS
+      aClosure.setValorReasSap(IncidentsUtil.sumarDoubles(aClosure.getValorReasSap(),IncidentsUtil.determineDoubleValue(TRM)));      //Sacar promedio de TRM
       aClosure.setEstado(incrementIntStr(aClosure.getEstado()));//en Estado se almacena divisor para sacar promedio a TRM            
       closureController.edit(aClosure);
     }    
@@ -279,17 +283,14 @@ public class DialogCoinsuranceClosure extends javax.swing.JDialog implements Run
     return String.valueOf(result);
   }
   
-  private Double determineDoubleValue(String aValue) {
-    return aValue.length() == 0 ? null: Double.parseDouble(aValue);
-  }
-  
   private String calculateTRM(String importeML, String importeMD) {
-    double resultDouble = Double.parseDouble(importeML) / Double.parseDouble(importeMD);
+    double resultDouble = Double.parseDouble(importeML.replaceAll(",", ".")) / 
+						              Double.parseDouble(importeMD.replaceAll(",", "."));
     return String.valueOf(resultDouble);
   }
   
   private String calculateABS(String importeMD) {    
-    double resultDouble = Math.abs(Double.parseDouble(importeMD));
+    double resultDouble = Math.abs(Double.parseDouble(importeMD.replaceAll(",", ".")));
     return String.valueOf(resultDouble);
   }
   
@@ -298,10 +299,10 @@ public class DialogCoinsuranceClosure extends javax.swing.JDialog implements Run
     List<Closure> aClosureList = closureController.findClosureEntities();
     for(Closure aClosure : aClosureList){            
       if(aClosure.getValorReasGw() != null){
-        aClosure.setValorReasGw(dividirDoubles(aClosure.getValorReasGw(),determineDoubleValue(aClosure.getRowTxt())));
+        aClosure.setValorReasGw(dividirDoubles(aClosure.getValorReasGw(),IncidentsUtil.determineDoubleValue(aClosure.getRowTxt())));
       }
       if(aClosure.getValorReasSap() != null){
-        aClosure.setValorReasSap(dividirDoubles(aClosure.getValorReasSap(),determineDoubleValue(aClosure.getEstado())));
+        aClosure.setValorReasSap(dividirDoubles(aClosure.getValorReasSap(),IncidentsUtil.determineDoubleValue(aClosure.getEstado())));
       }      
       
       aClosure.setDiferCien(IncidentsUtil.restarDoubles(aClosure.getValorCienGw(),aClosure.getValorCienSap()));
