@@ -416,7 +416,13 @@ function reclamacionPorReferencia(reference : String) {
   var aTransaction = gw.api.database.Query.make(entity.Transaction).compare(Transaction#PublicID,Equals,reference)
       .select().FirstResult
   if (aTransaction != null) {
-    _strResult = _strResult + "Revisar siniesto " + aTransaction.Claim.ClaimNumber + ", "
+    _strResult = _strResult + "Revisar Transaccion en siniestro " + aTransaction.Claim.ClaimNumber + ", "
+  } else { //verificar si es un reflejo
+    var aReflection = gw.api.database.Query.make(entity.MessagingReflection_Ext)
+        .compare(MessagingReflection_Ext#PublicID,Equals,reference).select().FirstResult
+    if (aReflection != null) {
+      _strResult = _strResult + "Revisar Reflejo en siniestro " + aReflection.AgreementGroupRI.Transaction.Claim.ClaimNumber + ", "
+    }
   }
 }
 
