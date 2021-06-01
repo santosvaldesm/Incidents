@@ -180,7 +180,7 @@ function coinsuranceValidations(coinsurance : entity.Coinsurance_Ext) {
 
  /**/
 function claimHasWaitingPayment(aClaim : entity.Claim, reference : String, status : String,value100GW : Double) {
-  if (reference != null and reference.length() == 0) {
+  if (reference == null or reference.length() == 0) {
     var _checks = aClaim.ChecksQuery.toList()
     for (aCheck in _checks) {
       if (aCheck.MarkPaymentByEft_Ext and aCheck.CheckNumber == null) {
