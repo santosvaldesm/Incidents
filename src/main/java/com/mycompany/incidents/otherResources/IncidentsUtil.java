@@ -20,10 +20,12 @@ import javax.swing.JTextArea;
 import org.apache.poi.ss.usermodel.BorderStyle;
 import org.apache.poi.ss.usermodel.FillPatternType;
 import org.apache.poi.ss.usermodel.Font;
+import org.apache.poi.ss.util.CellRangeAddress;
 import org.apache.poi.xssf.usermodel.XSSFCell;
 import org.apache.poi.xssf.usermodel.XSSFCellStyle;
 import org.apache.poi.xssf.usermodel.XSSFColor;
 import org.apache.poi.xssf.usermodel.XSSFRow;
+import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
 /**
@@ -34,7 +36,6 @@ public class IncidentsUtil {
 
 	static DecimalFormat df = new DecimalFormat("#.#");
 	static HashMap<String,String> textsHasMap = new HashMap<>();
-	
 	
 	private static void createTexts(){
 		readText("textoCierreCoaseguroAyuda.txt");
@@ -86,39 +87,53 @@ public class IncidentsUtil {
 		return strReturn == null ? "Texto no encontrado" : strReturn;
 	}
 	
+	public static void setBorder(XSSFCellStyle aStyle) {
+		aStyle.setBorderBottom(BorderStyle.THIN);
+		aStyle.setBorderTop(BorderStyle.THIN);
+		aStyle.setBorderRight(BorderStyle.THIN);
+		aStyle.setBorderLeft(BorderStyle.THIN);
+	}
+	
+	public static void setColorFill(XSSFCellStyle aStyle,byte red,byte blue,byte green) {
+		byte[] rgb = new byte[]{red, blue, green};
+		aStyle.setFillForegroundColor(new XSSFColor(rgb, null));
+		aStyle.setFillPattern(FillPatternType.SOLID_FOREGROUND);
+	}
+	
 	public static XSSFCellStyle createHeaderStyle(XSSFWorkbook anExcelWorbook) {
 		XSSFCellStyle aStyle = (XSSFCellStyle)anExcelWorbook.createCellStyle();
 		Font font = anExcelWorbook.createFont();
 		font.setBold(true);
 		aStyle.setFont(font);		
-		aStyle.setBorderBottom(BorderStyle.THIN);
-		aStyle.setBorderTop(BorderStyle.THIN);
-		aStyle.setBorderRight(BorderStyle.THIN);
-		aStyle.setBorderLeft(BorderStyle.THIN);
-		byte[] rgb = new byte[]{(byte)221, (byte)235, (byte)247};
-		aStyle.setFillForegroundColor(new XSSFColor(rgb, null));
-		aStyle.setFillPattern(FillPatternType.SOLID_FOREGROUND);
+		setBorder(aStyle);
+		setColorFill(aStyle, (byte)221, (byte)235, (byte)247);		
 		return aStyle;
 	}
 	
 	public static XSSFCellStyle createCellStyle(XSSFWorkbook anExcelWorbook) {
 		XSSFCellStyle aStyle = anExcelWorbook.createCellStyle();		
-		aStyle.setBorderBottom(BorderStyle.THIN);
-		aStyle.setBorderTop(BorderStyle.THIN);
-		aStyle.setBorderRight(BorderStyle.THIN);
-		aStyle.setBorderLeft(BorderStyle.THIN);
+		setBorder(aStyle);
+		return aStyle;
+	}
+	
+	public static XSSFCellStyle createCellStyleYellow(XSSFWorkbook anExcelWorbook) {
+		XSSFCellStyle aStyle = anExcelWorbook.createCellStyle();		
+		setBorder(aStyle);
+		setColorFill(aStyle,(byte)255, (byte)242, (byte)204);		
+		return aStyle;
+	}
+	
+	public static XSSFCellStyle createCellStyleGreen(XSSFWorkbook anExcelWorbook) {
+		XSSFCellStyle aStyle = anExcelWorbook.createCellStyle();		
+		setBorder(aStyle);
+		setColorFill(aStyle,(byte)226, (byte)239, (byte)218);		
 		return aStyle;
 	}
 	
 	public static XSSFCellStyle createCellStyleGray(XSSFWorkbook anExcelWorbook) {
 		XSSFCellStyle aStyle = anExcelWorbook.createCellStyle();		
-		aStyle.setBorderBottom(BorderStyle.THIN);
-		aStyle.setBorderTop(BorderStyle.THIN);
-		aStyle.setBorderRight(BorderStyle.THIN);
-		aStyle.setBorderLeft(BorderStyle.THIN);
-		byte[] rgb = new byte[]{(byte)214, (byte)220, (byte)228};
-		aStyle.setFillForegroundColor(new XSSFColor(rgb, null));
-		aStyle.setFillPattern(FillPatternType.SOLID_FOREGROUND);
+		setBorder(aStyle);
+		setColorFill(aStyle,(byte)214, (byte)220, (byte)228);		
 		return aStyle;
 	}
 	
@@ -136,6 +151,17 @@ public class IncidentsUtil {
       aCell.setCellValue((Double) obj); 
     }      
   }
+	
+	public static void insertHeader(XSSFSheet aSheet, String[] headers,
+					                  int rowPosition,int sizeCell, XSSFCellStyle aStyle){
+		XSSFRow headerRow = aSheet.createRow(rowPosition++);
+		if(sizeCell>1){			
+			aSheet.addMergedRegion(new CellRangeAddress(rowPosition-1,rowPosition-1,0,sizeCell-1)); 
+		}
+		for (int i = 0; i < headers.length; ++i) {			
+			IncidentsUtil.createCellInRow(headerRow,i,headers[i],aStyle);			
+		}		
+	}
 	
 	public static void printStackTrace(Exception e3,JTextArea outputTxt) {
 		String textToAdd = "\n" + e3.toString();

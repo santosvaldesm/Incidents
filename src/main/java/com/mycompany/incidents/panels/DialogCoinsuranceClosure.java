@@ -6,20 +6,25 @@ import com.mycompany.incidents.otherResources.ClosureTypeEnum;
 import com.mycompany.incidents.otherResources.DataBaseController;
 import com.mycompany.incidents.otherResources.IncidentsUtil;
 import java.io.BufferedReader;
-import java.io.BufferedWriter;
 import javax.swing.JFileChooser;
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.FileReader;
-import java.io.FileWriter;
 import java.io.IOException;
 import java.sql.SQLException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import javax.persistence.EntityManagerFactory;
 import javax.persistence.Persistence;
+import org.apache.commons.lang3.ArrayUtils;
+import org.apache.poi.xssf.usermodel.XSSFCellStyle;
+import org.apache.poi.xssf.usermodel.XSSFRow;
+import org.apache.poi.xssf.usermodel.XSSFSheet;
+import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
 public class DialogCoinsuranceClosure extends javax.swing.JDialog implements Runnable {
   
@@ -42,6 +47,13 @@ public class DialogCoinsuranceClosure extends javax.swing.JDialog implements Run
   int rowCountGW = 0;
   String limitInconsistencies ="-"; //desde que valor se considera inconsistenca
   String lastRowInfo="";
+  ArrayList<String[]> inconsistencesList=new ArrayList<>();
+
+	static XSSFCellStyle headerStyle;
+	static XSSFCellStyle cellStyle;
+	static XSSFCellStyle cellStyleGray;
+	static XSSFCellStyle cellStyleGreen;
+	static XSSFCellStyle cellStyleYellow;
     
   public DialogCoinsuranceClosure(java.awt.Frame parent, boolean modal) {
     super(parent, modal);
@@ -83,7 +95,7 @@ public class DialogCoinsuranceClosure extends javax.swing.JDialog implements Run
         progressTotal(100,50); 
         
         searchInconsistencies();        
-                
+        createExcelReport();        
         printInOutputText("\nEliminando temporales...");          
         regenerateTableClosure();//eliminar datos              
         progressTotal(100,100);    
@@ -214,55 +226,101 @@ public class DialogCoinsuranceClosure extends javax.swing.JDialog implements Run
       aClosure.setEstado(incrementIntStr(aClosure.getEstado()));//en Estado se almacena divisor para sacar promedio a TRM            
       closureController.edit(aClosure);
     }    
-  }  
   
+	}  
+ 
+	
   private void searchInconsistencies() throws IOException, SQLException, ClassNotFoundException{    
-    String rutaResult = IncidentsUtil.determineUrl(rutaCarpeta,"CruceCoaseguro",".csv");
-    File file = new File(rutaResult);                
-    if (!file.exists()) {// Si el archivo no existe es creado
-        file.createNewFile();
-    }
-    FileWriter fw = new FileWriter(file);
-    BufferedWriter bw = new BufferedWriter(fw);
-    bw.write( "\"TIPO ERROR\";\"DOCUMENTO\";\"NRO_SINIESTRO\";\"POLIZA\";"
-            + "\"RAMO_A\";\"SUM PART\";\"AVG TASA\";"
-            + "\"ABS SAP\";\"TRM SAP\";\"DIF ABS\";\"DIF TRM\";\"DETALLE\";\n");
     
-    insertInconsistencyInFile(bw,"ECO",ClosureTypeEnum.faltanteEnSAP);
-    insertInconsistencyInFile(bw,"ECO",ClosureTypeEnum.AbsMayorQue);
-    insertInconsistencyInFile(bw,"ECO",ClosureTypeEnum.AbsMenorQue);
-    insertInconsistencyInFile(bw,"ECO",ClosureTypeEnum.TrmMenorQue);
-    insertInconsistencyInFile(bw,"ECO",ClosureTypeEnum.TrmMayorQue);
+		inconsistencesList = new ArrayList<>();
+		
+    insertInconsistencyInFile("ECO",ClosureTypeEnum.faltanteEnSAP);
+    insertInconsistencyInFile("ECO",ClosureTypeEnum.AbsMayorQue);
+    insertInconsistencyInFile("ECO",ClosureTypeEnum.AbsMenorQue);
+    insertInconsistencyInFile("ECO",ClosureTypeEnum.TrmMenorQue);
+    insertInconsistencyInFile("ECO",ClosureTypeEnum.TrmMayorQue);
     
-    insertInconsistencyInFile(bw,"SAP",ClosureTypeEnum.faltanteEnECO);    
-    insertInconsistencyInFile(bw,"SAP",ClosureTypeEnum.AbsMayorQue);
-    insertInconsistencyInFile(bw,"SAP",ClosureTypeEnum.AbsMenorQue);
-    insertInconsistencyInFile(bw,"SAP",ClosureTypeEnum.TrmMenorQue);
-    insertInconsistencyInFile(bw,"SAP",ClosureTypeEnum.TrmMayorQue);    
-    bw.close();
-    fw.close();
+		insertInconsistencyInFile("SAP",ClosureTypeEnum.faltanteEnECO);    
+    insertInconsistencyInFile("SAP",ClosureTypeEnum.AbsMayorQue);
+    insertInconsistencyInFile("SAP",ClosureTypeEnum.AbsMenorQue);
+    insertInconsistencyInFile("SAP",ClosureTypeEnum.TrmMenorQue);
+    insertInconsistencyInFile("SAP",ClosureTypeEnum.TrmMayorQue);    
   }
+	
+	private void createExcelReport() throws FileNotFoundException, IOException {
+		String rutaResult = IncidentsUtil.determineUrl(rutaCarpeta, "Consolidado", ".xlsx");		
+		XSSFWorkbook anExcelWorbook = new XSSFWorkbook();		
+		createStyles(anExcelWorbook);		
+		XSSFSheet sheetInconsistences = anExcelWorbook.createSheet("DIFERENCIAS");						
+		String[] headerInconsistences   = new String[]{"ID","TIPO ERROR","DOCUMENTO","NRO_SINIESTRO","POLIZA","RAMO_A","SUM PART","AVG TASA","ABS SAP","TRM SAP","DIF ABS","DIF TRM","DETALLE"};		
+		insertInconsistencesInExcel(sheetInconsistences,headerInconsistences);		
+		FileOutputStream file = new FileOutputStream(rutaResult);
+		anExcelWorbook.write(file);
+		file.close();
+	}
+	
+	private void insertInconsistencesInExcel(XSSFSheet aSheet,String[] headers) {		
+		int rowPosition = 0;
+		IncidentsUtil.insertHeader(aSheet,headers,rowPosition++,1,headerStyle);
+		for(String[] anInconsistence : inconsistencesList){		  
+			XSSFRow newRow = aSheet.createRow(rowPosition++);			
+			int colPosition = 0;
+			String[] ar1={String.valueOf(rowPosition-1)};
+			anInconsistence = (String[])ArrayUtils.addAll(ar1, anInconsistence);
+			for(String aValue : anInconsistence){
+				XSSFCellStyle aStyle;
+				switch (colPosition) {
+					case 0:
+					case 1:
+					case 10:
+					case 11:
+						aStyle = cellStyleGray;
+						break;
+					case 6:
+					case 7:				
+						aStyle = cellStyleGreen;
+						break;
+					case 8:
+					case 9:
+						aStyle = cellStyleYellow;
+						break;
+					default:
+						aStyle = cellStyle;
+						break;
+				}
+				IncidentsUtil.createCellInRow(newRow,colPosition++,aValue,aStyle);
+			}			
+		}		
+	}
+	
+	private void createStyles(XSSFWorkbook anExcelWorbook){
+		headerStyle     = IncidentsUtil.createHeaderStyle(anExcelWorbook);
+	  cellStyle       = IncidentsUtil.createCellStyle(anExcelWorbook);		
+	  cellStyleGray   = IncidentsUtil.createCellStyleGray(anExcelWorbook);		
+		cellStyleGreen  = IncidentsUtil.createCellStyleGreen(anExcelWorbook);		
+		cellStyleYellow = IncidentsUtil.createCellStyleYellow(anExcelWorbook);		
+	}
   
-  private void insertInconsistencyInFile(BufferedWriter bw, String origen, 
-          ClosureTypeEnum criterio) throws IOException{    
+  private void insertInconsistencyInFile(String origen, ClosureTypeEnum criterio) {    
     printInOutputText("\nAnalizando  - " + criterio.name());
     currentItemNumber=0;                    
-    List<Closure> resultList=searchInconsistency(origen,criterio,limitInconsistencies);              
-    String strRow = "";
+    List<Closure> resultList=searchInconsistency(origen,criterio,limitInconsistencies);                  
     for(Closure aClosure : resultList) {  
+			String[] strRow = new String[11];	
+			int colNum = 0;
       lastRowInfo = IncidentsUtil.determineRowInfo(aClosure);
-      strRow = "\"REF DE " + origen + " CON " + criterio.name() + "\";\"" + 
-              IncidentsUtil.determineStringValue(aClosure.getReferencia())   + "\";\"" + 
-              IncidentsUtil.determineStringValue(aClosure.getClaimnumber())  + "\";\"" + 
-              IncidentsUtil.determineStringValue(aClosure.getPolicynumber()) + "\";\"" + 
-              IncidentsUtil.determineStringValue(aClosure.getRamo())         + "\";\"" + 
-              IncidentsUtil.determineStringValue(aClosure.getValorCienGw())  + "\";\"" + 
-              IncidentsUtil.determineStringValue(aClosure.getValorReasGw())  + "\";\"" +  
-              IncidentsUtil.determineStringValue(aClosure.getValorCienSap()) + "\";\"" + 
-              IncidentsUtil.determineStringValue(aClosure.getValorReasSap()) + "\";\"" + 
-              IncidentsUtil.determineStringValue(aClosure.getDiferCien())    + "\";\"" + 
-              IncidentsUtil.determineStringValue(aClosure.getDiferReas())    + "\";\n";
-      bw.write(strRow);
+			strRow[colNum++] = "REF DE " + origen + " CON " + criterio.name();
+			strRow[colNum++] = IncidentsUtil.determineStringValue(aClosure.getReferencia());
+			strRow[colNum++] = IncidentsUtil.determineStringValue(aClosure.getClaimnumber());
+			strRow[colNum++] = IncidentsUtil.determineStringValue(aClosure.getPolicynumber());
+			strRow[colNum++] = IncidentsUtil.determineStringValue(aClosure.getRamo());
+			strRow[colNum++] = IncidentsUtil.determineStringValue(aClosure.getValorCienGw());
+			strRow[colNum++] = IncidentsUtil.determineStringValue(aClosure.getValorReasGw()); 
+			strRow[colNum++] = IncidentsUtil.determineStringValue(aClosure.getValorCienSap());
+			strRow[colNum++] = IncidentsUtil.determineStringValue(aClosure.getValorReasSap());
+			strRow[colNum++] = IncidentsUtil.determineStringValue(aClosure.getDiferCien());
+			strRow[colNum++] = IncidentsUtil.determineStringValue(aClosure.getDiferReas());
+			inconsistencesList.add(strRow);			
       progressProcess(resultList.size(), ++currentItemNumber);
     }    
   }

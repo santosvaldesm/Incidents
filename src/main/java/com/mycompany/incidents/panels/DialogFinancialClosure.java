@@ -81,6 +81,7 @@ public class DialogFinancialClosure extends javax.swing.JDialog implements Runna
 	XSSFCellStyle cellStyle;
 	XSSFCellStyle cellStyleGray;
 
+
 	public DialogFinancialClosure(java.awt.Frame parent, boolean modal) {
 		super(parent, modal);
 		initComponents();
@@ -398,14 +399,14 @@ public class DialogFinancialClosure extends javax.swing.JDialog implements Runna
 		int rowPosition = 0;				
 		
 		String[] headerTmp = new String[]{tipo+" COP"};
-		insertHeader(aSheet,headerTmp,rowPosition++,headers.length);
-		insertHeader(aSheet,headers,rowPosition++,1);
+		IncidentsUtil.insertHeader(aSheet,headerTmp,rowPosition++,headers.length,headerStyle);
+		IncidentsUtil.insertHeader(aSheet,headers,rowPosition++,1,headerStyle);
 		rowPosition = insertDataByCurrency(aSheet,rowPosition,tipo,"COP");				
 		rowPosition = rowPosition + 3;
 		
 		headerTmp = new String[]{tipo+" USD"};
-		insertHeader(aSheet,headerTmp,rowPosition++,headers.length);
-		insertHeader(aSheet,headers,rowPosition++,1);
+		IncidentsUtil.insertHeader(aSheet,headerTmp,rowPosition++,headers.length,headerStyle);
+		IncidentsUtil.insertHeader(aSheet,headers,rowPosition++,1,headerStyle);
 		rowPosition = insertDataByCurrency(aSheet,rowPosition,tipo,"USD");		
 	}
 	
@@ -450,7 +451,7 @@ public class DialogFinancialClosure extends javax.swing.JDialog implements Runna
 	
 	private void insertInconsistencesInExcel(XSSFSheet aSheet,String[] headers) {		
 		int rowPosition = 0;
-		insertHeader(aSheet,headers,rowPosition++,1);
+		IncidentsUtil.insertHeader(aSheet,headers,rowPosition++,1,headerStyle);
 		for(String[] anInconsistence : inconsistencesList){		  
 			XSSFRow newRow = aSheet.createRow(rowPosition++);			
 			int colPosition = 0;
@@ -467,16 +468,6 @@ public class DialogFinancialClosure extends javax.swing.JDialog implements Runna
 			}			
 		}
 		
-	}
-	
-	private void insertHeader(XSSFSheet aSheet, String[] headers,int rowPosition,int sizeCell){
-		XSSFRow headerRow = aSheet.createRow(rowPosition++);
-		if(sizeCell>1){			
-			aSheet.addMergedRegion(new CellRangeAddress(rowPosition-1,rowPosition-1,0,sizeCell-1)); 
-		}
-		for (int i = 0; i < headers.length; ++i) {			
-			IncidentsUtil.createCellInRow(headerRow,i,headers[i],headerStyle);			
-		}		
 	}
 	
 	private int insertDataByCurrency(XSSFSheet aSheet,int rowPosition,String tipo,String currency) {
