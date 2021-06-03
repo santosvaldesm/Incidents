@@ -409,20 +409,50 @@ function convertToString(aValue : String) : String {
 }
 
 /**/
+function searchTransaction(reference : String) : boolean {
+  var aTransaction = gw.api.database.Query.make(entity.Transaction).compare(Transaction#PublicID,Equals,reference)
+      .select().FirstResult
+  if (aTransaction != null) {
+    _strResult = _strResult + "Error no determinado: Revisar Transaccion en siniestro " + aTransaction.Claim.ClaimNumber + ", "
+    return true
+  }
+  return false
+}
+
+/**/
+function searchReflection(reference : String) : boolean {
+  var aReflection = gw.api.database.Query.make(entity.MessagingReflection_Ext)
+      .compare(MessagingReflection_Ext#PublicID,Equals,reference).select().FirstResult
+  if (aReflection != null) {
+    _strResult = _strResult + "Error no determinado:  Revisar Reflejo en siniestro " +
+        aReflection.AgreementGroupRI.Transaction.Claim.ClaimNumber + ", "
+    return true
+  }
+  return false
+}
+
+/**/
+function searchPayment(reference : String) : boolean {
+  var aCheck = Query.make(entity.Check).compare(entity.Check#CheckNumber, Equals, reference).select().FirstResult
+  if (aCheck != null) {
+    _strResult = _strResult + "Error no determinado:  Revisar Pago en siniestro " +
+        aCheck.Claim.ClaimNumber + ", "
+    return true
+  }
+  return false
+}
+
+/**/
 function reclamacionPorReferencia(reference : String) {
   if (reference == null) {
     return
   }
-  var aTransaction = gw.api.database.Query.make(entity.Transaction).compare(Transaction#PublicID,Equals,reference)
-      .select().FirstResult
-  if (aTransaction != null) {
-    _strResult = _strResult + "Revisar Transaccion en siniestro " + aTransaction.Claim.ClaimNumber + ", "
-  } else { //verificar si es un reflejo
-    var aReflection = gw.api.database.Query.make(entity.MessagingReflection_Ext)
-        .compare(MessagingReflection_Ext#PublicID,Equals,reference).select().FirstResult
-    if (aReflection != null) {
-      _strResult = _strResult + "Revisar Reflejo en siniestro " + aReflection.AgreementGroupRI.Transaction.Claim.ClaimNumber + ", "
+  if(reference.toLowerCase().contains("cc:")) { //es transaccion o reflejo
+    if (not searchTransaction(reference)) {
+      searchReflection(reference)
     }
+  } else { //verificar si es un pago
+    searchPayment(reference)
   }
 }
 
