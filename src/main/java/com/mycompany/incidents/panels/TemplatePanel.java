@@ -51,16 +51,8 @@ public class TemplatePanel extends javax.swing.JPanel {
         comboEstado.addItem("");
         comboResponsable.removeAllItems();
         comboResponsable.addItem("");
-        comboDiagnostico.removeAllItems();
-        comboDiagnostico.addItem("");
-        comboAccion.removeAllItems();
-        comboAccion.addItem("");
-        ComboDescripcion.removeAllItems();
-        ComboDescripcion.addItem("");
         comboOperatividad.removeAllItems();
         comboOperatividad.addItem("");
-        comboRaizal.removeAllItems();
-        comboRaizal.addItem("");
         for (Lista aLista : listaList) {
             switch (aLista.getNombre()) {
                 case "Causa":
@@ -80,19 +72,7 @@ public class TemplatePanel extends javax.swing.JPanel {
                     break;
                 case "Operatividad":
                     comboOperatividad.addItem(aLista.getValor());
-                    break;
-                case "Diagnostico":
-                    comboDiagnostico.addItem(aLista.getValor());
-                    break;
-                case "Accion":
-                    comboAccion.addItem(aLista.getValor());
-                    break;
-                case "Descripcion":
-                    ComboDescripcion.addItem(aLista.getValor());
-                    break;
-                case "Raizal":
-                    comboRaizal.addItem(aLista.getValor());
-                    break;
+                    break;        
             }
 
         }
@@ -223,7 +203,6 @@ public class TemplatePanel extends javax.swing.JPanel {
     comboProceso = new javax.swing.JComboBox<>();
     txtRaizal = new javax.swing.JTextField();
     jLabel4 = new javax.swing.JLabel();
-    comboRaizal = new javax.swing.JComboBox<>();
     jLabel5 = new javax.swing.JLabel();
     jLabel6 = new javax.swing.JLabel();
     jLabel12 = new javax.swing.JLabel();
@@ -231,15 +210,12 @@ public class TemplatePanel extends javax.swing.JPanel {
     comboResponsable = new javax.swing.JComboBox<>();
     jScrollPane2 = new javax.swing.JScrollPane();
     txtDiagnostico = new javax.swing.JTextPane();
-    comboDiagnostico = new javax.swing.JComboBox<>();
     jLabel13 = new javax.swing.JLabel();
-    comboAccion = new javax.swing.JComboBox<>();
     jScrollPane3 = new javax.swing.JScrollPane();
     txtAccion = new javax.swing.JTextPane();
     jScrollPane4 = new javax.swing.JScrollPane();
     txtDescripcion = new javax.swing.JTextPane();
     jLabel15 = new javax.swing.JLabel();
-    ComboDescripcion = new javax.swing.JComboBox<>();
     jLabel14 = new javax.swing.JLabel();
     jLabel16 = new javax.swing.JLabel();
     comboOperatividad = new javax.swing.JComboBox<>();
@@ -266,7 +242,7 @@ public class TemplatePanel extends javax.swing.JPanel {
     jScrollPane5 = new javax.swing.JScrollPane();
     tableListas = new javax.swing.JTable();
 
-    jSplitPane3.setDividerLocation(600);
+    jSplitPane3.setDividerLocation(370);
 
     btnUpdateTemplate.setIcon(new javax.swing.ImageIcon(getClass().getResource("/save.png"))); // NOI18N
     btnUpdateTemplate.setToolTipText("Actualizar Nota");
@@ -300,7 +276,7 @@ public class TemplatePanel extends javax.swing.JPanel {
       }
     });
 
-    jLabel1.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
+    jLabel1.setHorizontalAlignment(javax.swing.SwingConstants.LEFT);
     jLabel1.setText("Agrupador del Error: ");
 
     comboAgrupador.addItemListener(new java.awt.event.ItemListener() {
@@ -315,10 +291,10 @@ public class TemplatePanel extends javax.swing.JPanel {
       }
     });
 
-    jLabel2.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
+    jLabel2.setHorizontalAlignment(javax.swing.SwingConstants.LEFT);
     jLabel2.setText("Causa del error");
 
-    jLabel3.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
+    jLabel3.setHorizontalAlignment(javax.swing.SwingConstants.LEFT);
     jLabel3.setText("Proceso del error: ");
 
     comboProceso.addItemListener(new java.awt.event.ItemListener() {
@@ -334,23 +310,16 @@ public class TemplatePanel extends javax.swing.JPanel {
       }
     });
 
-    jLabel4.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
+    jLabel4.setHorizontalAlignment(javax.swing.SwingConstants.LEFT);
     jLabel4.setText("HU Raizal / Mejora");
 
-    comboRaizal.setName(""); // NOI18N
-    comboRaizal.addItemListener(new java.awt.event.ItemListener() {
-      public void itemStateChanged(java.awt.event.ItemEvent evt) {
-        comboRaizalItemStateChanged(evt);
-      }
-    });
-
-    jLabel5.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
+    jLabel5.setHorizontalAlignment(javax.swing.SwingConstants.LEFT);
     jLabel5.setText("Estado Raizal");
 
-    jLabel6.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
+    jLabel6.setHorizontalAlignment(javax.swing.SwingConstants.LEFT);
     jLabel6.setText("Responsable solucion");
 
-    jLabel12.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
+    jLabel12.setHorizontalAlignment(javax.swing.SwingConstants.LEFT);
     jLabel12.setText("Diagnostico");
 
     comboEstado.addItemListener(new java.awt.event.ItemListener() {
@@ -372,20 +341,8 @@ public class TemplatePanel extends javax.swing.JPanel {
     });
     jScrollPane2.setViewportView(txtDiagnostico);
 
-    comboDiagnostico.addItemListener(new java.awt.event.ItemListener() {
-      public void itemStateChanged(java.awt.event.ItemEvent evt) {
-        comboDiagnosticoItemStateChanged(evt);
-      }
-    });
-
-    jLabel13.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
+    jLabel13.setHorizontalAlignment(javax.swing.SwingConstants.LEFT);
     jLabel13.setText("Accion ejecutada");
-
-    comboAccion.addItemListener(new java.awt.event.ItemListener() {
-      public void itemStateChanged(java.awt.event.ItemEvent evt) {
-        comboAccionItemStateChanged(evt);
-      }
-    });
 
     txtAccion.addFocusListener(new java.awt.event.FocusAdapter() {
       public void focusLost(java.awt.event.FocusEvent evt) {
@@ -401,20 +358,13 @@ public class TemplatePanel extends javax.swing.JPanel {
     });
     jScrollPane4.setViewportView(txtDescripcion);
 
-    jLabel15.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
+    jLabel15.setHorizontalAlignment(javax.swing.SwingConstants.LEFT);
     jLabel15.setText("Descripcion solucion");
 
-    ComboDescripcion.setMaximumSize(new java.awt.Dimension(150, 150));
-    ComboDescripcion.addItemListener(new java.awt.event.ItemListener() {
-      public void itemStateChanged(java.awt.event.ItemEvent evt) {
-        ComboDescripcionItemStateChanged(evt);
-      }
-    });
-
-    jLabel14.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
+    jLabel14.setHorizontalAlignment(javax.swing.SwingConstants.LEFT);
     jLabel14.setText("Confirmar operatividad");
 
-    jLabel16.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
+    jLabel16.setHorizontalAlignment(javax.swing.SwingConstants.LEFT);
     jLabel16.setText("ID credenciales");
 
     comboOperatividad.addItemListener(new java.awt.event.ItemListener() {
@@ -436,38 +386,6 @@ public class TemplatePanel extends javax.swing.JPanel {
       .addGroup(jPanel3Layout.createSequentialGroup()
         .addContainerGap()
         .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-          .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel3Layout.createSequentialGroup()
-            .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-              .addGroup(javax.swing.GroupLayout.Alignment.LEADING, jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                .addComponent(jLabel5, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addComponent(jLabel6, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addComponent(jLabel2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addComponent(jLabel3, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addComponent(jLabel4, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addComponent(comboRaizal, javax.swing.GroupLayout.PREFERRED_SIZE, 250, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 250, javax.swing.GroupLayout.PREFERRED_SIZE))
-              .addGroup(javax.swing.GroupLayout.Alignment.LEADING, jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
-                .addComponent(comboDiagnostico, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.PREFERRED_SIZE, 250, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addComponent(jLabel14, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addComponent(jLabel16, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addComponent(jLabel15, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addComponent(ComboDescripcion, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.PREFERRED_SIZE, 250, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addComponent(jLabel13, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addComponent(comboAccion, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.PREFERRED_SIZE, 250, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addComponent(jLabel12, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.PREFERRED_SIZE, 250, javax.swing.GroupLayout.PREFERRED_SIZE)))
-            .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-            .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-              .addComponent(comboCausa, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-              .addComponent(comboAgrupador, javax.swing.GroupLayout.Alignment.TRAILING, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-              .addComponent(txtRaizal)
-              .addComponent(comboProceso, javax.swing.GroupLayout.Alignment.TRAILING, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-              .addComponent(comboResponsable, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-              .addComponent(comboEstado, javax.swing.GroupLayout.Alignment.TRAILING, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-              .addComponent(jScrollPane3)
-              .addComponent(jScrollPane2, javax.swing.GroupLayout.Alignment.TRAILING)
-              .addComponent(txtCredenciales)
-              .addComponent(comboOperatividad, javax.swing.GroupLayout.Alignment.TRAILING, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-              .addComponent(jScrollPane4, javax.swing.GroupLayout.Alignment.TRAILING)))
           .addGroup(jPanel3Layout.createSequentialGroup()
             .addComponent(btnUpdateTemplate)
             .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
@@ -476,7 +394,37 @@ public class TemplatePanel extends javax.swing.JPanel {
             .addComponent(btnRemoveTemplate)
             .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
             .addComponent(btnClearTemplate)
-            .addGap(0, 0, Short.MAX_VALUE)))
+            .addGap(0, 7, Short.MAX_VALUE))
+          .addGroup(jPanel3Layout.createSequentialGroup()
+            .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
+              .addComponent(jLabel4, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+              .addComponent(jLabel3, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+              .addComponent(jLabel2, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+              .addComponent(jLabel1, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, 114, Short.MAX_VALUE))
+            .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+            .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+              .addComponent(txtRaizal, javax.swing.GroupLayout.Alignment.TRAILING)
+              .addComponent(comboProceso, javax.swing.GroupLayout.Alignment.TRAILING, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+              .addComponent(comboCausa, javax.swing.GroupLayout.Alignment.TRAILING, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+              .addComponent(comboAgrupador, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
+          .addComponent(jScrollPane4, javax.swing.GroupLayout.Alignment.TRAILING)
+          .addComponent(jScrollPane3, javax.swing.GroupLayout.Alignment.TRAILING)
+          .addComponent(jScrollPane2, javax.swing.GroupLayout.Alignment.TRAILING)
+          .addGroup(jPanel3Layout.createSequentialGroup()
+            .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
+              .addComponent(jLabel14, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, 114, Short.MAX_VALUE)
+              .addComponent(jLabel15, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+              .addComponent(jLabel13, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+              .addComponent(jLabel12, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+              .addComponent(jLabel6, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+              .addComponent(jLabel5, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+              .addComponent(jLabel16, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+            .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+            .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+              .addComponent(comboOperatividad, javax.swing.GroupLayout.Alignment.TRAILING, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+              .addComponent(comboResponsable, javax.swing.GroupLayout.Alignment.TRAILING, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+              .addComponent(comboEstado, javax.swing.GroupLayout.Alignment.TRAILING, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+              .addComponent(txtCredenciales))))
         .addContainerGap())
     );
     jPanel3Layout.setVerticalGroup(
@@ -501,12 +449,9 @@ public class TemplatePanel extends javax.swing.JPanel {
           .addComponent(jLabel3, javax.swing.GroupLayout.PREFERRED_SIZE, 20, javax.swing.GroupLayout.PREFERRED_SIZE)
           .addComponent(comboProceso, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-        .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-          .addGroup(jPanel3Layout.createSequentialGroup()
-            .addComponent(jLabel4)
-            .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-            .addComponent(comboRaizal, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-          .addComponent(txtRaizal, javax.swing.GroupLayout.PREFERRED_SIZE, 63, javax.swing.GroupLayout.PREFERRED_SIZE))
+        .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+          .addComponent(jLabel4)
+          .addComponent(txtRaizal, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
         .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
           .addComponent(jLabel5, javax.swing.GroupLayout.PREFERRED_SIZE, 21, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -516,35 +461,25 @@ public class TemplatePanel extends javax.swing.JPanel {
           .addComponent(comboResponsable, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
           .addComponent(jLabel6, javax.swing.GroupLayout.PREFERRED_SIZE, 20, javax.swing.GroupLayout.PREFERRED_SIZE))
         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-        .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-          .addComponent(jScrollPane2)
-          .addGroup(jPanel3Layout.createSequentialGroup()
-            .addComponent(jLabel12)
-            .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-            .addComponent(comboDiagnostico, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
+        .addComponent(jLabel12)
         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-        .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-          .addGroup(jPanel3Layout.createSequentialGroup()
-            .addComponent(jLabel13)
-            .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-            .addComponent(comboAccion, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-            .addGap(0, 0, Short.MAX_VALUE))
-          .addComponent(jScrollPane3))
+        .addComponent(jScrollPane2, javax.swing.GroupLayout.DEFAULT_SIZE, 86, Short.MAX_VALUE)
         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-        .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-          .addGroup(jPanel3Layout.createSequentialGroup()
-            .addComponent(jLabel15)
-            .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-            .addComponent(ComboDescripcion, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-          .addComponent(jScrollPane4))
+        .addComponent(jLabel13)
+        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+        .addComponent(jScrollPane3, javax.swing.GroupLayout.DEFAULT_SIZE, 77, Short.MAX_VALUE)
+        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+        .addComponent(jLabel15)
+        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+        .addComponent(jScrollPane4, javax.swing.GroupLayout.DEFAULT_SIZE, 100, Short.MAX_VALUE)
         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
         .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-          .addComponent(comboOperatividad, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-          .addComponent(jLabel14, javax.swing.GroupLayout.PREFERRED_SIZE, 20, javax.swing.GroupLayout.PREFERRED_SIZE))
+          .addComponent(jLabel14, javax.swing.GroupLayout.PREFERRED_SIZE, 20, javax.swing.GroupLayout.PREFERRED_SIZE)
+          .addComponent(comboOperatividad, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
         .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-          .addComponent(txtCredenciales, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-          .addComponent(jLabel16, javax.swing.GroupLayout.PREFERRED_SIZE, 20, javax.swing.GroupLayout.PREFERRED_SIZE))
+          .addComponent(jLabel16, javax.swing.GroupLayout.PREFERRED_SIZE, 20, javax.swing.GroupLayout.PREFERRED_SIZE)
+          .addComponent(txtCredenciales, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
         .addContainerGap())
     );
 
@@ -558,11 +493,11 @@ public class TemplatePanel extends javax.swing.JPanel {
       jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
       .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
         .addGap(0, 0, 0)
-        .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 411, Short.MAX_VALUE))
+        .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 579, Short.MAX_VALUE))
     );
     jPanel1Layout.setVerticalGroup(
       jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-      .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 465, Short.MAX_VALUE)
+      .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 579, Short.MAX_VALUE)
     );
 
     jTabbedPane1.addTab("PLANTILA GENERADA", jPanel1);
@@ -588,14 +523,14 @@ public class TemplatePanel extends javax.swing.JPanel {
       jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
       .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel2Layout.createSequentialGroup()
         .addContainerGap()
-        .addComponent(jScrollPane6, javax.swing.GroupLayout.DEFAULT_SIZE, 391, Short.MAX_VALUE)
+        .addComponent(jScrollPane6, javax.swing.GroupLayout.DEFAULT_SIZE, 559, Short.MAX_VALUE)
         .addContainerGap())
     );
     jPanel2Layout.setVerticalGroup(
       jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
       .addGroup(jPanel2Layout.createSequentialGroup()
         .addContainerGap()
-        .addComponent(jScrollPane6, javax.swing.GroupLayout.DEFAULT_SIZE, 443, Short.MAX_VALUE)
+        .addComponent(jScrollPane6, javax.swing.GroupLayout.DEFAULT_SIZE, 557, Short.MAX_VALUE)
         .addContainerGap())
     );
 
@@ -737,7 +672,7 @@ public class TemplatePanel extends javax.swing.JPanel {
             .addComponent(txtSearchLista, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
           .addComponent(btnSearch, javax.swing.GroupLayout.PREFERRED_SIZE, 48, javax.swing.GroupLayout.PREFERRED_SIZE))
         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-        .addComponent(jScrollPane5, javax.swing.GroupLayout.DEFAULT_SIZE, 144, Short.MAX_VALUE)
+        .addComponent(jScrollPane5, javax.swing.GroupLayout.DEFAULT_SIZE, 258, Short.MAX_VALUE)
         .addContainerGap())
     );
 
@@ -749,7 +684,7 @@ public class TemplatePanel extends javax.swing.JPanel {
       jPanel8Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
       .addGroup(jPanel8Layout.createSequentialGroup()
         .addContainerGap()
-        .addComponent(jTabbedPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 416, Short.MAX_VALUE)
+        .addComponent(jTabbedPane1)
         .addContainerGap())
     );
     jPanel8Layout.setVerticalGroup(
@@ -770,7 +705,7 @@ public class TemplatePanel extends javax.swing.JPanel {
       jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
       .addGroup(jPanel4Layout.createSequentialGroup()
         .addContainerGap()
-        .addComponent(jSplitPane3, javax.swing.GroupLayout.DEFAULT_SIZE, 980, Short.MAX_VALUE)
+        .addComponent(jSplitPane3)
         .addContainerGap())
     );
     jPanel4Layout.setVerticalGroup(
@@ -881,54 +816,6 @@ public class TemplatePanel extends javax.swing.JPanel {
   private void txtValorKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txtValorKeyReleased
       activeButtonsListas();
   }//GEN-LAST:event_txtValorKeyReleased
-
-  private void comboRaizalItemStateChanged(java.awt.event.ItemEvent evt) {//GEN-FIRST:event_comboRaizalItemStateChanged
-      if (comboRaizal.getSelectedIndex() != -1) {
-          String aValue = comboRaizal.getSelectedItem().toString();
-          if (aValue.length() != 0 && aValue.contains("\n")) {
-              aValue = aValue.substring(0, aValue.indexOf("\n"));
-              txtRaizal.setText(aValue);
-          } else {
-              txtRaizal.setText(aValue);
-          }
-      }
-  }//GEN-LAST:event_comboRaizalItemStateChanged
-
-  private void comboDiagnosticoItemStateChanged(java.awt.event.ItemEvent evt) {//GEN-FIRST:event_comboDiagnosticoItemStateChanged
-      if (comboDiagnostico.getSelectedIndex() != -1) {
-          String aValue = comboDiagnostico.getSelectedItem().toString();
-          if (aValue.length() != 0 && aValue.contains("\n")) {
-              aValue = aValue.substring(aValue.indexOf("\n"), aValue.length());
-              txtDiagnostico.setText(aValue);
-          } else {
-              txtDiagnostico.setText(aValue);
-          }
-      }
-  }//GEN-LAST:event_comboDiagnosticoItemStateChanged
-
-  private void comboAccionItemStateChanged(java.awt.event.ItemEvent evt) {//GEN-FIRST:event_comboAccionItemStateChanged
-      if (comboAccion.getSelectedIndex() != -1) {
-          String aValue = comboAccion.getSelectedItem().toString();
-          if (aValue.length() != 0 && aValue.contains("\n")) {
-              aValue = aValue.substring(aValue.indexOf("\n"), aValue.length());
-              txtAccion.setText(aValue);
-          } else {
-              txtAccion.setText(aValue);
-          }
-      }
-  }//GEN-LAST:event_comboAccionItemStateChanged
-
-  private void ComboDescripcionItemStateChanged(java.awt.event.ItemEvent evt) {//GEN-FIRST:event_ComboDescripcionItemStateChanged
-      if (ComboDescripcion.getSelectedIndex() != -1) {
-          String aValue = ComboDescripcion.getSelectedItem().toString();
-          if (aValue.length() != 0 && aValue.contains("\n")) {
-              aValue = aValue.substring(aValue.indexOf("\n"), aValue.length());
-              txtDescripcion.setText(aValue);
-          } else {
-              txtDescripcion.setText(aValue);
-          }
-      }
-  }//GEN-LAST:event_ComboDescripcionItemStateChanged
 
     private void btnUpdateTemplateActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnUpdateTemplateActionPerformed
         currentTemplate.setAgrupador(comboAgrupador.getSelectedItem().toString());
@@ -1056,19 +943,14 @@ public class TemplatePanel extends javax.swing.JPanel {
         txtRaizal.setText("");
         comboEstado.setSelectedIndex(-1);
         comboResponsable.setSelectedIndex(-1);
-        txtDiagnostico.setText("");
-        comboDiagnostico.setSelectedIndex(-1);
-        txtAccion.setText("");
-        comboAccion.setSelectedIndex(-1);
-        txtDescripcion.setText("");
-        ComboDescripcion.setSelectedIndex(-1);
-        comboOperatividad.setSelectedIndex(-1);
-        comboRaizal.setSelectedIndex(-1);
+        txtDiagnostico.setText("");        
+        txtAccion.setText("");        
+        txtDescripcion.setText("");        
+        comboOperatividad.setSelectedIndex(-1);        
         txtCredenciales.setText("");
     }
 
   // Variables declaration - do not modify//GEN-BEGIN:variables
-  private javax.swing.JComboBox<String> ComboDescripcion;
   private javax.swing.JButton btnClearLista;
   private javax.swing.JButton btnClearSearch;
   private javax.swing.JButton btnClearTemplate;
@@ -1079,14 +961,11 @@ public class TemplatePanel extends javax.swing.JPanel {
   private javax.swing.JButton btnSearch;
   private javax.swing.JButton btnUpdateLista;
   private javax.swing.JButton btnUpdateTemplate;
-  private javax.swing.JComboBox<String> comboAccion;
   private javax.swing.JComboBox<String> comboAgrupador;
   private javax.swing.JComboBox<String> comboCausa;
-  private javax.swing.JComboBox<String> comboDiagnostico;
   private javax.swing.JComboBox<String> comboEstado;
   private javax.swing.JComboBox<String> comboOperatividad;
   private javax.swing.JComboBox<String> comboProceso;
-  private javax.swing.JComboBox<String> comboRaizal;
   private javax.swing.JComboBox<String> comboResponsable;
   private javax.swing.JComboBox<String> comboTipoLista;
   private javax.swing.JLabel jLabel1;
