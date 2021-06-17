@@ -43,7 +43,7 @@ public class PanelHomologations extends javax.swing.JPanel {
 
     private void searchCoreToEcosystemHomologations() {
         HomologationTypeEnum homologationType = HomologationTypeEnum.valueOf(comboHomologCoreEcoType.getSelectedItem().toString());
-        String valueToSearch = txtSearchHomologCoreEco.getText();
+        String valueToSearch = txtSearchHomologCoreEco.getText().trim();
         coreToGeneralList = coreToGeneralController.executeSearchHomologations(valueToSearch, homologationType, txtResultQueryHomologCoreEcosystem);
         tableHomologCoreEcosystem.setModel(aTableController.createModel(coreToGeneralList.toArray(), GwHomologCoreToGeneral.columNames()));
         TableController.cofigureSizeColumns(tableHomologCoreEcosystem, GwHomologCoreToGeneral.columNames());
@@ -51,7 +51,7 @@ public class PanelHomologations extends javax.swing.JPanel {
 
     private void searchEcosystemToCoreHomologations() {
         HomologationTypeEnum homologationType = HomologationTypeEnum.valueOf(comboHomologEcoCoreType.getSelectedItem().toString());
-        String valueToSearch = txtSearchHomologEcoCore.getText();
+        String valueToSearch = txtSearchHomologEcoCore.getText().trim();
         generalToCoreList = generalToCoreController.executeSearchHomologations(valueToSearch, homologationType, txtResultQueryHomologEcosystemCore);
 
         tableHomologEcosystemCore.setModel(aTableController.createModel(generalToCoreList.toArray(), GwHomologGeneralToCore.columNames()));
@@ -59,7 +59,7 @@ public class PanelHomologations extends javax.swing.JPanel {
     }
 
     private void searchEcosystemCoverages() {
-        String valueToSearch = txtSearchEcosystemCoverage.getText();
+        String valueToSearch = txtSearchEcosystemCoverage.getText().trim();
         ecosystemCoverageList = ecosystemCoveragesController.executeSearchEcosystemCoverages(valueToSearch, txtResultQueryEcosystemCoverages);
 
         tableEcosystemCoverages.setModel(aTableController.createModel(ecosystemCoverageList.toArray(), GwEcosystemCoverages.columNames()));
