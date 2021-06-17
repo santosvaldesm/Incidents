@@ -44,16 +44,16 @@ public class DialogGeneratePolicyQuery extends javax.swing.JDialog {
 
 	private void generateQueryBeneficiarios() {
 		String out = IncidentsUtil.getText("ConsultaPolizaBeneficiarios");
-		out = out.replaceAll("NUM_POLIZA",txtPolicyNumber.getText());
-		out = out.replaceAll("NUM_RIESGO",txtRiskNumber.getText());
+		out = out.replaceAll("NUM_POLIZA",txtPolicyNumber.getText().trim());
+		out = out.replaceAll("NUM_RIESGO",txtRiskNumber.getText().trim());
 		outputTxt.setText(out);
 		outputTxt.setCaretPosition(0);		
 	}
 
 	private void generateQueryCoaseguradores() {
 		String out = IncidentsUtil.getText("ConsultaPolizaCoaseguradores");
-		out = out.replaceAll("NUM_POLIZA",txtPolicyNumber.getText());		
-		out = out.replaceAll("NUM_RIESGO",txtRiskNumber.getText());
+		out = out.replaceAll("NUM_POLIZA",txtPolicyNumber.getText().trim());		
+		out = out.replaceAll("NUM_RIESGO",txtRiskNumber.getText().trim());
 		out = out.replaceAll("INITIAL_DATE",aYear + "/" + aMonth + "/" + aDay);
 		outputTxt.setText(out);
 		outputTxt.setCaretPosition(0);
@@ -61,38 +61,38 @@ public class DialogGeneratePolicyQuery extends javax.swing.JDialog {
 
 	private void generateCommonQueries() {
 		String out = IncidentsUtil.getText("ConsultaPolizaConsultasComunes");
-		out = out.replaceAll("NUM_POLIZA",txtPolicyNumber.getText());		
-		out = out.replaceAll("NUM_RIESGO",txtRiskNumber.getText());
+		out = out.replaceAll("NUM_POLIZA",txtPolicyNumber.getText().trim());		
+		out = out.replaceAll("NUM_RIESGO",txtRiskNumber.getText().trim());
 		out = out.replaceAll("INITIAL_DATE",aYear + "/" + aMonth + "/" + aDay);
-		out = out.replaceAll("NUM_RIESGO",txtRiskNumber.getText());
+		out = out.replaceAll("NUM_RIESGO",txtRiskNumber.getText().trim());
 		outputTxt.setText(out);
 		outputTxt.setCaretPosition(0);
 	}
 
 	private void generateQueryCoberturas() {
 		String out = IncidentsUtil.getText("ConsultaPolizaCobertura");
-		out = out.replaceAll("NUM_POLIZA",txtPolicyNumber.getText());		
-		out = out.replaceAll("NUM_RIESGO",txtRiskNumber.getText());
+		out = out.replaceAll("NUM_POLIZA",txtPolicyNumber.getText().trim());		
+		out = out.replaceAll("NUM_RIESGO",txtRiskNumber.getText().trim());
 		out = out.replaceAll("INITIAL_DATE",aYear + "-" + aMonth + "-" + aDay);
-		out = out.replaceAll("NUM_RIESGO",txtRiskNumber.getText());
+		out = out.replaceAll("NUM_RIESGO",txtRiskNumber.getText().trim());
 		outputTxt.setText(out);
 		outputTxt.setCaretPosition(0);		
 	}
 
 	private void generateQueryDirecciones() {
 		String out = IncidentsUtil.getText("ConsultaPolizaDirecciones");
-		out = out.replaceAll("TIPO_NUM_IDENTIFICACION",txtIdentification.getText());		
+		out = out.replaceAll("TIPO_NUM_IDENTIFICACION",txtIdentification.getText().trim());		
 		outputTxt.setText(out);
 		outputTxt.setCaretPosition(0);				
 	}
 
 	private void generateQueryTerminos() {
 		String out = IncidentsUtil.getText("ConsultaPolizaTerminos");
-		out = out.replaceAll("NUM_POLIZA",txtPolicyNumber.getText());		
-		out = out.replaceAll("NUM_RIESGO",txtRiskNumber.getText());
+		out = out.replaceAll("NUM_POLIZA",txtPolicyNumber.getText().trim());		
+		out = out.replaceAll("NUM_RIESGO",txtRiskNumber.getText().trim());
 		out = out.replaceAll("INITIAL_DATE",aYear + "-" + aMonth + "-" + aDay);
-		out = out.replaceAll("NUM_RIESGO",txtRiskNumber.getText());
-		out = out.replaceAll("HOMOLOGACION_COBERTURA",txtHomologation.getText());
+		out = out.replaceAll("NUM_RIESGO",txtRiskNumber.getText().trim());
+		out = out.replaceAll("HOMOLOGACION_COBERTURA",txtHomologation.getText().trim());
 		outputTxt.setText(out);
 		outputTxt.setCaretPosition(0);
 	}
