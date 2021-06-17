@@ -90,7 +90,7 @@ public class DialogGeneratePolicyQuery extends javax.swing.JDialog {
 		String out = IncidentsUtil.getText("ConsultaPolizaTerminos");
 		out = out.replaceAll("NUM_POLIZA",txtPolicyNumber.getText().trim());		
 		out = out.replaceAll("NUM_RIESGO",txtRiskNumber.getText().trim());
-		out = out.replaceAll("INITIAL_DATE",aYear + "-" + aMonth + "-" + aDay);
+		out = out.replaceAll("INITIAL_DATE",aYear + "-" + aMonth + "-" + aDay );
 		out = out.replaceAll("NUM_RIESGO",txtRiskNumber.getText().trim());
 		out = out.replaceAll("HOMOLOGACION_COBERTURA",txtHomologation.getText().trim());
 		outputTxt.setText(out);
