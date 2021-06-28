@@ -154,26 +154,18 @@ function claimValidations(aClaim : entity.Claim) {
 function policyVerifiedValidation(aPolicy : entity.Policy) {
   if (not aPolicy.Verified) {
     var aClaim = aPolicy.Claim
-    if (gw.api.snapshot.ClaimSnapshotUtil.hasSnapshot(aClaim)) {
-      var aSnapshot = gw.api.snapshot.ClaimSnapshotUtil.getSnapshot(aClaim) as snapshot.v800.Claim
-
-      var aNewLossDate = aClaim.LossDate
-      var anOldLossDate = _sdf.parse(util.Snapshot.renderValue(util.Snapshot.getPropertyValue(aSnapshot, "LossDate")))
-      var anEffectiveDate = aPolicy.EffectiveDate
-      var anExpirationDate = aPolicy.ExpirationDate
-      _strResult = _strResult + "Poliza no verificada - Fechas: " +
-                    "Antes("  + _sdf2.format(anOldLossDate) + ") " +
-                    "Ahora("    + _sdf2.format(aNewLossDate) + ") " +
-                    "Vigencia(" + _sdf2.format(anEffectiveDate) +
-                    " a "       + _sdf2.format(anExpirationDate) + ") - "
-      if (aNewLossDate.afterOrEqual(anEffectiveDate) and aNewLossDate.beforeOrEqual(anExpirationDate)) {
-        _strResult = _strResult + " Verificar momentaneamente, "
-      } else {
-        _strResult = _strResult + " Cambio NO valido, "
-      }
-    }
-    else {
-      _strResult = _strResult + "Poliza no verificada, "
+    var aNewLossDate = aClaim.LossDate
+    var anEffectiveDate = aPolicy.EffectiveDate
+    var anExpirationDate = aPolicy.ExpirationDate
+    _strResult = _strResult +
+                  "Poliza no verificada: " +
+                  "Fecha actual("    + _sdf2.format(aNewLossDate) + ") " +
+                  "Vigencia(" + _sdf2.format(anEffectiveDate) +
+                  " a "       + _sdf2.format(anExpirationDate) + ") - "
+    if (aNewLossDate.afterOrEqual(anEffectiveDate) and aNewLossDate.beforeOrEqual(anExpirationDate)) {
+      _strResult = _strResult + " Verificar momentaneamente, "
+    } else {
+      _strResult = _strResult + " Cambio NO valido, "
     }
   }
 }
