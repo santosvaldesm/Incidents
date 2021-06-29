@@ -69,7 +69,7 @@ function evaluateMessages(messages : IQueryBeanResult<entity.Message>,statusMess
               aMessage.Claim.ClaimNumber,
               getErrorDescriptor(aMessage.ErrorDescription),
               aMessage.PublicID,
-              (statusMessage == 1 ? "Con Error" : "Sin enviar")
+              (statusMessage == 1 ? "Sin enviar" : "Con Error")
           })
           break
       case 1 :
@@ -82,7 +82,8 @@ function evaluateMessages(messages : IQueryBeanResult<entity.Message>,statusMess
               aMessage.Claim.ClaimNumber,
               getErrorDescriptor(aMessage.ErrorDescription),
               aMessage.PublicID,
-              (statusMessage == 1 ? "Con Error" : "Sin enviar")})
+              (statusMessage == 1 ? "Sin enviar" : "Con Error")
+          })
           break
       case 3 :
           var aPayload = getPayload(aMessage)
@@ -94,11 +95,13 @@ function evaluateMessages(messages : IQueryBeanResult<entity.Message>,statusMess
               aMessage.Claim.ClaimNumber,
               getErrorDescriptor(aMessage.ErrorDescription),
               aMessage.PublicID,
-              (statusMessage == 1 ? "Con Error" : "Sin enviar")})
+              (statusMessage == 1 ? "Sin enviar" : "Con Error")
+          })
           break
     }
   }
 }
+
 /**/
 function getPayload(aMessage : entity.Message) : String {
   var envelopDTO = Envelope.parse(aMessage.Payload)
