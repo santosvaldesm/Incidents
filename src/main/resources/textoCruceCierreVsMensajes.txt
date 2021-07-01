@@ -460,12 +460,13 @@ function processInformation() {
     var claimNumber = convertToString(inconsistency[3])
     var currency    = inconsistency[5]
     var status      = inconsistency[6]
-    var value100GW  = convertToNumber(inconsistency[7])
-    var reinsGW     = convertToNumber(inconsistency[8])
-    var value100SAP = convertToNumber(inconsistency[9])
-    var reinsSAP    = convertToNumber(inconsistency[10])
-    var dif100      = convertToNumber(inconsistency[11])
-    var difReins    = convertToNumber(inconsistency[12])
+    var dateGW      = inconsistency[7]
+    var value100GW  = convertToNumber(inconsistency[8])
+    var reinsGW     = convertToNumber(inconsistency[9])
+    var value100SAP = convertToNumber(inconsistency[10])
+    var reinsSAP    = convertToNumber(inconsistency[11])
+    var dif100      = convertToNumber(inconsistency[12])
+    var difReins    = convertToNumber(inconsistency[13])
 
     errorInformeSAP(reference)
     reaseguroDetalladoDuplicado(reinsGW,reinsSAP)

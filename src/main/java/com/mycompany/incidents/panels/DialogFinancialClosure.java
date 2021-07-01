@@ -16,6 +16,7 @@ import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.sql.SQLException;
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -80,7 +81,8 @@ public class DialogFinancialClosure extends javax.swing.JDialog implements Runna
 	XSSFCellStyle headerStyle;
 	XSSFCellStyle cellStyle;
 	XSSFCellStyle cellStyleGray;
-
+	
+	boolean crueSinRamo = true;
 
 	public DialogFinancialClosure(java.awt.Frame parent, boolean modal) {
 		super(parent, modal);
@@ -383,7 +385,7 @@ public class DialogFinancialClosure extends javax.swing.JDialog implements Runna
 		XSSFSheet sheetScript = anExcelWorbook.createSheet("SCRIPT");		
 		String[] headerPagSalv       = new String[]{"Ramo","Moneda","Valor GW","Reaseguro GW","Valor SAP","Reaseguro SAP","Dif. Valor GW-SAP","Dif. Reaseguro GW-SAP"};
 		String[] headerReserva    = new String[]{"Ramo","Moneda","Valor GW","Gastos GW","Reaseguro GW","Valor SAP","Gastos SAP","Reaseguro SAP","Dif. Valor GW-SAP","Dif. Gastos GW-SAP","Dif. Reaseguro GW-SAP"};		
-		String[] headerInconsistences   = new String[]{"ID","TIPO ERROR","REFERENCIA","RAMO","CLAIM NUMBER","POLCY NUMBER","MONEDA","ESTADO","VALOR 100 GW","REAS GW","VALOR 100 SAP","REAS SAP","DIF 100","DIF REAS","DETALLE"};		
+		String[] headerInconsistences   = new String[]{"ID","TIPO ERROR","REFERENCIA","RAMO","CLAIM NUMBER","POLCY NUMBER","MONEDA","ESTADO","FECHA","VALOR 100 GW","REAS GW","VALOR 100 SAP","REAS SAP","DIF 100","DIF REAS","DETALLE"};		
 		
 		insertDataInExcel(sheetPago,headerPagSalv,"PAGO");
 		insertDataInExcel(sheetReserva,headerReserva,"RESERVA");
@@ -417,8 +419,13 @@ public class DialogFinancialClosure extends javax.swing.JDialog implements Runna
 			String aReference = "";
 			if(anInconsistence[1]!=null &&
 				 anInconsistence[1].length()!=0 &&
-				 !anInconsistence[1].equals("null")){
-				aReference = anInconsistence[1].substring(0,anInconsistence[1].indexOf("-"));
+				 !anInconsistence[1].equals("null")){						
+				if(crueSinRamo){
+					aReference = anInconsistence[1];
+				}
+				else{
+					aReference = anInconsistence[1].substring(0,anInconsistence[1].indexOf("-"));
+				}
 			}
 			String aType = anInconsistence[0].substring(0,anInconsistence[0].indexOf(" "));
 			references = references + "  arrayResult.add({"
@@ -434,7 +441,8 @@ public class DialogFinancialClosure extends javax.swing.JDialog implements Runna
 							+ "\"" + anInconsistence[9] + "\","
 							+ "\"" + anInconsistence[10] + "\","
 							+ "\"" + anInconsistence[11] + "\","
-							+ "\"" + anInconsistence[12] + "\""
+							+ "\"" + anInconsistence[12] + "\","
+							+ "\"" + anInconsistence[13] + "\""
 							+ "})\n";
 		}
 		aScript = aScript.replace("  arrayResult.add({\"X\",\"Y\",\"Z\"})", references);
@@ -604,12 +612,19 @@ public class DialogFinancialClosure extends javax.swing.JDialog implements Runna
 		String[] rowInfoSplit = rowInfo.split(";");
 		FinalReportDTO aDTO = new FinalReportDTO();
 		aDTO.setOrigen(columnIdentifiers.get(0).toString());
-		aDTO.setTipo(columnIdentifiers.get(1).toString());
+		aDTO.setTipo(columnIdentifiers.get(1).toString());		
 		aDTO.setRamo(IncidentsUtil.determineStringValue(columnIdentifiers.get(4), rowInfoSplit));
-		String referencia = determineReferenceValue(columnIdentifiers.get(5), rowInfoSplit);
-		String clave = referencia == null ? null
+		String referencia = determineReferenceValue(columnIdentifiers.get(5), rowInfoSplit);		
+		String transactionTime = IncidentsUtil.determineStringValue(columnIdentifiers.get(10), rowInfoSplit);		
+		String clave = "";
+		if(crueSinRamo){
+			clave = referencia;
+		}
+		else{
+		 clave = referencia == null ? null
 						: //Si no tiene referencia, la clave queda null 
 						referencia.toLowerCase() + "-" + aDTO.getRamo();  //si hay referencia la clave = referencia-ramo              
+		}
 		aDTO.setValorCien(IncidentsUtil.determineDoubleValue(columnIdentifiers.get(6), rowInfoSplit));
 		aDTO.setValorReas(IncidentsUtil.determineDoubleValue(columnIdentifiers.get(7), rowInfoSplit));
 		aDTO.setMoneda(IncidentsUtil.determineStringValue(columnIdentifiers.get(8), rowInfoSplit).toUpperCase());
@@ -636,10 +651,11 @@ public class DialogFinancialClosure extends javax.swing.JDialog implements Runna
 			newClosure.setValorReasGw(aDTO.getValorReas());
 			newClosure.setMoneda(aDTO.getMoneda());
 			newClosure.setEstado(IncidentsUtil.determineStringValue(columnIdentifiers.get(9), rowInfoSplit));
+			newClosure.setFecha(transactionTime);
 			closureController.create(newClosure);
 		}
 	}
-
+	
 	private void updateRowInDB(String rowInfo, ArrayList<Object> columnIdentifiers) throws Exception {
 		lastRowInfo = rowInfo;
 		//Todos los registros que llegan a esta funcion seran de SAP
@@ -649,7 +665,12 @@ public class DialogFinancialClosure extends javax.swing.JDialog implements Runna
 		aDTO.setOrigen(columnIdentifiers.get(0).toString());
 		aDTO.setTipo(columnIdentifiers.get(1).toString());
 		aDTO.setRamo(IncidentsUtil.determineStringValue(columnIdentifiers.get(4), rowInfoSplit));
-		String referencia = determineReferenceValue(columnIdentifiers.get(5), rowInfoSplit).toLowerCase() + "-" + aDTO.getRamo();
+		String referencia = "";
+		if(crueSinRamo){
+			referencia = determineReferenceValue(columnIdentifiers.get(5), rowInfoSplit).toLowerCase();
+		}else{
+			referencia = determineReferenceValue(columnIdentifiers.get(5), rowInfoSplit).toLowerCase() + "-" + aDTO.getRamo();
+		}
 		aDTO.setValorCien(IncidentsUtil.determineDoubleValue(columnIdentifiers.get(6), rowInfoSplit));//sacado del excel
 		aDTO.setValorReas(IncidentsUtil.determineDoubleValue(columnIdentifiers.get(7), rowInfoSplit));//sacado del excel        
 		aDTO.setMoneda(IncidentsUtil.determineStringValue(columnIdentifiers.get(8), rowInfoSplit).toUpperCase());
@@ -728,26 +749,26 @@ public class DialogFinancialClosure extends javax.swing.JDialog implements Runna
 				//ORIGEN TIPO Claim# Poli# Ramo Ref ReseImpMD ReaImpMD  Moneda Estado
 				return new ArrayList<>(Arrays.asList("SAP", "RESERVA", null, 3, 2, 4, 5, 9, 0, null));
 			case "GW_RESERVAS.csv":
-				//ORIGEN TIPO Claim# Poli# Ramo PuIdTra VlrBruto Cedido Moneda Estado
-				return new ArrayList<>(Arrays.asList("GW", "RESERVA", 1, 3, 7, 10, 16, 13, 17, 8));
+				//ORIGEN TIPO Claim# Poli# Ramo PuIdTra VlrBruto Cedido Moneda Estado CreaTime
+				return new ArrayList<>(Arrays.asList("GW", "RESERVA", 1, 3, 7, 10, 16, 13, 17, 8, 9));
 			case "SAP_GASTOS.csv":
 				//ORIGEN TIPO Claim# Poli# Ramo Ref GtLiImpMD ReaImpMD Moneda Estado
 				return new ArrayList<>(Arrays.asList("SAP", "GASTO", null, 3, 2, 4, 7, null, 0, null));
 			case "GW_GASTOS.csv":
-				//ORIGEN TIPO Claim# Poli# Ramo Ref liqResExp VlrRea Moneda Estado
-				return new ArrayList<>(Arrays.asList("GW", "GASTO", 1, 2, 7, 11, 19, null, 14, 9));
+				//ORIGEN TIPO Claim# Poli# Ramo Ref liqResExp VlrRea Moneda Estado CreaTime
+				return new ArrayList<>(Arrays.asList("GW", "GASTO", 1, 2, 7, 11, 19, null, 14, 9,13));
 			case "SAP_PAGOS.csv":
 				//ORIGEN TIPO Claim# Poli# Ramo Ref PagImpMD  ReaImpMD Moneda Estado
 				return new ArrayList<>(Arrays.asList("SAP", "PAGO", null, 3, 2, 4, 6, 8, 0, null));
 			case "GW_PAGOS.csv":
-				//ORIGEN TIPO Claim# Poli# Ramo NumTra VlrSinCoa Cedido Moneda Estado
-				return new ArrayList<>(Arrays.asList("GW", "PAGO", 2, 3, 4, 10, 24, 14, 20, 17));
+				//ORIGEN TIPO Claim# Poli# Ramo NumTra VlrSinCoa Cedido Moneda Estado CreaTime
+				return new ArrayList<>(Arrays.asList("GW", "PAGO", 2, 3, 4, 10, 24, 14, 20, 17,18));
 			case "SAP_SALVAMENTOS.csv":
 				//ORIGEN TIPO Claim# Poli# Ramo Ref SalImpMD ReaImpMD  Moneda Estado
 				return new ArrayList<>(Arrays.asList("SAP", "SALVAMENTO", null, 3, 2, 4, 6, 8, 0, null));
 			case "GW_SALVAMENTOS.csv":
-				//ORIGEN TIPO Claim# Poli# Ramo NumTra VlrSinCoa Cedido Moneda Estado
-				return new ArrayList<>(Arrays.asList("GW", "SALVAMENTO", 1, 2, 3, 9, 19, 13, 18, 11));
+				//ORIGEN TIPO Claim# Poli# Ramo NumTra VlrSinCoa Cedido Moneda Estado CreaTime
+				return new ArrayList<>(Arrays.asList("GW", "SALVAMENTO", 1, 2, 3, 9, 19, 13, 18, 11,12));
 		}
 		return null;
 	}
@@ -832,7 +853,7 @@ public class DialogFinancialClosure extends javax.swing.JDialog implements Runna
 		
 		for (Closure aResult : resultList) {
 			int colNum = 0;
-			String[] strRow = new String[13];			
+			String[] strRow = new String[14];			
 			if(inconsistencesList.size()==inconsistencesLimit){
 				strRow[colNum]="ERROR Limite de "+ inconsistencesLimit +" se ha superado, se debe verificar informes y volver a ejectuar.";
 				inconsistencesList.add(strRow);	
@@ -850,6 +871,7 @@ public class DialogFinancialClosure extends javax.swing.JDialog implements Runna
 			strRow[colNum++] = aResult.getPolicynumber();
 			strRow[colNum++] = aResult.getMoneda();
 			strRow[colNum++] = aResult.getEstado();
+			strRow[colNum++] = aResult.getFecha();
 
 			if (tipo.equals("GASTO")) {//gasto no realiza analisis de reaseguro
 				strRow[colNum++] = IncidentsUtil.determineStringValue(aResult.getValorCienGw());
