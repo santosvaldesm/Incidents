@@ -116,7 +116,7 @@ public class DialogFinancialClosure extends javax.swing.JDialog implements Runna
 		try {
 			if (runProcess) {
 				progressTotal(100, 0);
-				crueSinRamo = checkRamo.isSelected();
+				crueSinRamo = !checkRamo.isSelected();
 				btnStart.setEnabled(false);
 				btnSelectFile.setEnabled(false);
 				spinnerLimit.setEnabled(false);
