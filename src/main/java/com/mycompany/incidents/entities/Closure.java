@@ -81,6 +81,8 @@ public class Closure implements Serializable {
   private Double diferCien;
   @Column(name = "DIFER_REAS")
   private Double diferReas;
+	@Column(name = "FECHA")
+  private String fecha;
 
   public Closure() {
   }
@@ -215,6 +217,14 @@ public class Closure implements Serializable {
 
   public void setDiferReas(Double diferReas) {
     this.diferReas = diferReas;
+  }
+	
+	public String getFecha() {
+    return fecha;
+  }
+
+  public void setFecha(String fecha) {
+    this.fecha = fecha;
   }
 
   @Override
