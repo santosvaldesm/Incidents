@@ -227,6 +227,7 @@ public class DataBaseController {
                     "        VALOR_REAS_SAP DOUBLE," +                    
                     "        MONEDA         VARCHAR(10)," +                    
                     "        ESTADO         VARCHAR(30)," +
+										"        FECHA          VARCHAR(50)," +
                     "        DIFER_CIEN     DOUBLE," +
                     "        DIFER_REAS     DOUBLE)" );  
     
