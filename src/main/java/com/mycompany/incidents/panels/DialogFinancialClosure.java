@@ -116,6 +116,7 @@ public class DialogFinancialClosure extends javax.swing.JDialog implements Runna
 		try {
 			if (runProcess) {
 				progressTotal(100, 0);
+				crueSinRamo = checkRamo.isSelected();
 				btnStart.setEnabled(false);
 				btnSelectFile.setEnabled(false);
 				spinnerLimit.setEnabled(false);
@@ -919,19 +920,22 @@ public class DialogFinancialClosure extends javax.swing.JDialog implements Runna
   // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
   private void initComponents() {
 
-    progressBar = new javax.swing.JProgressBar();
-    btnSelectFile = new javax.swing.JButton();
-    btnStart = new javax.swing.JButton();
-    labelFile = new javax.swing.JLabel();
     jScrollPane1 = new javax.swing.JScrollPane();
     outputTxt = new javax.swing.JTextArea();
-    jLabel3 = new javax.swing.JLabel();
-    jLabel4 = new javax.swing.JLabel();
-    progressBarProceso = new javax.swing.JProgressBar();
+    jPanel1 = new javax.swing.JPanel();
     spinnerMaxErrors = new javax.swing.JSpinner();
     jLabel2 = new javax.swing.JLabel();
     jLabel5 = new javax.swing.JLabel();
     spinnerLimit = new javax.swing.JSpinner();
+    btnSelectFile = new javax.swing.JButton();
+    btnStart = new javax.swing.JButton();
+    jPanel2 = new javax.swing.JPanel();
+    jLabel4 = new javax.swing.JLabel();
+    progressBar = new javax.swing.JProgressBar();
+    progressBarProceso = new javax.swing.JProgressBar();
+    jLabel3 = new javax.swing.JLabel();
+    labelFile = new javax.swing.JLabel();
+    checkRamo = new javax.swing.JCheckBox();
 
     setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
     setTitle("CIERRE FINANCIERO");
@@ -941,7 +945,15 @@ public class DialogFinancialClosure extends javax.swing.JDialog implements Runna
       }
     });
 
-    progressBar.setStringPainted(true);
+    outputTxt.setEditable(false);
+    outputTxt.setColumns(20);
+    outputTxt.setRows(5);
+    outputTxt.setName(""); // NOI18N
+    jScrollPane1.setViewportView(outputTxt);
+
+    jLabel2.setText("Limite Monetario");
+
+    jLabel5.setText("Num Max Errores");
 
     btnSelectFile.setText("Seleccionar Carpeta");
     btnSelectFile.addActionListener(new java.awt.event.ActionListener() {
@@ -957,99 +969,125 @@ public class DialogFinancialClosure extends javax.swing.JDialog implements Runna
       }
     });
 
-    outputTxt.setEditable(false);
-    outputTxt.setColumns(20);
-    outputTxt.setRows(5);
-    outputTxt.setName(""); // NOI18N
-    jScrollPane1.setViewportView(outputTxt);
-
-    jLabel3.setText("PROCESO ACTUAL: ");
-
-    jLabel4.setText("PROGRESO TOTAL: ");
-
-    progressBarProceso.setStringPainted(true);
-
-    jLabel2.setText("Limite Monetario");
-
-    jLabel5.setText("Num Max Errores");
-
-    javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
-    getContentPane().setLayout(layout);
-    layout.setHorizontalGroup(
-      layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-      .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-          .addGroup(layout.createSequentialGroup()
-            .addContainerGap()
-            .addComponent(jScrollPane1))
-          .addGroup(layout.createSequentialGroup()
-            .addGap(5, 5, 5)
-            .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-              .addGroup(layout.createSequentialGroup()
-                .addGap(5, 5, 5)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                  .addComponent(jLabel4, javax.swing.GroupLayout.DEFAULT_SIZE, 102, Short.MAX_VALUE)
-                  .addComponent(jLabel3, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                  .addComponent(progressBar, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                  .addComponent(progressBarProceso, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                .addGap(12, 12, 12)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                  .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                    .addComponent(jLabel5, javax.swing.GroupLayout.PREFERRED_SIZE, 78, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                    .addComponent(spinnerMaxErrors, javax.swing.GroupLayout.PREFERRED_SIZE, 67, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addGap(2, 2, 2))
-                  .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                    .addComponent(jLabel2)
-                    .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                    .addComponent(spinnerLimit, javax.swing.GroupLayout.PREFERRED_SIZE, 67, javax.swing.GroupLayout.PREFERRED_SIZE))))
-              .addGroup(layout.createSequentialGroup()
-                .addComponent(labelFile, javax.swing.GroupLayout.PREFERRED_SIZE, 473, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addComponent(btnSelectFile, javax.swing.GroupLayout.PREFERRED_SIZE, 159, javax.swing.GroupLayout.PREFERRED_SIZE)))
-            .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-            .addComponent(btnStart, javax.swing.GroupLayout.PREFERRED_SIZE, 86, javax.swing.GroupLayout.PREFERRED_SIZE)))
-        .addContainerGap())
-    );
-    layout.setVerticalGroup(
-      layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-      .addGroup(layout.createSequentialGroup()
+    javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
+    jPanel1.setLayout(jPanel1Layout);
+    jPanel1Layout.setHorizontalGroup(
+      jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+      .addGroup(jPanel1Layout.createSequentialGroup()
         .addContainerGap()
-        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-          .addGroup(layout.createSequentialGroup()
-            .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-              .addComponent(jLabel2, javax.swing.GroupLayout.PREFERRED_SIZE, 25, javax.swing.GroupLayout.PREFERRED_SIZE)
-              .addComponent(spinnerLimit, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-              .addComponent(progressBar, javax.swing.GroupLayout.DEFAULT_SIZE, 25, Short.MAX_VALUE)
-              .addComponent(jLabel4, javax.swing.GroupLayout.PREFERRED_SIZE, 23, javax.swing.GroupLayout.PREFERRED_SIZE))
-            .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-              .addGroup(layout.createSequentialGroup()
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 7, Short.MAX_VALUE)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                  .addComponent(jLabel3, javax.swing.GroupLayout.PREFERRED_SIZE, 23, javax.swing.GroupLayout.PREFERRED_SIZE)
-                  .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(progressBarProceso, javax.swing.GroupLayout.PREFERRED_SIZE, 24, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jLabel5)))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED))
-              .addGroup(layout.createSequentialGroup()
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(spinnerMaxErrors, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
-            .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-              .addComponent(btnSelectFile)
-              .addComponent(labelFile, javax.swing.GroupLayout.PREFERRED_SIZE, 23, javax.swing.GroupLayout.PREFERRED_SIZE)))
-          .addComponent(btnStart, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-        .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 434, Short.MAX_VALUE)
-        .addContainerGap())
+        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+          .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel1Layout.createSequentialGroup()
+              .addComponent(jLabel5, javax.swing.GroupLayout.PREFERRED_SIZE, 84, javax.swing.GroupLayout.PREFERRED_SIZE)
+              .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+              .addComponent(spinnerMaxErrors, javax.swing.GroupLayout.PREFERRED_SIZE, 67, javax.swing.GroupLayout.PREFERRED_SIZE))
+            .addGroup(jPanel1Layout.createSequentialGroup()
+              .addComponent(jLabel2, javax.swing.GroupLayout.PREFERRED_SIZE, 84, javax.swing.GroupLayout.PREFERRED_SIZE)
+              .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+              .addComponent(spinnerLimit, javax.swing.GroupLayout.PREFERRED_SIZE, 67, javax.swing.GroupLayout.PREFERRED_SIZE)))
+          .addComponent(btnSelectFile, javax.swing.GroupLayout.PREFERRED_SIZE, 155, javax.swing.GroupLayout.PREFERRED_SIZE))
+        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+        .addComponent(btnStart, javax.swing.GroupLayout.PREFERRED_SIZE, 92, javax.swing.GroupLayout.PREFERRED_SIZE)
+        .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+    );
+    jPanel1Layout.setVerticalGroup(
+      jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+      .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
+        .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+          .addGroup(jPanel1Layout.createSequentialGroup()
+            .addComponent(btnStart, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+            .addContainerGap())
+          .addGroup(jPanel1Layout.createSequentialGroup()
+            .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+              .addComponent(spinnerLimit)
+              .addComponent(jLabel2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+            .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+            .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+              .addComponent(jLabel5)
+              .addComponent(spinnerMaxErrors, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+            .addGap(9, 9, 9)
+            .addComponent(btnSelectFile)
+            .addGap(12, 12, 12))))
     );
 
     btnStart.getAccessibleContext().setAccessibleName("btnStart");
     btnStart.getAccessibleContext().setAccessibleDescription("");
 
-    setSize(new java.awt.Dimension(765, 593));
+    jLabel4.setText("PROGRESO TOTAL: ");
+
+    progressBar.setStringPainted(true);
+
+    progressBarProceso.setStringPainted(true);
+
+    jLabel3.setText("PROCESO ACTUAL: ");
+
+    checkRamo.setSelected(true);
+    checkRamo.setText("Usar Ramo");
+
+    javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(jPanel2);
+    jPanel2.setLayout(jPanel2Layout);
+    jPanel2Layout.setHorizontalGroup(
+      jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+      .addGroup(jPanel2Layout.createSequentialGroup()
+        .addContainerGap()
+        .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+          .addGroup(jPanel2Layout.createSequentialGroup()
+            .addComponent(labelFile, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+            .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+            .addComponent(checkRamo))
+          .addGroup(jPanel2Layout.createSequentialGroup()
+            .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+              .addComponent(jLabel4, javax.swing.GroupLayout.DEFAULT_SIZE, 106, Short.MAX_VALUE)
+              .addComponent(jLabel3, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+            .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+            .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+              .addComponent(progressBarProceso, javax.swing.GroupLayout.DEFAULT_SIZE, 363, Short.MAX_VALUE)
+              .addComponent(progressBar, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))))
+        .addContainerGap())
+    );
+    jPanel2Layout.setVerticalGroup(
+      jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+      .addGroup(jPanel2Layout.createSequentialGroup()
+        .addContainerGap(12, Short.MAX_VALUE)
+        .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+          .addComponent(jLabel4, javax.swing.GroupLayout.PREFERRED_SIZE, 23, javax.swing.GroupLayout.PREFERRED_SIZE)
+          .addComponent(progressBar, javax.swing.GroupLayout.PREFERRED_SIZE, 25, javax.swing.GroupLayout.PREFERRED_SIZE))
+        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+        .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+          .addComponent(progressBarProceso, javax.swing.GroupLayout.PREFERRED_SIZE, 25, javax.swing.GroupLayout.PREFERRED_SIZE)
+          .addComponent(jLabel3, javax.swing.GroupLayout.PREFERRED_SIZE, 23, javax.swing.GroupLayout.PREFERRED_SIZE))
+        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+        .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+          .addComponent(labelFile, javax.swing.GroupLayout.PREFERRED_SIZE, 23, javax.swing.GroupLayout.PREFERRED_SIZE)
+          .addComponent(checkRamo)))
+    );
+
+    javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
+    getContentPane().setLayout(layout);
+    layout.setHorizontalGroup(
+      layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+      .addGroup(layout.createSequentialGroup()
+        .addComponent(jPanel2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+        .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+      .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+        .addContainerGap()
+        .addComponent(jScrollPane1)
+        .addContainerGap())
+    );
+    layout.setVerticalGroup(
+      layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+      .addGroup(layout.createSequentialGroup()
+        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+          .addComponent(jPanel2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+          .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE))
+        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+        .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 466, Short.MAX_VALUE)
+        .addContainerGap())
+    );
+
+    setSize(new java.awt.Dimension(798, 619));
     setLocationRelativeTo(null);
   }// </editor-fold>//GEN-END:initComponents
 
@@ -1116,10 +1154,13 @@ public class DialogFinancialClosure extends javax.swing.JDialog implements Runna
   // Variables declaration - do not modify//GEN-BEGIN:variables
   private javax.swing.JButton btnSelectFile;
   private javax.swing.JButton btnStart;
+  private javax.swing.JCheckBox checkRamo;
   private javax.swing.JLabel jLabel2;
   private javax.swing.JLabel jLabel3;
   private javax.swing.JLabel jLabel4;
   private javax.swing.JLabel jLabel5;
+  private javax.swing.JPanel jPanel1;
+  private javax.swing.JPanel jPanel2;
   private javax.swing.JScrollPane jScrollPane1;
   private javax.swing.JLabel labelFile;
   private javax.swing.JTextArea outputTxt;
