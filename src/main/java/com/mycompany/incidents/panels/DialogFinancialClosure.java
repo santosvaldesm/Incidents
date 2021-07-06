@@ -469,7 +469,7 @@ public class DialogFinancialClosure extends javax.swing.JDialog implements Runna
 			anInconsistence = (String[])ArrayUtils.addAll(ar1, anInconsistence);
 			for(String aValue : anInconsistence){
 				XSSFCellStyle aStyle;
-				if(colPosition==0 || colPosition==1 || colPosition==12 || colPosition==13){
+				if(colPosition==0 || colPosition==1 || colPosition==13 || colPosition==14){
 					aStyle = cellStyleGray;
 				}else{
 					aStyle = cellStyle;
