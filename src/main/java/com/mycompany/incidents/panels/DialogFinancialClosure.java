@@ -108,6 +108,7 @@ public class DialogFinancialClosure extends javax.swing.JDialog implements Runna
 		ommitedStatus.put("En espera de envío",true);
 		ommitedStatus.put("Solicitando",true);
 		ommitedStatus.put("Rechazado",true);
+		ommitedStatus.put("Denegada",true);//Estado que aparece al anular pago en espera de procesamiento		
 	}
 
 	@Override
