@@ -134,5 +134,24 @@ public class TemplateJpaController implements Serializable {
             em.close();
         }
     }
+		
+	public List<Template> executeSearchLista(String valor){
+						
+    String hql = "SELECT t FROM Template t ";                   
+    if(!valor.trim().isEmpty()){          
+      hql = hql + "WHERE lower(t.raizal) LIKE lower(CONCAT('%',:valor,'%'))";  
+			hql = hql + " OR lower(t.diagnostico) LIKE lower(CONCAT('%',:valor,'%'))";  
+			hql = hql + " OR lower(t.accion) LIKE lower(CONCAT('%',:valor,'%'))";  
+			hql = hql + " OR lower(t.descripcion) LIKE lower(CONCAT('%',:valor,'%'))";  
+
+    }  
+    hql = hql + " ORDER BY t.raizal DESC";
+    EntityManager em = getEntityManager();
+    Query aQuery = em.createQuery(hql, Template.class);
+    if(hql.contains("WHERE")){
+      aQuery.setParameter("valor",valor);
+    }
+    return aQuery.getResultList();
+  }
     
 }

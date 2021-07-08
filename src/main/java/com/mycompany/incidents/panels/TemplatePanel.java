@@ -175,13 +175,12 @@ public class TemplatePanel extends javax.swing.JPanel {
     }
 
     private void searchTemplates() {
-
-        List<Template> noteList = templateController.findTemplateEntities();
-        tableTemplates.setModel(aTableController.createModel(noteList.toArray(), Template.columNames()));
-        TableController.cofigureSizeColumns(tableTemplates, Template.columNames());
-        currentTemplate = null;
-        limpiarTodo();
-        activeButtonsTemplate();
+			List<Template> templatesList = templateController.executeSearchLista(txtSearchTemplate.getText());
+			tableTemplates.setModel(aTableController.createModel(templatesList.toArray(), Template.columNames()));
+			TableController.cofigureSizeColumns(tableTemplates, Template.columNames());
+			currentTemplate = null;
+			limpiarTodo();
+			activeButtonsTemplate();
     }
 
     @SuppressWarnings("unchecked")
@@ -223,11 +222,13 @@ public class TemplatePanel extends javax.swing.JPanel {
     jPanel8 = new javax.swing.JPanel();
     jTabbedPane1 = new javax.swing.JTabbedPane();
     jPanel1 = new javax.swing.JPanel();
-    jScrollPane1 = new javax.swing.JScrollPane();
-    txtOuput = new javax.swing.JTextPane();
-    jPanel2 = new javax.swing.JPanel();
     jScrollPane6 = new javax.swing.JScrollPane();
     tableTemplates = new javax.swing.JTable();
+    jScrollPane1 = new javax.swing.JScrollPane();
+    txtOuput = new javax.swing.JTextPane();
+    txtSearchTemplate = new javax.swing.JTextField();
+    btnSearchTemplate = new javax.swing.JButton();
+    btnClearSearchTemplate = new javax.swing.JButton();
     jPanel5 = new javax.swing.JPanel();
     btnUpdateLista = new javax.swing.JButton();
     btnCreateLista = new javax.swing.JButton();
@@ -236,8 +237,8 @@ public class TemplatePanel extends javax.swing.JPanel {
     comboTipoLista = new javax.swing.JComboBox<>();
     jScrollPane7 = new javax.swing.JScrollPane();
     txtValor = new javax.swing.JTextPane();
-    btnClearSearch = new javax.swing.JButton();
-    btnSearch = new javax.swing.JButton();
+    btnClearSearchList = new javax.swing.JButton();
+    btnSearchList = new javax.swing.JButton();
     txtSearchLista = new javax.swing.JTextField();
     jScrollPane5 = new javax.swing.JScrollPane();
     tableListas = new javax.swing.JTable();
@@ -485,23 +486,6 @@ public class TemplatePanel extends javax.swing.JPanel {
 
     jSplitPane3.setLeftComponent(jPanel3);
 
-    jScrollPane1.setViewportView(txtOuput);
-
-    javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
-    jPanel1.setLayout(jPanel1Layout);
-    jPanel1Layout.setHorizontalGroup(
-      jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-      .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
-        .addGap(0, 0, 0)
-        .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 579, Short.MAX_VALUE))
-    );
-    jPanel1Layout.setVerticalGroup(
-      jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-      .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 579, Short.MAX_VALUE)
-    );
-
-    jTabbedPane1.addTab("PLANTILA GENERADA", jPanel1);
-
     tableTemplates.setModel(new javax.swing.table.DefaultTableModel(
       new Object [][] {
 
@@ -515,26 +499,70 @@ public class TemplatePanel extends javax.swing.JPanel {
         tableTemplatesMouseClicked(evt);
       }
     });
+    tableTemplates.addKeyListener(new java.awt.event.KeyAdapter() {
+      public void keyReleased(java.awt.event.KeyEvent evt) {
+        tableTemplatesKeyReleased(evt);
+      }
+    });
     jScrollPane6.setViewportView(tableTemplates);
 
-    javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(jPanel2);
-    jPanel2.setLayout(jPanel2Layout);
-    jPanel2Layout.setHorizontalGroup(
-      jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-      .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel2Layout.createSequentialGroup()
+    jScrollPane1.setViewportView(txtOuput);
+
+    txtSearchTemplate.addKeyListener(new java.awt.event.KeyAdapter() {
+      public void keyPressed(java.awt.event.KeyEvent evt) {
+        txtSearchTemplateKeyPressed(evt);
+      }
+    });
+
+    btnSearchTemplate.setText("Buscar");
+    btnSearchTemplate.setActionCommand("Buscar");
+    btnSearchTemplate.addActionListener(new java.awt.event.ActionListener() {
+      public void actionPerformed(java.awt.event.ActionEvent evt) {
+        btnSearchTemplateActionPerformed(evt);
+      }
+    });
+
+    btnClearSearchTemplate.setText("Limpiar");
+    btnClearSearchTemplate.addActionListener(new java.awt.event.ActionListener() {
+      public void actionPerformed(java.awt.event.ActionEvent evt) {
+        btnClearSearchTemplateActionPerformed(evt);
+      }
+    });
+
+    javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
+    jPanel1.setLayout(jPanel1Layout);
+    jPanel1Layout.setHorizontalGroup(
+      jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+      .addGroup(jPanel1Layout.createSequentialGroup()
         .addContainerGap()
-        .addComponent(jScrollPane6, javax.swing.GroupLayout.DEFAULT_SIZE, 559, Short.MAX_VALUE)
+        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+          .addComponent(jScrollPane6, javax.swing.GroupLayout.DEFAULT_SIZE, 559, Short.MAX_VALUE)
+          .addComponent(jScrollPane1)
+          .addGroup(jPanel1Layout.createSequentialGroup()
+            .addComponent(btnClearSearchTemplate)
+            .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+            .addComponent(txtSearchTemplate)
+            .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+            .addComponent(btnSearchTemplate)))
         .addContainerGap())
     );
-    jPanel2Layout.setVerticalGroup(
-      jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-      .addGroup(jPanel2Layout.createSequentialGroup()
+    jPanel1Layout.setVerticalGroup(
+      jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+      .addGroup(jPanel1Layout.createSequentialGroup()
         .addContainerGap()
-        .addComponent(jScrollPane6, javax.swing.GroupLayout.DEFAULT_SIZE, 557, Short.MAX_VALUE)
+        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+          .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+            .addComponent(txtSearchTemplate, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+            .addComponent(btnSearchTemplate, javax.swing.GroupLayout.PREFERRED_SIZE, 20, javax.swing.GroupLayout.PREFERRED_SIZE))
+          .addComponent(btnClearSearchTemplate, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE))
+        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+        .addComponent(jScrollPane6, javax.swing.GroupLayout.DEFAULT_SIZE, 257, Short.MAX_VALUE)
+        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+        .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 258, javax.swing.GroupLayout.PREFERRED_SIZE)
         .addContainerGap())
     );
 
-    jTabbedPane1.addTab("PLANTILLAS GUARDADAS", jPanel2);
+    jTabbedPane1.addTab("PLANTILAS", jPanel1);
 
     btnUpdateLista.setIcon(new javax.swing.ImageIcon(getClass().getResource("/save.png"))); // NOI18N
     btnUpdateLista.setToolTipText("Actualizar Nota");
@@ -582,18 +610,18 @@ public class TemplatePanel extends javax.swing.JPanel {
     });
     jScrollPane7.setViewportView(txtValor);
 
-    btnClearSearch.setText("Limpiar");
-    btnClearSearch.setToolTipText("");
-    btnClearSearch.addActionListener(new java.awt.event.ActionListener() {
+    btnClearSearchList.setText("Limpiar");
+    btnClearSearchList.setToolTipText("");
+    btnClearSearchList.addActionListener(new java.awt.event.ActionListener() {
       public void actionPerformed(java.awt.event.ActionEvent evt) {
-        btnClearSearchActionPerformed(evt);
+        btnClearSearchListActionPerformed(evt);
       }
     });
 
-    btnSearch.setIcon(new javax.swing.ImageIcon(getClass().getResource("/lupa.gif"))); // NOI18N
-    btnSearch.addActionListener(new java.awt.event.ActionListener() {
+    btnSearchList.setText("Buscar");
+    btnSearchList.addActionListener(new java.awt.event.ActionListener() {
       public void actionPerformed(java.awt.event.ActionEvent evt) {
-        btnSearchActionPerformed(evt);
+        btnSearchListActionPerformed(evt);
       }
     });
 
@@ -631,24 +659,25 @@ public class TemplatePanel extends javax.swing.JPanel {
       .addGroup(jPanel5Layout.createSequentialGroup()
         .addContainerGap()
         .addGroup(jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-          .addComponent(jScrollPane5, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE)
+          .addComponent(jScrollPane5, javax.swing.GroupLayout.DEFAULT_SIZE, 559, Short.MAX_VALUE)
           .addComponent(comboTipoLista, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
           .addComponent(jScrollPane7)
           .addGroup(jPanel5Layout.createSequentialGroup()
-            .addComponent(btnUpdateLista, javax.swing.GroupLayout.PREFERRED_SIZE, 65, javax.swing.GroupLayout.PREFERRED_SIZE)
-            .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-            .addComponent(btnCreateLista, javax.swing.GroupLayout.PREFERRED_SIZE, 62, javax.swing.GroupLayout.PREFERRED_SIZE)
-            .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-            .addComponent(btnRemoveLista, javax.swing.GroupLayout.PREFERRED_SIZE, 63, javax.swing.GroupLayout.PREFERRED_SIZE)
-            .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-            .addComponent(btnClearLista, javax.swing.GroupLayout.PREFERRED_SIZE, 59, javax.swing.GroupLayout.PREFERRED_SIZE)
-            .addGap(0, 0, Short.MAX_VALUE))
-          .addGroup(jPanel5Layout.createSequentialGroup()
             .addGroup(jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-              .addComponent(btnClearSearch)
-              .addComponent(txtSearchLista, javax.swing.GroupLayout.PREFERRED_SIZE, 217, javax.swing.GroupLayout.PREFERRED_SIZE))
-            .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-            .addComponent(btnSearch, javax.swing.GroupLayout.PREFERRED_SIZE, 69, javax.swing.GroupLayout.PREFERRED_SIZE)))
+              .addGroup(jPanel5Layout.createSequentialGroup()
+                .addComponent(btnUpdateLista, javax.swing.GroupLayout.PREFERRED_SIZE, 65, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(btnCreateLista, javax.swing.GroupLayout.PREFERRED_SIZE, 62, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(btnRemoveLista, javax.swing.GroupLayout.PREFERRED_SIZE, 63, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(btnClearLista, javax.swing.GroupLayout.PREFERRED_SIZE, 59, javax.swing.GroupLayout.PREFERRED_SIZE))
+              .addGroup(jPanel5Layout.createSequentialGroup()
+                .addComponent(btnClearSearchList)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(txtSearchLista)))
+            .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+            .addComponent(btnSearchList, javax.swing.GroupLayout.PREFERRED_SIZE, 69, javax.swing.GroupLayout.PREFERRED_SIZE)))
         .addContainerGap())
     );
     jPanel5Layout.setVerticalGroup(
@@ -665,14 +694,12 @@ public class TemplatePanel extends javax.swing.JPanel {
         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
         .addComponent(jScrollPane7, javax.swing.GroupLayout.PREFERRED_SIZE, 149, javax.swing.GroupLayout.PREFERRED_SIZE)
         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-        .addGroup(jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-          .addGroup(jPanel5Layout.createSequentialGroup()
-            .addComponent(btnClearSearch)
-            .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-            .addComponent(txtSearchLista, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-          .addComponent(btnSearch, javax.swing.GroupLayout.PREFERRED_SIZE, 48, javax.swing.GroupLayout.PREFERRED_SIZE))
+        .addGroup(jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+          .addComponent(btnSearchList, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+          .addComponent(txtSearchLista, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+          .addComponent(btnClearSearchList))
         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-        .addComponent(jScrollPane5, javax.swing.GroupLayout.DEFAULT_SIZE, 258, Short.MAX_VALUE)
+        .addComponent(jScrollPane5, javax.swing.GroupLayout.DEFAULT_SIZE, 284, Short.MAX_VALUE)
         .addContainerGap())
     );
 
@@ -752,16 +779,16 @@ public class TemplatePanel extends javax.swing.JPanel {
       }
   }//GEN-LAST:event_txtSearchListaKeyPressed
 
-  private void btnSearchActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnSearchActionPerformed
+  private void btnSearchListActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnSearchListActionPerformed
       try {
           validateChanges();
           searchListas();
       } catch (IncidentException e) {
           JOptionPane.showMessageDialog(this, e.getMessage());
       }
-  }//GEN-LAST:event_btnSearchActionPerformed
+  }//GEN-LAST:event_btnSearchListActionPerformed
 
-  private void btnClearSearchActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnClearSearchActionPerformed
+  private void btnClearSearchListActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnClearSearchListActionPerformed
       try {
           validateChanges();
           txtSearchLista.setText("");
@@ -769,7 +796,7 @@ public class TemplatePanel extends javax.swing.JPanel {
       } catch (IncidentException e) {
           JOptionPane.showMessageDialog(this, e.getMessage());
       }
-  }//GEN-LAST:event_btnClearSearchActionPerformed
+  }//GEN-LAST:event_btnClearSearchListActionPerformed
 
   private void comboTipoListaItemStateChanged(java.awt.event.ItemEvent evt) {//GEN-FIRST:event_comboTipoListaItemStateChanged
       activeButtonsListas();
@@ -871,24 +898,28 @@ public class TemplatePanel extends javax.swing.JPanel {
         searchTemplates();
     }//GEN-LAST:event_btnClearTemplateActionPerformed
 
-    private void tableTemplatesMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_tableTemplatesMouseClicked
-        int idPosition = tableTemplates.getSelectedRow();
+		private void loadTemplate(){
+			int idPosition = tableTemplates.getSelectedRow();
         if (idPosition != -1) {
-            idPosition = Integer.parseInt(tableTemplates.getModel().getValueAt(idPosition, 0).toString());
-            currentTemplate = templateController.findTemplate(idPosition);
-            comboAgrupador.setSelectedItem(currentTemplate.getAgrupador());
-            comboCausa.setSelectedItem(currentTemplate.getCausa());
-            comboProceso.setSelectedItem(currentTemplate.getProceso());
-            txtRaizal.setText(currentTemplate.getRaizal());
-            comboEstado.setSelectedItem(currentTemplate.getEstadoRaizal());
-            comboResponsable.setSelectedItem(currentTemplate.getResponsable());
-            txtDiagnostico.setText(currentTemplate.getDiagnostico());
-            txtAccion.setText(currentTemplate.getAccion());
-            txtDescripcion.setText(currentTemplate.getDescripcion());
-            comboOperatividad.setSelectedItem(currentTemplate.getOperatividad());
-            txtCredenciales.setText(currentTemplate.getCredenciales());
-        }
-        activeButtonsTemplate();
+					idPosition = Integer.parseInt(tableTemplates.getModel().getValueAt(idPosition, 0).toString());
+					currentTemplate = templateController.findTemplate(idPosition);
+					comboAgrupador.setSelectedItem(currentTemplate.getAgrupador());
+					comboCausa.setSelectedItem(currentTemplate.getCausa());
+					comboProceso.setSelectedItem(currentTemplate.getProceso());
+					txtRaizal.setText(currentTemplate.getRaizal());
+					comboEstado.setSelectedItem(currentTemplate.getEstadoRaizal());
+					comboResponsable.setSelectedItem(currentTemplate.getResponsable());
+					txtDiagnostico.setText(currentTemplate.getDiagnostico());
+					txtAccion.setText(currentTemplate.getAccion());
+					txtDescripcion.setText(currentTemplate.getDescripcion());
+					comboOperatividad.setSelectedItem(currentTemplate.getOperatividad());
+					txtCredenciales.setText(currentTemplate.getCredenciales());
+      }
+      activeButtonsTemplate();
+		}
+		
+    private void tableTemplatesMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_tableTemplatesMouseClicked
+      loadTemplate();  
     }//GEN-LAST:event_tableTemplatesMouseClicked
 
     private void comboAgrupadorItemStateChanged(java.awt.event.ItemEvent evt) {//GEN-FIRST:event_comboAgrupadorItemStateChanged
@@ -935,6 +966,25 @@ public class TemplatePanel extends javax.swing.JPanel {
          activeButtonsTemplate();
     }//GEN-LAST:event_txtCredencialesFocusLost
 
+  private void tableTemplatesKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_tableTemplatesKeyReleased
+    loadTemplate();
+  }//GEN-LAST:event_tableTemplatesKeyReleased
+
+  private void btnSearchTemplateActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnSearchTemplateActionPerformed
+    searchTemplates();
+  }//GEN-LAST:event_btnSearchTemplateActionPerformed
+
+  private void btnClearSearchTemplateActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnClearSearchTemplateActionPerformed
+    txtSearchTemplate.setText("");
+    searchTemplates();
+  }//GEN-LAST:event_btnClearSearchTemplateActionPerformed
+
+  private void txtSearchTemplateKeyPressed(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txtSearchTemplateKeyPressed
+    if (evt.getKeyCode() == KeyEvent.VK_ENTER) {
+      searchTemplates();
+    }
+  }//GEN-LAST:event_txtSearchTemplateKeyPressed
+
     private void limpiarTodo() {
         txtOuput.setText("");
         comboAgrupador.setSelectedIndex(-1);
@@ -952,13 +1002,15 @@ public class TemplatePanel extends javax.swing.JPanel {
 
   // Variables declaration - do not modify//GEN-BEGIN:variables
   private javax.swing.JButton btnClearLista;
-  private javax.swing.JButton btnClearSearch;
+  private javax.swing.JButton btnClearSearchList;
+  private javax.swing.JButton btnClearSearchTemplate;
   private javax.swing.JButton btnClearTemplate;
   private javax.swing.JButton btnCreateLista;
   private javax.swing.JButton btnCreateTemplate;
   private javax.swing.JButton btnRemoveLista;
   private javax.swing.JButton btnRemoveTemplate;
-  private javax.swing.JButton btnSearch;
+  private javax.swing.JButton btnSearchList;
+  private javax.swing.JButton btnSearchTemplate;
   private javax.swing.JButton btnUpdateLista;
   private javax.swing.JButton btnUpdateTemplate;
   private javax.swing.JComboBox<String> comboAgrupador;
@@ -980,7 +1032,6 @@ public class TemplatePanel extends javax.swing.JPanel {
   private javax.swing.JLabel jLabel5;
   private javax.swing.JLabel jLabel6;
   private javax.swing.JPanel jPanel1;
-  private javax.swing.JPanel jPanel2;
   private javax.swing.JPanel jPanel3;
   private javax.swing.JPanel jPanel4;
   private javax.swing.JPanel jPanel5;
@@ -1003,6 +1054,7 @@ public class TemplatePanel extends javax.swing.JPanel {
   private javax.swing.JTextPane txtOuput;
   private javax.swing.JTextField txtRaizal;
   private javax.swing.JTextField txtSearchLista;
+  private javax.swing.JTextField txtSearchTemplate;
   private javax.swing.JTextPane txtValor;
   // End of variables declaration//GEN-END:variables
 }
