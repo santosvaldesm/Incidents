@@ -399,16 +399,13 @@ public class ReinsurancePanel extends javax.swing.JPanel {
     jScrollPane13 = new javax.swing.JScrollPane();
     txtResultHomologation = new javax.swing.JEditorPane();
     jPanel3 = new javax.swing.JPanel();
-    jSplitPane5 = new javax.swing.JSplitPane();
-    jPanel4 = new javax.swing.JPanel();
+    brnValidateReinsurance = new javax.swing.JButton();
     jLabel1 = new javax.swing.JLabel();
     jScrollPane1 = new javax.swing.JScrollPane();
     txtPayloadReinsurance = new javax.swing.JEditorPane();
-    jPanel13 = new javax.swing.JPanel();
     jLabel2 = new javax.swing.JLabel();
     jScrollPane2 = new javax.swing.JScrollPane();
     txtResultOfValidation = new javax.swing.JTextArea();
-    brnValidateReinsurance = new javax.swing.JButton();
     jPanel6 = new javax.swing.JPanel();
     btnUpdateIncident = new javax.swing.JButton();
     btnCreateIncident = new javax.swing.JButton();
@@ -658,43 +655,6 @@ public class ReinsurancePanel extends javax.swing.JPanel {
 
     jTabbedPane2.addTab("Obtener Homologación", jPanel9);
 
-    jSplitPane5.setDividerLocation(250);
-
-    jLabel1.setText("Payload");
-
-    jScrollPane1.setViewportView(txtPayloadReinsurance);
-
-    javax.swing.GroupLayout jPanel4Layout = new javax.swing.GroupLayout(jPanel4);
-    jPanel4.setLayout(jPanel4Layout);
-    jPanel4Layout.setHorizontalGroup(
-      jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-      .addGroup(jPanel4Layout.createSequentialGroup()
-        .addContainerGap()
-        .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-          .addGroup(jPanel4Layout.createSequentialGroup()
-            .addComponent(jLabel1)
-            .addGap(0, 0, Short.MAX_VALUE))
-          .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 229, Short.MAX_VALUE))
-        .addContainerGap())
-    );
-    jPanel4Layout.setVerticalGroup(
-      jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-      .addGroup(jPanel4Layout.createSequentialGroup()
-        .addGap(18, 18, 18)
-        .addComponent(jLabel1)
-        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-        .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 475, Short.MAX_VALUE)
-        .addContainerGap())
-    );
-
-    jSplitPane5.setLeftComponent(jPanel4);
-
-    jLabel2.setText("Result");
-
-    txtResultOfValidation.setColumns(20);
-    txtResultOfValidation.setRows(5);
-    jScrollPane2.setViewportView(txtResultOfValidation);
-
     brnValidateReinsurance.setText("Validate");
     brnValidateReinsurance.addActionListener(new java.awt.event.ActionListener() {
       public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -702,33 +662,15 @@ public class ReinsurancePanel extends javax.swing.JPanel {
       }
     });
 
-    javax.swing.GroupLayout jPanel13Layout = new javax.swing.GroupLayout(jPanel13);
-    jPanel13.setLayout(jPanel13Layout);
-    jPanel13Layout.setHorizontalGroup(
-      jPanel13Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-      .addGroup(jPanel13Layout.createSequentialGroup()
-        .addContainerGap()
-        .addGroup(jPanel13Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-          .addGroup(jPanel13Layout.createSequentialGroup()
-            .addComponent(jLabel2)
-            .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-            .addComponent(brnValidateReinsurance))
-          .addComponent(jScrollPane2, javax.swing.GroupLayout.DEFAULT_SIZE, 224, Short.MAX_VALUE))
-        .addContainerGap())
-    );
-    jPanel13Layout.setVerticalGroup(
-      jPanel13Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-      .addGroup(jPanel13Layout.createSequentialGroup()
-        .addContainerGap()
-        .addGroup(jPanel13Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-          .addComponent(jLabel2)
-          .addComponent(brnValidateReinsurance))
-        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-        .addComponent(jScrollPane2, javax.swing.GroupLayout.DEFAULT_SIZE, 478, Short.MAX_VALUE)
-        .addContainerGap())
-    );
+    jLabel1.setText("Payload");
 
-    jSplitPane5.setRightComponent(jPanel13);
+    jScrollPane1.setViewportView(txtPayloadReinsurance);
+
+    jLabel2.setText("Result");
+
+    txtResultOfValidation.setColumns(20);
+    txtResultOfValidation.setRows(5);
+    jScrollPane2.setViewportView(txtResultOfValidation);
 
     javax.swing.GroupLayout jPanel3Layout = new javax.swing.GroupLayout(jPanel3);
     jPanel3.setLayout(jPanel3Layout);
@@ -736,14 +678,31 @@ public class ReinsurancePanel extends javax.swing.JPanel {
       jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
       .addGroup(jPanel3Layout.createSequentialGroup()
         .addContainerGap()
-        .addComponent(jSplitPane5)
+        .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+          .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel3Layout.createSequentialGroup()
+            .addComponent(jLabel1)
+            .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+            .addComponent(brnValidateReinsurance))
+          .addComponent(jScrollPane1)
+          .addGroup(jPanel3Layout.createSequentialGroup()
+            .addComponent(jLabel2)
+            .addGap(0, 0, Short.MAX_VALUE))
+          .addComponent(jScrollPane2, javax.swing.GroupLayout.DEFAULT_SIZE, 659, Short.MAX_VALUE))
         .addContainerGap())
     );
     jPanel3Layout.setVerticalGroup(
       jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-      .addGroup(jPanel3Layout.createSequentialGroup()
+      .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel3Layout.createSequentialGroup()
         .addContainerGap()
-        .addComponent(jSplitPane5)
+        .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+          .addComponent(brnValidateReinsurance)
+          .addComponent(jLabel1))
+        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+        .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 332, Short.MAX_VALUE)
+        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+        .addComponent(jLabel2)
+        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+        .addComponent(jScrollPane2, javax.swing.GroupLayout.DEFAULT_SIZE, 390, Short.MAX_VALUE)
         .addContainerGap())
     );
 
@@ -1217,13 +1176,11 @@ public class ReinsurancePanel extends javax.swing.JPanel {
   private javax.swing.JPanel jPanel1;
   private javax.swing.JPanel jPanel11;
   private javax.swing.JPanel jPanel12;
-  private javax.swing.JPanel jPanel13;
   private javax.swing.JPanel jPanel14;
   private javax.swing.JPanel jPanel15;
   private javax.swing.JPanel jPanel16;
   private javax.swing.JPanel jPanel17;
   private javax.swing.JPanel jPanel3;
-  private javax.swing.JPanel jPanel4;
   private javax.swing.JPanel jPanel6;
   private javax.swing.JPanel jPanel7;
   private javax.swing.JPanel jPanel8;
@@ -1244,7 +1201,6 @@ public class ReinsurancePanel extends javax.swing.JPanel {
   private javax.swing.JScrollPane jScrollPane9;
   private javax.swing.JSplitPane jSplitPane1;
   private javax.swing.JSplitPane jSplitPane4;
-  private javax.swing.JSplitPane jSplitPane5;
   private javax.swing.JTabbedPane jTabbedPane2;
   private javax.swing.JTable tableReinsurances;
   private javax.swing.JEditorPane txtPayloadReinsurance;
