@@ -16,34 +16,34 @@ import javax.swing.JOptionPane;
 import javax.swing.JTextPane;
 
 public class NotesPanel extends javax.swing.JPanel {
-  
-  TableController aTableController = new TableController();
-  EntityManagerFactory factory = Persistence.createEntityManagerFactory("Incidents_PU");  
-  NoteJpaController noteController = new NoteJpaController(factory);
-  int txtNoteId = 0;
-  Note currentNote = null;
-  TextRichHelper aTextRichHelper = null;
-  
-  public NotesPanel() {
-    initComponents();
-    activeButtons();
-    
-    aTextRichHelper = new TextRichHelper(txtNoteDescription);
-    txtNoteDescription.setStyledDocument(aTextRichHelper.doc);
-    
-    searchNotes();
-  }
-  
-  public DefaultComboBoxModel<String> getTypesOfNote(){
-    DefaultComboBoxModel<String> comboModel = new DefaultComboBoxModel<>();
-    NoteTypeEnum[] values = NoteTypeEnum.values();
-    for (NoteTypeEnum value : values) {
-      comboModel.addElement(value.toString());
-    }    
-    return comboModel;
-  }
-    
-  @SuppressWarnings("unchecked")
+
+	TableController aTableController = new TableController();
+	EntityManagerFactory factory = Persistence.createEntityManagerFactory("Incidents_PU");
+	NoteJpaController noteController = new NoteJpaController(factory);
+	int txtNoteId = 0;
+	Note currentNote = null;
+	TextRichHelper aTextRichHelper = null;
+
+	public NotesPanel() {
+		initComponents();
+		activeButtons();
+
+		aTextRichHelper = new TextRichHelper(txtNoteDescription);
+		txtNoteDescription.setStyledDocument(aTextRichHelper.doc);
+
+		searchNotes();
+	}
+
+	public DefaultComboBoxModel<String> getTypesOfNote() {
+		DefaultComboBoxModel<String> comboModel = new DefaultComboBoxModel<>();
+		NoteTypeEnum[] values = NoteTypeEnum.values();
+		for (NoteTypeEnum value : values) {
+			comboModel.addElement(value.toString());
+		}
+		return comboModel;
+	}
+
+	@SuppressWarnings("unchecked")
   // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
   private void initComponents() {
 
@@ -264,174 +264,187 @@ public class NotesPanel extends javax.swing.JPanel {
     );
   }// </editor-fold>//GEN-END:initComponents
 
-  private void searchNotes(){        
-    List<Note> noteList = noteController.executeSearchIncident(txtSearchNote.getText());        
-    tableNotes.setModel(aTableController.createModel(noteList.toArray(),Note.columNames()));        
-    TableController.cofigureSizeColumns(tableNotes,Note.columNames());
-    entityManagerNotes.clear();
-    currentNote = null;          
-    clearNoteControls();
-    activeButtons();
-    setSearchActions();
-  }
-  
-  private void setSearchActions() {
-    txtSearchedText.setText(txtSearchNote.getText());
-    aTextRichHelper.searchedText = aTextRichHelper.normalizeText(txtSearchedText.getText());
-    aTextRichHelper.applyStyles();
-  }
-  
-  private void clearNoteControls(){
-      txtNoteDescription.setText("");
-      txtNoteTitle.setText("");
-  }
-       
-  private void activeButtons() {
-    btnCreateIncident.setEnabled(false);        
-    btnUpdateIncident.setEnabled(false);        
-    btnRemoveIncident.setEnabled(false);        
-    if(txtNoteDescription.getText().trim().length()!=0 && 
-       txtNoteTitle.getText().trim().length() != 0){
-        btnCreateIncident.setEnabled(true);
-    }        
-    if(currentNote!=null){
-        btnRemoveIncident.setEnabled(true);
-        btnUpdateIncident.setEnabled(true);            
-    }    
-  } 
-  
-  private void updateCurrentIncident() throws IncidentException {
-    if(currentNote!=null) {
-      if(txtNoteDescription.getText().length()>20000){
-        throw new IncidentException("El numero de caracteres de la descripción supera el limite de 20.000 caracteres");        
-      }
-      currentNote.setTypenote(txtNoteTitle.getText());
-      currentNote.setDescription(txtNoteDescription.getText());
-      try {
-        noteController.edit(currentNote);
-      } catch (Exception ex) {
-        throw new IncidentException("Error al editar la nota\n" + ex.getMessage());
-      }
-    }
-  }
-    
-  private void validateChanges() throws IncidentException{
-    if(currentNote!=null && 
-       currentNote.getDescription().compareTo(txtNoteDescription.getText())!=0) {
-      int result = JOptionPane.showConfirmDialog(this, "Existen cambios en la descripción, \n¿desea guardarlos?","Cambios sin guardar",JOptionPane.YES_NO_OPTION);
-      switch(result){
-        case JOptionPane.OK_OPTION:
-          updateCurrentIncident();
-          break;                
-      } 
-    }
-  }
-  
-  private void changeIncidentSelection(){
-    try {
-      validateChanges();
-      int idPosition = tableNotes.getSelectedRow();
-      if (idPosition != -1) {
-          idPosition = Integer.parseInt(tableNotes.getModel().getValueAt(idPosition,0).toString());
-          currentNote = noteController.findNote(idPosition);
-          txtNoteTitle.setText(currentNote.getTypenote());
-          txtNoteDescription.setText(currentNote.getDescription());        
-      }    
-      aTextRichHelper.applyStyles();//TODO: activar cuando se complete
-      activeButtons();
-    } catch (IncidentException e) {
-      JOptionPane.showMessageDialog(this, e.getMessage());
-    }
-  }
-  
+	private void searchNotes() {
+		List<Note> noteList = noteController.executeSearchIncident(txtSearchNote.getText());
+		tableNotes.setModel(aTableController.createModel(noteList.toArray(), Note.columNames()));
+		TableController.cofigureSizeColumns(tableNotes, Note.columNames());
+		entityManagerNotes.clear();
+		currentNote = null;
+		clearNoteControls();
+		activeButtons();
+		setSearchActions();
+	}
+
+	private void setSearchActions() {
+		txtSearchedText.setText(txtSearchNote.getText());
+		aTextRichHelper.searchedText = aTextRichHelper.normalizeText(txtSearchedText.getText());
+		aTextRichHelper.applyStyles();
+	}
+
+	private void clearNoteControls() {
+		txtNoteDescription.setText("");
+		txtNoteTitle.setText("");
+	}
+
+	private void activeButtons() {
+		btnCreateIncident.setEnabled(false);
+		btnUpdateIncident.setEnabled(false);
+		btnRemoveIncident.setEnabled(false);
+		if (txtNoteDescription.getText().trim().length() != 0
+						&& txtNoteTitle.getText().trim().length() != 0) {
+			btnCreateIncident.setEnabled(true);
+		}
+		if (currentNote != null) {
+			btnRemoveIncident.setEnabled(true);
+			btnUpdateIncident.setEnabled(true);
+		}
+	}
+
+	private void updateCurrentIncident() throws IncidentException {
+		if (currentNote != null) {
+			if (txtNoteDescription.getText().length() > 20000) {
+				throw new IncidentException("El numero de caracteres de la descripción supera el limite de 20.000 caracteres");
+			}
+			currentNote.setTypenote(txtNoteTitle.getText());
+			currentNote.setDescription(txtNoteDescription.getText());
+			try {
+				noteController.edit(currentNote);
+			} catch (Exception ex) {
+				throw new IncidentException("Error al editar la nota\n" + ex.getMessage());
+			}
+		}
+	}
+
+	private void validateChanges() throws IncidentException {
+		if (currentNote != null
+						&& currentNote.getDescription().compareTo(txtNoteDescription.getText()) != 0) {
+			int result = JOptionPane.showConfirmDialog(this, "Existen cambios en la descripción, \n¿desea guardarlos?", "Cambios sin guardar", JOptionPane.YES_NO_OPTION);
+			switch (result) {
+				case JOptionPane.OK_OPTION:
+					updateCurrentIncident();
+					break;
+			}
+		}
+	}
+
+	private String validateASCII(String input) {
+		StringBuilder myString = new StringBuilder(input);
+		int sizeString = myString.length();
+		for (int i = 0; i < sizeString; i++) {
+			if ((int) myString.charAt(i) > 255) {
+				myString.deleteCharAt(i);
+				sizeString--;
+				i--;
+			}
+		}
+		return myString.toString();
+	}
+
+	private void changeIncidentSelection() {
+		try {
+			validateChanges();
+			int idPosition = tableNotes.getSelectedRow();
+			if (idPosition != -1) {
+				idPosition = Integer.parseInt(tableNotes.getModel().getValueAt(idPosition, 0).toString());
+				currentNote = noteController.findNote(idPosition);
+				txtNoteTitle.setText(currentNote.getTypenote());
+				txtNoteDescription.setText(validateASCII(currentNote.getDescription()));
+			}
+			aTextRichHelper.applyStyles();//TODO: activar cuando se complete
+			activeButtons();
+		} catch (IncidentException e) {
+			JOptionPane.showMessageDialog(this, e.getMessage());
+		}
+	}
+
   private void btnSearchActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnSearchActionPerformed
-    try {
-      validateChanges();
-      searchNotes();
-    } catch (IncidentException e) {
-      JOptionPane.showMessageDialog(this, e.getMessage());
-    }
-        
+		try {
+			validateChanges();
+			searchNotes();
+		} catch (IncidentException e) {
+			JOptionPane.showMessageDialog(this, e.getMessage());
+		}
+
   }//GEN-LAST:event_btnSearchActionPerformed
-  
+
   private void tableNotesMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_tableNotesMouseClicked
-    changeIncidentSelection();
+		changeIncidentSelection();
   }//GEN-LAST:event_tableNotesMouseClicked
 
   private void btnClearSearchActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnClearSearchActionPerformed
-    try {
-      validateChanges();
-      txtSearchNote.setText("");
-    searchNotes();
-    } catch (IncidentException e) {
-      JOptionPane.showMessageDialog(this, e.getMessage());
-    }    
+		try {
+			validateChanges();
+			txtSearchNote.setText("");
+			searchNotes();
+		} catch (IncidentException e) {
+			JOptionPane.showMessageDialog(this, e.getMessage());
+		}
   }//GEN-LAST:event_btnClearSearchActionPerformed
 
   private void txtSearchNoteKeyPressed(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txtSearchNoteKeyPressed
-    if(evt.getKeyCode()== KeyEvent.VK_ENTER){
-      try {
-        validateChanges();
-        searchNotes();
-      } catch (IncidentException e) {
-        JOptionPane.showMessageDialog(this, e.getMessage());
-      }      
-    }
+		if (evt.getKeyCode() == KeyEvent.VK_ENTER) {
+			try {
+				validateChanges();
+				searchNotes();
+			} catch (IncidentException e) {
+				JOptionPane.showMessageDialog(this, e.getMessage());
+			}
+		}
   }//GEN-LAST:event_txtSearchNoteKeyPressed
 
   private void btnClearIncidentActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnClearIncidentActionPerformed
-    try {
-      validateChanges();
-      searchNotes();
-    } catch (IncidentException e) {
-      JOptionPane.showMessageDialog(this, e.getMessage());
-    }    
+		try {
+			validateChanges();
+			searchNotes();
+		} catch (IncidentException e) {
+			JOptionPane.showMessageDialog(this, e.getMessage());
+		}
   }//GEN-LAST:event_btnClearIncidentActionPerformed
 
   private void btnRemoveIncidentActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnRemoveIncidentActionPerformed
-    if(JOptionPane.showConfirmDialog(this, "Confirma la eliminación de este registro?")==0){
-      try {
-        noteController.destroy(currentNote.getId());
-        searchNotes();
-      } catch (NonexistentEntityException ex) {
-        JOptionPane.showMessageDialog(this,"Error al eliminar nota: \n" + ex.getMessage());
-      }      
-    }
+		if (JOptionPane.showConfirmDialog(this, "Confirma la eliminación de este registro?") == 0) {
+			try {
+				noteController.destroy(currentNote.getId());
+				searchNotes();
+			} catch (NonexistentEntityException ex) {
+				JOptionPane.showMessageDialog(this, "Error al eliminar nota: \n" + ex.getMessage());
+			}
+		}
   }//GEN-LAST:event_btnRemoveIncidentActionPerformed
 
   private void btnCreateIncidentActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnCreateIncidentActionPerformed
-    Note newNote = new Note();
-    newNote.setTypenote(txtNoteTitle.getText());
-    newNote.setDescription(txtNoteDescription.getText());
-    noteController.create(newNote);
-    searchNotes();
+		Note newNote = new Note();
+		newNote.setTypenote(txtNoteTitle.getText());
+		newNote.setDescription(txtNoteDescription.getText());
+		noteController.create(newNote);
+		searchNotes();
   }//GEN-LAST:event_btnCreateIncidentActionPerformed
 
   private void btnUpdateIncidentActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnUpdateIncidentActionPerformed
-    try {
-      updateCurrentIncident();
-    } catch (IncidentException e) {
-      JOptionPane.showMessageDialog(this, e.getMessage());
-    }
+		try {
+			updateCurrentIncident();
+		} catch (IncidentException e) {
+			JOptionPane.showMessageDialog(this, e.getMessage());
+		}
   }//GEN-LAST:event_btnUpdateIncidentActionPerformed
 
   private void txtSearchedTextKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txtSearchedTextKeyReleased
-    aTextRichHelper.searchedText = aTextRichHelper.normalizeText(txtSearchedText.getText());
-    aTextRichHelper.applyStyles();
+		aTextRichHelper.searchedText = aTextRichHelper.normalizeText(txtSearchedText.getText());
+		aTextRichHelper.applyStyles();
   }//GEN-LAST:event_txtSearchedTextKeyReleased
 
   private void txtNoteDescriptionKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txtNoteDescriptionKeyReleased
-    activeButtons();
-    aTextRichHelper.applyStyles();
+		activeButtons();
+		aTextRichHelper.applyStyles();
   }//GEN-LAST:event_txtNoteDescriptionKeyReleased
 
   private void tableNotesKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_tableNotesKeyReleased
-    try {
-      validateChanges();
-      changeIncidentSelection();
-    } catch (IncidentException e) {
-      JOptionPane.showConfirmDialog(this, e.getMessage());
-    }    
+		try {
+			validateChanges();
+			changeIncidentSelection();
+		} catch (IncidentException e) {
+			JOptionPane.showConfirmDialog(this, e.getMessage());
+		}
   }//GEN-LAST:event_tableNotesKeyReleased
 
   // Variables declaration - do not modify//GEN-BEGIN:variables
