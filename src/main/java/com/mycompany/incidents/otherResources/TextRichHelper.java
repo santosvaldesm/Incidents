@@ -33,6 +33,7 @@ public class TextRichHelper {
 	JTextPane textPane = new JTextPane();
 	AbstractDocument doc;
 	DefaultStyledDocument dsd;
+	String lastText = "";
 	ArrayList<SectionStyle> SectionsStyles = new ArrayList<>();
 	char currentSpecialChar = 0;
 	String currentWord = "";
@@ -91,6 +92,7 @@ public class TextRichHelper {
 			configureFontStyle(blackFontStyle, Color.black, false, 20);
 			configureFontStyle(grayFontStyle, new Color(150, 150, 150), false, 20);
 			StyleConstants.setBackground(yellowHighlightedStyle, new Color(255, 200, 0));
+			StyleConstants.setBold(yellowHighlightedStyle, true);
 			StyleConstants.setBackground(greenHighlightedStyle, new Color(144, 226, 89));
 		} catch (Exception e) {
 			System.out.println(e.getMessage());
@@ -128,10 +130,14 @@ public class TextRichHelper {
 	}
 	
 	public void applyStyles() throws BadLocationException {
+		if (lastText.compareTo(textPane.getText()) == 0) {
+			return;
+		}
 		SectionsStyles = new ArrayList<>();
 		textOfDocument = "";		
 		textOfDocument = textPane.getStyledDocument().getText(0, textPane.getStyledDocument().getLength());		
 		int aCaretPosition = textPane.getCaretPosition();
+		lastText = textPane.getText();
 		textPane.setText("");
 		int currentPosition = 0;
 		currentWord = "";

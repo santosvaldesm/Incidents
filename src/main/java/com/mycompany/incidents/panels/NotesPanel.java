@@ -342,17 +342,26 @@ public class NotesPanel extends javax.swing.JPanel {
 		return myString.toString();
 	}
 
+	int posSelecTableNotes = -1;
+					
+	private Note findNote(int positionInTable){
+		String strIdNote = tableNotes.getModel().getValueAt(positionInTable, 0).toString(); 
+		int idNote = Integer.parseInt(strIdNote); 
+		return noteController.findNote(idNote);
+	}
+	
 	private void changeIncidentSelection() throws BadLocationException {
 		try {
 			validateChanges();
-			int idPosition = tableNotes.getSelectedRow();
-			if (idPosition != -1) {
-				idPosition = Integer.parseInt(tableNotes.getModel().getValueAt(idPosition, 0).toString());
-				currentNote = noteController.findNote(idPosition);
-				txtNoteTitle.setText(currentNote.getTypenote());
-				txtNoteDescription.setText(validateASCII(currentNote.getDescription()));
+			if(tableNotes.getSelectedRow() == posSelecTableNotes ||
+				 tableNotes.getSelectedRow() == -1 ) {
+				return;
 			}
-			aTextRichHelper.applyStyles();//TODO: activar cuando se complete
+			posSelecTableNotes = tableNotes.getSelectedRow();						
+			currentNote = findNote(posSelecTableNotes); 
+			txtNoteTitle.setText(currentNote.getTypenote());
+			txtNoteDescription.setText(validateASCII(currentNote.getDescription()));			
+			aTextRichHelper.applyStyles();
 			activeButtons();
 		} catch (IncidentException e) {
 			JOptionPane.showMessageDialog(this, e.getMessage());
