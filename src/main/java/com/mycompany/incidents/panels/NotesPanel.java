@@ -14,6 +14,7 @@ import javax.persistence.Persistence;
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.JOptionPane;
 import javax.swing.JTextPane;
+import javax.swing.text.BadLocationException;
 
 public class NotesPanel extends javax.swing.JPanel {
 
@@ -22,15 +23,12 @@ public class NotesPanel extends javax.swing.JPanel {
 	NoteJpaController noteController = new NoteJpaController(factory);
 	int txtNoteId = 0;
 	Note currentNote = null;
-	TextRichHelper aTextRichHelper = null;
-
+	TextRichHelper aTextRichHelper = null;	
+	
 	public NotesPanel() {
 		initComponents();
 		activeButtons();
-
-		aTextRichHelper = new TextRichHelper(txtNoteDescription);
-		txtNoteDescription.setStyledDocument(aTextRichHelper.doc);
-
+		aTextRichHelper = new TextRichHelper(txtNoteDescription);		
 		searchNotes();
 	}
 
@@ -210,6 +208,14 @@ public class NotesPanel extends javax.swing.JPanel {
         .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
           .addComponent(jScrollPane3)
           .addGroup(jPanel3Layout.createSequentialGroup()
+            .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 45, javax.swing.GroupLayout.PREFERRED_SIZE)
+            .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+            .addComponent(txtNoteTitle, javax.swing.GroupLayout.DEFAULT_SIZE, 212, Short.MAX_VALUE)
+            .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+            .addComponent(jLabel3)
+            .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+            .addComponent(txtSearchedText, javax.swing.GroupLayout.PREFERRED_SIZE, 234, javax.swing.GroupLayout.PREFERRED_SIZE))
+          .addGroup(jPanel3Layout.createSequentialGroup()
             .addComponent(btnUpdateIncident)
             .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
             .addComponent(btnCreateIncident)
@@ -217,15 +223,7 @@ public class NotesPanel extends javax.swing.JPanel {
             .addComponent(btnRemoveIncident)
             .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
             .addComponent(btnClearIncident)
-            .addGap(0, 0, Short.MAX_VALUE))
-          .addGroup(jPanel3Layout.createSequentialGroup()
-            .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 45, javax.swing.GroupLayout.PREFERRED_SIZE)
-            .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-            .addComponent(txtNoteTitle, javax.swing.GroupLayout.DEFAULT_SIZE, 212, Short.MAX_VALUE)
-            .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-            .addComponent(jLabel3)
-            .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-            .addComponent(txtSearchedText, javax.swing.GroupLayout.PREFERRED_SIZE, 234, javax.swing.GroupLayout.PREFERRED_SIZE)))
+            .addGap(0, 0, Short.MAX_VALUE)))
         .addContainerGap())
     );
     jPanel3Layout.setVerticalGroup(
@@ -277,8 +275,12 @@ public class NotesPanel extends javax.swing.JPanel {
 
 	private void setSearchActions() {
 		txtSearchedText.setText(txtSearchNote.getText());
-		aTextRichHelper.searchedText = aTextRichHelper.normalizeText(txtSearchedText.getText());
-		aTextRichHelper.applyStyles();
+		aTextRichHelper.searchedText = txtSearchedText.getText();
+		try {
+			aTextRichHelper.applyStyles();
+		} catch (BadLocationException ex) {
+			JOptionPane.showConfirmDialog(this, ex.getMessage());
+		}
 	}
 
 	private void clearNoteControls() {
@@ -340,7 +342,7 @@ public class NotesPanel extends javax.swing.JPanel {
 		return myString.toString();
 	}
 
-	private void changeIncidentSelection() {
+	private void changeIncidentSelection() throws BadLocationException {
 		try {
 			validateChanges();
 			int idPosition = tableNotes.getSelectedRow();
@@ -368,7 +370,11 @@ public class NotesPanel extends javax.swing.JPanel {
   }//GEN-LAST:event_btnSearchActionPerformed
 
   private void tableNotesMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_tableNotesMouseClicked
-		changeIncidentSelection();
+		try {
+			changeIncidentSelection();
+		} catch (BadLocationException ex) {
+			JOptionPane.showConfirmDialog(this, ex.getMessage());
+		}
   }//GEN-LAST:event_tableNotesMouseClicked
 
   private void btnClearSearchActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnClearSearchActionPerformed
@@ -430,12 +436,20 @@ public class NotesPanel extends javax.swing.JPanel {
 
   private void txtSearchedTextKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txtSearchedTextKeyReleased
 		aTextRichHelper.searchedText = aTextRichHelper.normalizeText(txtSearchedText.getText());
-		aTextRichHelper.applyStyles();
+		try {
+			aTextRichHelper.applyStyles();
+		} catch (BadLocationException ex) {
+			JOptionPane.showConfirmDialog(this, ex.getMessage());
+		}
   }//GEN-LAST:event_txtSearchedTextKeyReleased
 
   private void txtNoteDescriptionKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txtNoteDescriptionKeyReleased
 		activeButtons();
-		aTextRichHelper.applyStyles();
+		try {
+			aTextRichHelper.applyStyles();
+		} catch (BadLocationException ex) {
+			JOptionPane.showConfirmDialog(this, ex.getMessage());
+		}
   }//GEN-LAST:event_txtNoteDescriptionKeyReleased
 
   private void tableNotesKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_tableNotesKeyReleased
@@ -444,6 +458,8 @@ public class NotesPanel extends javax.swing.JPanel {
 			changeIncidentSelection();
 		} catch (IncidentException e) {
 			JOptionPane.showConfirmDialog(this, e.getMessage());
+		} catch (BadLocationException ex) {
+			JOptionPane.showConfirmDialog(this, ex.getMessage());
 		}
   }//GEN-LAST:event_tableNotesKeyReleased
 
